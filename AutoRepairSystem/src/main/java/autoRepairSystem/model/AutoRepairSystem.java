@@ -3,6 +3,8 @@
 
 package autoRepairSystem.model;
 import java.util.*;
+import java.sql.Time;
+import java.sql.Date;
 
 // line 3 "../../AutoRepairSystem.ump"
 public class AutoRepairSystem
@@ -12,7 +14,13 @@ public class AutoRepairSystem
   // MEMBER VARIABLES
   //------------------------
 
+  //AutoRepairSystem Attributes
+  private String businessName;
+  private String address;
+  private String phoneNumber;
+
   //AutoRepairSystem Associations
+  private List<AvailabilitySchedule> businessHour;
   private List<Service> services;
   private List<User> users;
   private List<Appointment> appointments;
@@ -21,8 +29,12 @@ public class AutoRepairSystem
   // CONSTRUCTOR
   //------------------------
 
-  public AutoRepairSystem()
+  public AutoRepairSystem(String aBusinessName, String aAddress, String aPhoneNumber)
   {
+    businessName = aBusinessName;
+    address = aAddress;
+    phoneNumber = aPhoneNumber;
+    businessHour = new ArrayList<AvailabilitySchedule>();
     services = new ArrayList<Service>();
     users = new ArrayList<User>();
     appointments = new ArrayList<Appointment>();
@@ -31,6 +43,75 @@ public class AutoRepairSystem
   //------------------------
   // INTERFACE
   //------------------------
+
+  public boolean setBusinessName(String aBusinessName)
+  {
+    boolean wasSet = false;
+    businessName = aBusinessName;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setAddress(String aAddress)
+  {
+    boolean wasSet = false;
+    address = aAddress;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setPhoneNumber(String aPhoneNumber)
+  {
+    boolean wasSet = false;
+    phoneNumber = aPhoneNumber;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public String getBusinessName()
+  {
+    return businessName;
+  }
+
+  public String getAddress()
+  {
+    return address;
+  }
+
+  public String getPhoneNumber()
+  {
+    return phoneNumber;
+  }
+  /* Code from template association_GetMany */
+  public AvailabilitySchedule getBusinessHour(int index)
+  {
+    AvailabilitySchedule aBusinessHour = businessHour.get(index);
+    return aBusinessHour;
+  }
+
+  public List<AvailabilitySchedule> getBusinessHour()
+  {
+    List<AvailabilitySchedule> newBusinessHour = Collections.unmodifiableList(businessHour);
+    return newBusinessHour;
+  }
+
+  public int numberOfBusinessHour()
+  {
+    int number = businessHour.size();
+    return number;
+  }
+
+  public boolean hasBusinessHour()
+  {
+    boolean has = businessHour.size() > 0;
+    return has;
+  }
+
+  public int indexOfBusinessHour(AvailabilitySchedule aBusinessHour)
+  {
+    int index = businessHour.indexOf(aBusinessHour);
+    return index;
+  }
   /* Code from template association_GetMany */
   public Service getService(int index)
   {
@@ -120,6 +201,77 @@ public class AutoRepairSystem
   {
     int index = appointments.indexOf(aAppointment);
     return index;
+  }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfBusinessHour()
+  {
+    return 0;
+  }
+  /* Code from template association_AddManyToOptionalOne */
+  public boolean addBusinessHour(AvailabilitySchedule aBusinessHour)
+  {
+    boolean wasAdded = false;
+    if (businessHour.contains(aBusinessHour)) { return false; }
+    AutoRepairSystem existingAutoRepairSystem = aBusinessHour.getAutoRepairSystem();
+    if (existingAutoRepairSystem == null)
+    {
+      aBusinessHour.setAutoRepairSystem(this);
+    }
+    else if (!this.equals(existingAutoRepairSystem))
+    {
+      existingAutoRepairSystem.removeBusinessHour(aBusinessHour);
+      addBusinessHour(aBusinessHour);
+    }
+    else
+    {
+      businessHour.add(aBusinessHour);
+    }
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeBusinessHour(AvailabilitySchedule aBusinessHour)
+  {
+    boolean wasRemoved = false;
+    if (businessHour.contains(aBusinessHour))
+    {
+      businessHour.remove(aBusinessHour);
+      aBusinessHour.setAutoRepairSystem(null);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addBusinessHourAt(AvailabilitySchedule aBusinessHour, int index)
+  {  
+    boolean wasAdded = false;
+    if(addBusinessHour(aBusinessHour))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfBusinessHour()) { index = numberOfBusinessHour() - 1; }
+      businessHour.remove(aBusinessHour);
+      businessHour.add(index, aBusinessHour);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveBusinessHourAt(AvailabilitySchedule aBusinessHour, int index)
+  {
+    boolean wasAdded = false;
+    if(businessHour.contains(aBusinessHour))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfBusinessHour()) { index = numberOfBusinessHour() - 1; }
+      businessHour.remove(aBusinessHour);
+      businessHour.add(index, aBusinessHour);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addBusinessHourAt(aBusinessHour, index);
+    }
+    return wasAdded;
   }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfServices()
@@ -268,9 +420,9 @@ public class AutoRepairSystem
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Appointment addAppointment(Technician aTechnician, TimeSlot aTimeSlot, Customer aCustomer, Service... allServices)
+  public Appointment addAppointment(Time aStartTime, Time aEndTime, Date aDate, Technician aTechnician, Customer aCustomer, Service... allServices)
   {
-    return new Appointment(aTechnician, aTimeSlot, aCustomer, this, allServices);
+    return new Appointment(aStartTime, aEndTime, aDate, aTechnician, aCustomer, this, allServices);
   }
 
   public boolean addAppointment(Appointment aAppointment)
@@ -337,6 +489,13 @@ public class AutoRepairSystem
 
   public void delete()
   {
+    while (businessHour.size() > 0)
+    {
+      AvailabilitySchedule aBusinessHour = businessHour.get(businessHour.size() - 1);
+      aBusinessHour.delete();
+      businessHour.remove(aBusinessHour);
+    }
+    
     while (services.size() > 0)
     {
       Service aService = services.get(services.size() - 1);
@@ -360,4 +519,12 @@ public class AutoRepairSystem
     
   }
 
+
+  public String toString()
+  {
+    return super.toString() + "["+
+            "businessName" + ":" + getBusinessName()+ "," +
+            "address" + ":" + getAddress()+ "," +
+            "phoneNumber" + ":" + getPhoneNumber()+ "]";
+  }
 }

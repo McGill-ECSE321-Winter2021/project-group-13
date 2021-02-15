@@ -2,10 +2,18 @@
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
 package autoRepairSystem.model;
+import java.util.*;
 
-// line 32 "../../AutoRepairSystem.ump"
+// line 25 "../../AutoRepairSystem.ump"
 public abstract class User
 {
+
+  //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  private static Map<String, User> usersByUsername = new HashMap<String, User>();
+  private static Map<String, User> usersByEmail = new HashMap<String, User>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -26,10 +34,16 @@ public abstract class User
 
   public User(String aUsername, String aPassword, String aName, String aEmail, AutoRepairSystem aAutoRepairSystem)
   {
-    username = aUsername;
     password = aPassword;
     name = aName;
-    email = aEmail;
+    if (!setUsername(aUsername))
+    {
+      throw new RuntimeException("Cannot create due to duplicate username. See http://manual.umple.org?RE003ViolationofUniqueness.html");
+    }
+    if (!setEmail(aEmail))
+    {
+      throw new RuntimeException("Cannot create due to duplicate email. See http://manual.umple.org?RE003ViolationofUniqueness.html");
+    }
     boolean didAddAutoRepairSystem = setAutoRepairSystem(aAutoRepairSystem);
     if (!didAddAutoRepairSystem)
     {
@@ -44,8 +58,19 @@ public abstract class User
   public boolean setUsername(String aUsername)
   {
     boolean wasSet = false;
+    String anOldUsername = getUsername();
+    if (anOldUsername != null && anOldUsername.equals(aUsername)) {
+      return true;
+    }
+    if (hasWithUsername(aUsername)) {
+      return wasSet;
+    }
     username = aUsername;
     wasSet = true;
+    if (anOldUsername != null) {
+      usersByUsername.remove(anOldUsername);
+    }
+    usersByUsername.put(aUsername, this);
     return wasSet;
   }
 
@@ -68,14 +93,35 @@ public abstract class User
   public boolean setEmail(String aEmail)
   {
     boolean wasSet = false;
+    String anOldEmail = getEmail();
+    if (anOldEmail != null && anOldEmail.equals(aEmail)) {
+      return true;
+    }
+    if (hasWithEmail(aEmail)) {
+      return wasSet;
+    }
     email = aEmail;
     wasSet = true;
+    if (anOldEmail != null) {
+      usersByEmail.remove(anOldEmail);
+    }
+    usersByEmail.put(aEmail, this);
     return wasSet;
   }
 
   public String getUsername()
   {
     return username;
+  }
+  /* Code from template attribute_GetUnique */
+  public static User getWithUsername(String aUsername)
+  {
+    return usersByUsername.get(aUsername);
+  }
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithUsername(String aUsername)
+  {
+    return getWithUsername(aUsername) != null;
   }
 
   public String getPassword()
@@ -91,6 +137,16 @@ public abstract class User
   public String getEmail()
   {
     return email;
+  }
+  /* Code from template attribute_GetUnique */
+  public static User getWithEmail(String aEmail)
+  {
+    return usersByEmail.get(aEmail);
+  }
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithEmail(String aEmail)
+  {
+    return getWithEmail(aEmail) != null;
   }
   /* Code from template association_GetOne */
   public AutoRepairSystem getAutoRepairSystem()
@@ -119,6 +175,8 @@ public abstract class User
 
   public void delete()
   {
+    usersByUsername.remove(getUsername());
+    usersByEmail.remove(getEmail());
     AutoRepairSystem placeholderAutoRepairSystem = autoRepairSystem;
     this.autoRepairSystem = null;
     if(placeholderAutoRepairSystem != null)

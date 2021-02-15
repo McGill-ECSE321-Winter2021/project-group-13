@@ -2,8 +2,9 @@
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
 package autoRepairSystem.model;
+import java.util.*;
 
-// line 50 "../../AutoRepairSystem.ump"
+// line 43 "../../AutoRepairSystem.ump"
 public class Administrator extends User
 {
 

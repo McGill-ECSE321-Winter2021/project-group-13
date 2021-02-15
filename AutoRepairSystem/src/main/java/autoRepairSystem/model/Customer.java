@@ -3,8 +3,10 @@
 
 package autoRepairSystem.model;
 import java.util.*;
+import java.sql.Time;
+import java.sql.Date;
 
-// line 45 "../../AutoRepairSystem.ump"
+// line 39 "../../AutoRepairSystem.ump"
 public class Customer extends User
 {
 
@@ -64,9 +66,9 @@ public class Customer extends User
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Appointment addAppointment(Technician aTechnician, TimeSlot aTimeSlot, AutoRepairSystem aAutoRepairSystem, Service... allServices)
+  public Appointment addAppointment(Time aStartTime, Time aEndTime, Date aDate, Technician aTechnician, AutoRepairSystem aAutoRepairSystem, Service... allServices)
   {
-    return new Appointment(aTechnician, aTimeSlot, this, aAutoRepairSystem, allServices);
+    return new Appointment(aStartTime, aEndTime, aDate, aTechnician, this, aAutoRepairSystem, allServices);
   }
 
   public boolean addAppointment(Appointment aAppointment)

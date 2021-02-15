@@ -4,7 +4,7 @@
 package autoRepairSystem.model;
 import java.util.*;
 
-// line 25 "../../AutoRepairSystem.ump"
+// line 18 "../../AutoRepairSystem.ump"
 public class Service
 {
 

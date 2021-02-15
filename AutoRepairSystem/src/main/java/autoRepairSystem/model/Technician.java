@@ -3,44 +3,80 @@
 
 package autoRepairSystem.model;
 import java.util.*;
+import java.sql.Time;
+import java.sql.Date;
 
-// line 41 "../../AutoRepairSystem.ump"
+// line 34 "../../AutoRepairSystem.ump"
 public class Technician extends User
 {
+
+  //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  private static int nextId = 1;
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
+  //Autounique Attributes
+  private int id;
+
   //Technician Associations
+  private List<AvailabilitySchedule> workHour;
   private List<Appointment> appointments;
-  private Schedule schedule;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Technician(String aUsername, String aPassword, String aName, String aEmail, AutoRepairSystem aAutoRepairSystem, Schedule aSchedule)
-  {
-    super(aUsername, aPassword, aName, aEmail, aAutoRepairSystem);
-    appointments = new ArrayList<Appointment>();
-    if (aSchedule == null || aSchedule.getTechnician() != null)
-    {
-      throw new RuntimeException("Unable to create Technician due to aSchedule. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    schedule = aSchedule;
-  }
-
   public Technician(String aUsername, String aPassword, String aName, String aEmail, AutoRepairSystem aAutoRepairSystem)
   {
     super(aUsername, aPassword, aName, aEmail, aAutoRepairSystem);
+    id = nextId++;
+    workHour = new ArrayList<AvailabilitySchedule>();
     appointments = new ArrayList<Appointment>();
-    schedule = new Schedule(this);
   }
 
   //------------------------
   // INTERFACE
   //------------------------
+
+  public int getId()
+  {
+    return id;
+  }
+  /* Code from template association_GetMany */
+  public AvailabilitySchedule getWorkHour(int index)
+  {
+    AvailabilitySchedule aWorkHour = workHour.get(index);
+    return aWorkHour;
+  }
+
+  public List<AvailabilitySchedule> getWorkHour()
+  {
+    List<AvailabilitySchedule> newWorkHour = Collections.unmodifiableList(workHour);
+    return newWorkHour;
+  }
+
+  public int numberOfWorkHour()
+  {
+    int number = workHour.size();
+    return number;
+  }
+
+  public boolean hasWorkHour()
+  {
+    boolean has = workHour.size() > 0;
+    return has;
+  }
+
+  public int indexOfWorkHour(AvailabilitySchedule aWorkHour)
+  {
+    int index = workHour.indexOf(aWorkHour);
+    return index;
+  }
   /* Code from template association_GetMany */
   public Appointment getAppointment(int index)
   {
@@ -71,10 +107,76 @@ public class Technician extends User
     int index = appointments.indexOf(aAppointment);
     return index;
   }
-  /* Code from template association_GetOne */
-  public Schedule getSchedule()
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfWorkHour()
   {
-    return schedule;
+    return 0;
+  }
+  /* Code from template association_AddManyToOptionalOne */
+  public boolean addWorkHour(AvailabilitySchedule aWorkHour)
+  {
+    boolean wasAdded = false;
+    if (workHour.contains(aWorkHour)) { return false; }
+    Technician existingTechnician = aWorkHour.getTechnician();
+    if (existingTechnician == null)
+    {
+      aWorkHour.setTechnician(this);
+    }
+    else if (!this.equals(existingTechnician))
+    {
+      existingTechnician.removeWorkHour(aWorkHour);
+      addWorkHour(aWorkHour);
+    }
+    else
+    {
+      workHour.add(aWorkHour);
+    }
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeWorkHour(AvailabilitySchedule aWorkHour)
+  {
+    boolean wasRemoved = false;
+    if (workHour.contains(aWorkHour))
+    {
+      workHour.remove(aWorkHour);
+      aWorkHour.setTechnician(null);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addWorkHourAt(AvailabilitySchedule aWorkHour, int index)
+  {  
+    boolean wasAdded = false;
+    if(addWorkHour(aWorkHour))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfWorkHour()) { index = numberOfWorkHour() - 1; }
+      workHour.remove(aWorkHour);
+      workHour.add(index, aWorkHour);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveWorkHourAt(AvailabilitySchedule aWorkHour, int index)
+  {
+    boolean wasAdded = false;
+    if(workHour.contains(aWorkHour))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfWorkHour()) { index = numberOfWorkHour() - 1; }
+      workHour.remove(aWorkHour);
+      workHour.add(index, aWorkHour);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addWorkHourAt(aWorkHour, index);
+    }
+    return wasAdded;
   }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfAppointments()
@@ -82,9 +184,9 @@ public class Technician extends User
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Appointment addAppointment(TimeSlot aTimeSlot, Customer aCustomer, AutoRepairSystem aAutoRepairSystem, Service... allServices)
+  public Appointment addAppointment(Time aStartTime, Time aEndTime, Date aDate, Customer aCustomer, AutoRepairSystem aAutoRepairSystem, Service... allServices)
   {
-    return new Appointment(this, aTimeSlot, aCustomer, aAutoRepairSystem, allServices);
+    return new Appointment(aStartTime, aEndTime, aDate, this, aCustomer, aAutoRepairSystem, allServices);
   }
 
   public boolean addAppointment(Appointment aAppointment)
@@ -151,18 +253,25 @@ public class Technician extends User
 
   public void delete()
   {
+    while (workHour.size() > 0)
+    {
+      AvailabilitySchedule aWorkHour = workHour.get(workHour.size() - 1);
+      aWorkHour.delete();
+      workHour.remove(aWorkHour);
+    }
+    
     for(int i=appointments.size(); i > 0; i--)
     {
       Appointment aAppointment = appointments.get(i - 1);
       aAppointment.delete();
     }
-    Schedule existingSchedule = schedule;
-    schedule = null;
-    if (existingSchedule != null)
-    {
-      existingSchedule.delete();
-    }
     super.delete();
   }
 
+
+  public String toString()
+  {
+    return super.toString() + "["+
+            "id" + ":" + getId()+ "]";
+  }
 }
