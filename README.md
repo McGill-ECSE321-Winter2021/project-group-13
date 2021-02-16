@@ -10,7 +10,7 @@ Edgar Desnos    ||
 Charles Wetaski ||
 Ezra Gomolin    |260926917|                   
 Hassan Kanj     ||
-Henri Rofiq     ||
+Henri Rofiq     |260805473|
 
 ## Project Scope:
 
@@ -30,7 +30,7 @@ Edgar Desnos    | Requirements Model | 100000000 hours
 Charles Wetaski ||
 Ezra Gomolin    ||                   
 Hassan Kanj     ||
-Henri Rofiq     ||
+Henri Rofiq     |Persistence and Managment|420 hours
 
 [Sprint 2:](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-2)
 
