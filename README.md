@@ -10,7 +10,8 @@
 ## Project Scope:
 
 ## Links:
-- [Project Report](wiki/Project-Deliverable-1-Report)
+- [Project Report](wiki/Project-Deliverable-1-Report) <br>
+[[Sprint 1|Sprint 1]]
 
 ## Effort Table:
 
@@ -23,3 +24,5 @@ Charles Wetaski ||
 Ezra Gomolin    ||                   
 Hassan Kanj     ||
 Henri Rofiq     ||
+
+
