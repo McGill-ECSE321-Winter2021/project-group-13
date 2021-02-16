@@ -11,8 +11,7 @@
 
 ## Links:
 - [Project Report](wiki/Project-Deliverable-1-Report) <br>
-[[Sprint 1|Sprint]]
-[Sprint 1](wiki/Sprint 1)
+ [Sprint 1](wiki/Sprint 1)
 
 ## Effort Table:
 
