@@ -1,6 +1,6 @@
 # Auto Repair System: Group 13
 
-## Team members:
+## Team Members:
 - Henri Rofiq
 - Ezra Gomolin
 - Edgar Desnos
@@ -8,6 +8,9 @@
 - Hassan Kanj
 
 ## Project Scope:
+
+## Links:
+- [Project Report](wiki/Project-Deliverable-1-Report)
 
 ## Effort Table:
 
