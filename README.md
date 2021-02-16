@@ -14,7 +14,7 @@
 
 ## Effort Table:
 
-Sprint 1:
+[Sprint 1:](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-1)
 
 Name            | Team Roles         | Individual Efforts
 --------------- |------------------- |-------------------
