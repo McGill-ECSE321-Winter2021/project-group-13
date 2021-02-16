@@ -1,5 +1,7 @@
 # Auto Repair System: Group 13
 
+# System Description
+
 ## Team Members:
 - Henri Rofiq
 - Ezra Gomolin
@@ -9,7 +11,7 @@
 
 Name            | Student ID         
 --------------- |------------------- 
-Edgar Desnos    | 
+Edgar Desnos    || 
 Charles Wetaski ||
 Ezra Gomolin    |260926917|                   
 Hassan Kanj     ||
