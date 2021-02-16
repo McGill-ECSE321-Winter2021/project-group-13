@@ -30,7 +30,7 @@ Edgar Desnos    | Requirements Model | 100000000 hours
 Charles Wetaski ||
 Ezra Gomolin    ||                   
 Hassan Kanj     ||
-Henri Rofiq     |Persistence and Managment|420 hours
+Henri Rofiq     |Persistence and Management|420 hours
 
 [Sprint 2:](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-2)
 
