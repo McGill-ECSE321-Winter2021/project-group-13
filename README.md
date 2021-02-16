@@ -3,11 +3,6 @@
 # System Description
 
 ## Team Members:
-- Henri Rofiq
-- Ezra Gomolin
-- Edgar Desnos
-- Charles Wetaski
-- Hassan Kanj
 
 Name            | Student ID         
 --------------- |------------------- 
