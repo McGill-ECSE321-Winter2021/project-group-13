@@ -10,8 +10,7 @@
 ## Project Scope:
 
 ## Links:
-- [Project Report](wiki/Project-Deliverable-1-Report) <br>
-- [Sprint 1](https://www.google.com)
+- [Sprint 1](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-1)
 
 ## Effort Table:
 
