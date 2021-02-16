@@ -11,11 +11,11 @@
 
 ## Links:
 - [Project Report](wiki/Project-Deliverable-1-Report) <br>
-- [Sprint 1](wiki/Sprint 1)
+- [Sprint 1](https://www.google.com)
 
 ## Effort Table:
 
-Deliverable 1:
+Sprint 1:
 
 Name            | Team Roles         | Individual Efforts
 --------------- |------------------- |-------------------
