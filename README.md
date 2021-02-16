@@ -10,7 +10,10 @@
 ## Project Scope:
 
 ## Links:
-- [Sprint 1](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-1)
+- [Sprint 1](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-1) <br>
+- [Sprint 2](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-2) <br>
+- [Sprint 3](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-3) <br>
+- [Sprint 4](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-4) <br>
 
 ## Effort Table:
 
