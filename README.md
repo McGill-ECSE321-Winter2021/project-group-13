@@ -28,7 +28,7 @@ Name            | Team Roles         | Individual Efforts
 --------------- |------------------- |-------------------
 Edgar Desnos    | Requirements Model | 100000000 hours
 Charles Wetaski ||
-Ezra Gomolin    ||                   
+Ezra Gomolin    | Requirements Model, UML Diagram|15 hours                   
 Hassan Kanj     ||
 Henri Rofiq     |Persistence and Management|420 hours
 
