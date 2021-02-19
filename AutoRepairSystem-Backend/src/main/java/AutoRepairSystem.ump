@@ -1,0 +1,59 @@
+namespace ca.mcgill.ecse321.autorepairsystem.uml;
+
+class AppointmentManager{
+}
+
+class AvailabilitySchedule {
+  	enum DayOfWeek{Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday};
+  DayOfWeek dayOfWeek;
+  Time startTime;
+  Time endTime;
+  * businessHour -<@> 0..1 AppointmentManager;
+  * workHour -<@> 0..1 Technician;
+}
+
+class Service {
+  * -<@> 1 AppointmentManager;
+  String name;
+  int duration;
+  int price;
+}
+
+class User{
+  abstract;
+  unique String username;
+  String password;
+  String name;
+  unique String email;
+  * -<@> 1 AppointmentManager;
+}
+
+class Technician {
+    isA User;
+    autounique id;
+}
+
+class Customer {
+  isA User;
+}
+
+class Administrator {
+  isA User;
+}
+	
+class Appointment {
+  Time startTime;
+  Time endTime;
+  Date date;
+  
+  * -- 0..1 Technician;
+  * -- 1..* Service;
+  * -- 0..1 Customer;
+  * -<@> 1 AppointmentManager;
+}
+
+class WorkBreak {
+  Time breakStarts;
+  Time breakEnds;
+  0..1 -<@> 1 AvailabilitySchedule;
+}
