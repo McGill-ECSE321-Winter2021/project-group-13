@@ -1,10 +1,12 @@
 namespace ca.mcgill.ecse321.autorepairsystem.uml;
 
+
+enum DayOfWeek {Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday};
+  	
 class AppointmentManager{
 }
 
 class AvailabilitySchedule {
-  	enum DayOfWeek{Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday};
   DayOfWeek dayOfWeek;
   Time startTime;
   Time endTime;
@@ -17,6 +19,10 @@ class Service {
   String name;
   int duration;
   int price;
+}
+
+class ServiceCombo {
+  
 }
 
 class User{
@@ -47,7 +53,7 @@ class Appointment {
   Date date;
   
   * -- 0..1 Technician;
-  * -- 1..* Service;
+  * -- 1 ServiceCombo;
   * -- 0..1 Customer;
   * -<@> 1 AppointmentManager;
 }

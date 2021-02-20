@@ -4,9 +4,15 @@
 package ca.mcgill.ecse321.autorepairsystem.uml;
 import java.util.*;
 
-// line 31 "../../../../../AutoRepairSystem.ump"
+// line 37 "../../../../../AutoRepairSystem.ump"
 public class Technician extends User
 {
+
+  //------------------------
+  // ENUMERATIONS
+  //------------------------
+
+  public enum DayOfWeek { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
 
   //------------------------
   // STATIC VARIABLES

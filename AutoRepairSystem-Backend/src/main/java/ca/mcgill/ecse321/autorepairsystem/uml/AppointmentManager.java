@@ -6,9 +6,15 @@ import java.util.*;
 import java.sql.Time;
 import java.sql.Date;
 
-// line 3 "../../../../../AutoRepairSystem.ump"
+// line 6 "../../../../../AutoRepairSystem.ump"
 public class AppointmentManager
 {
+
+  //------------------------
+  // ENUMERATIONS
+  //------------------------
+
+  public enum DayOfWeek { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
 
   //------------------------
   // MEMBER VARIABLES
@@ -373,9 +379,9 @@ public class AppointmentManager
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Appointment addAppointment(Time aStartTime, Time aEndTime, Date aDate, Service... allServices)
+  public Appointment addAppointment(Time aStartTime, Time aEndTime, Date aDate, ServiceCombo aServiceCombo)
   {
-    return new Appointment(aStartTime, aEndTime, aDate, this, allServices);
+    return new Appointment(aStartTime, aEndTime, aDate, aServiceCombo, this);
   }
 
   public boolean addAppointment(Appointment aAppointment)

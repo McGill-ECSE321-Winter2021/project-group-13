@@ -3,25 +3,26 @@
 
 package ca.mcgill.ecse321.autorepairsystem.uml;
 import java.util.*;
+import java.sql.Time;
+import java.sql.Date;
 
-// line 42 "../../../../../AutoRepairSystem.ump"
-public class Customer extends User
+// line 24 "../../../../../AutoRepairSystem.ump"
+public class ServiceCombo
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //Customer Associations
+  //ServiceCombo Associations
   private List<Appointment> appointments;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Customer(String aUsername, String aPassword, String aName, String aEmail, AppointmentManager aAppointmentManager)
+  public ServiceCombo()
   {
-    super(aUsername, aPassword, aName, aEmail, aAppointmentManager);
     appointments = new ArrayList<Appointment>();
   }
 
@@ -63,20 +64,21 @@ public class Customer extends User
   {
     return 0;
   }
-  /* Code from template association_AddManyToOptionalOne */
+  /* Code from template association_AddManyToOne */
+  public Appointment addAppointment(Time aStartTime, Time aEndTime, Date aDate, AppointmentManager aAppointmentManager)
+  {
+    return new Appointment(aStartTime, aEndTime, aDate, this, aAppointmentManager);
+  }
+
   public boolean addAppointment(Appointment aAppointment)
   {
     boolean wasAdded = false;
     if (appointments.contains(aAppointment)) { return false; }
-    Customer existingCustomer = aAppointment.getCustomer();
-    if (existingCustomer == null)
+    ServiceCombo existingServiceCombo = aAppointment.getServiceCombo();
+    boolean isNewServiceCombo = existingServiceCombo != null && !this.equals(existingServiceCombo);
+    if (isNewServiceCombo)
     {
-      aAppointment.setCustomer(this);
-    }
-    else if (!this.equals(existingCustomer))
-    {
-      existingCustomer.removeAppointment(aAppointment);
-      addAppointment(aAppointment);
+      aAppointment.setServiceCombo(this);
     }
     else
     {
@@ -89,10 +91,10 @@ public class Customer extends User
   public boolean removeAppointment(Appointment aAppointment)
   {
     boolean wasRemoved = false;
-    if (appointments.contains(aAppointment))
+    //Unable to remove aAppointment, as it must always have a serviceCombo
+    if (!this.equals(aAppointment.getServiceCombo()))
     {
       appointments.remove(aAppointment);
-      aAppointment.setCustomer(null);
       wasRemoved = true;
     }
     return wasRemoved;
@@ -132,11 +134,11 @@ public class Customer extends User
 
   public void delete()
   {
-    while( !appointments.isEmpty() )
+    for(int i=appointments.size(); i > 0; i--)
     {
-      appointments.get(0).setCustomer(null);
+      Appointment aAppointment = appointments.get(i - 1);
+      aAppointment.delete();
     }
-    super.delete();
   }
 
 }
