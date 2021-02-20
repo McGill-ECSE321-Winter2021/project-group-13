@@ -3,8 +3,7 @@
 
 package ca.mcgill.ecse321.autorepairsystem.model;
 import java.util.*;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 // line 15 "../../../../../AutoRepairSystem.ump"
 @Entity
@@ -64,7 +63,45 @@ public class Service
 
   //Service Associations
   private AppointmentManager appointmentManager;
+  
+  @ManyToOne
+  public AppointmentManager getAppointmentManager()
+  {
+    return appointmentManager;
+  }
+  
+  public boolean setAppointmentManager(AppointmentManager aAppointmentManager)
+  {
+    boolean wasSet = false;
+    if (aAppointmentManager == null)
+    {
+      return wasSet;
+    }
+
+    AppointmentManager existingAppointmentManager = appointmentManager;
+    appointmentManager = aAppointmentManager;
+    if (existingAppointmentManager != null && !existingAppointmentManager.equals(aAppointmentManager))
+    {
+      existingAppointmentManager.removeService(this);
+    }
+    appointmentManager.addService(this);
+    wasSet = true;
+    return wasSet;
+  }
+  
   private List<Appointment> appointments;
+  
+  @OneToMany
+  public List<Appointment> getAppointments()
+  {
+    List<Appointment> newAppointments = Collections.unmodifiableList(appointments);
+    return newAppointments;
+  }
+  
+  public void setAppointments(List<Appointment> newAppointments){
+	  this.appointments = newAppointments;
+  }
+  
 
   //------------------------
   // CONSTRUCTOR
@@ -87,10 +124,6 @@ public class Service
   // INTERFACE
   //------------------------
   /* Code from template association_GetOne */
-  public AppointmentManager getAppointmentManager()
-  {
-    return appointmentManager;
-  }
   /* Code from template association_GetMany */
   public Appointment getAppointment(int index)
   {
@@ -98,11 +131,6 @@ public class Service
     return aAppointment;
   }
 
-  public List<Appointment> getAppointments()
-  {
-    List<Appointment> newAppointments = Collections.unmodifiableList(appointments);
-    return newAppointments;
-  }
 
   public int numberOfAppointments()
   {
@@ -122,24 +150,6 @@ public class Service
     return index;
   }
   /* Code from template association_SetOneToMany */
-  public boolean setAppointmentManager(AppointmentManager aAppointmentManager)
-  {
-    boolean wasSet = false;
-    if (aAppointmentManager == null)
-    {
-      return wasSet;
-    }
-
-    AppointmentManager existingAppointmentManager = appointmentManager;
-    appointmentManager = aAppointmentManager;
-    if (existingAppointmentManager != null && !existingAppointmentManager.equals(aAppointmentManager))
-    {
-      existingAppointmentManager.removeService(this);
-    }
-    appointmentManager.addService(this);
-    wasSet = true;
-    return wasSet;
-  }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfAppointments()
   {

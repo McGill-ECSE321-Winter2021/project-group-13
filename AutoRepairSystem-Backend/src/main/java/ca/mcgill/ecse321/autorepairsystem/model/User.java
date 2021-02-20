@@ -3,8 +3,7 @@
 
 package ca.mcgill.ecse321.autorepairsystem.model;
 import java.util.*;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 // line 22 "../../../../../AutoRepairSystem.ump"
 @Entity
@@ -108,7 +107,31 @@ public abstract class User
   
   //User Associations
   private AppointmentManager appointmentManager;
+  
+  @ManyToOne
+  public AppointmentManager getAppointmentManager()
+  {
+    return appointmentManager;
+  }
+  
+  public boolean setAppointmentManager(AppointmentManager aAppointmentManager)
+  {
+    boolean wasSet = false;
+    if (aAppointmentManager == null)
+    {
+      return wasSet;
+    }
 
+    AppointmentManager existingAppointmentManager = appointmentManager;
+    appointmentManager = aAppointmentManager;
+    if (existingAppointmentManager != null && !existingAppointmentManager.equals(aAppointmentManager))
+    {
+      existingAppointmentManager.removeUser(this);
+    }
+    appointmentManager.addUser(this);
+    wasSet = true;
+    return wasSet;
+  }
   //------------------------
   // CONSTRUCTOR
   //------------------------
@@ -158,29 +181,7 @@ public abstract class User
     return getWithEmail(aEmail) != null;
   }
   /* Code from template association_GetOne */
-  public AppointmentManager getAppointmentManager()
-  {
-    return appointmentManager;
-  }
   /* Code from template association_SetOneToMany */
-  public boolean setAppointmentManager(AppointmentManager aAppointmentManager)
-  {
-    boolean wasSet = false;
-    if (aAppointmentManager == null)
-    {
-      return wasSet;
-    }
-
-    AppointmentManager existingAppointmentManager = appointmentManager;
-    appointmentManager = aAppointmentManager;
-    if (existingAppointmentManager != null && !existingAppointmentManager.equals(aAppointmentManager))
-    {
-      existingAppointmentManager.removeUser(this);
-    }
-    appointmentManager.addUser(this);
-    wasSet = true;
-    return wasSet;
-  }
 
   public void delete()
   {
