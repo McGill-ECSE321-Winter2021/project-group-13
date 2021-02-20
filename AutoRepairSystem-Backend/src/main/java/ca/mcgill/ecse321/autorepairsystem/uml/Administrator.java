@@ -4,7 +4,7 @@
 package ca.mcgill.ecse321.autorepairsystem.uml;
 import java.util.*;
 
-// line 46 "../../../../../AutoRepairSystem.ump"
+// line 38 "../../../../../AutoRepairSystem.ump"
 public class Administrator extends User
 {
 

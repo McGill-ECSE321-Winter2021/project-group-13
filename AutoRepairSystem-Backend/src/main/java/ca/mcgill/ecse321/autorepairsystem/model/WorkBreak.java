@@ -4,7 +4,7 @@
 package ca.mcgill.ecse321.autorepairsystem.model;
 import java.sql.Time;
 
-// line 55 "../../../../../AutoRepairSystem.ump"
+// line 70 "../../../../../AutoRepairSystem.ump"
 public class WorkBreak
 {
 
@@ -17,20 +17,20 @@ public class WorkBreak
   private Time breakEnds;
 
   //WorkBreak Associations
-  private AvailabilitySchedule availabilitySchedule;
+  private WorkHour workHour;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public WorkBreak(Time aBreakStarts, Time aBreakEnds, AvailabilitySchedule aAvailabilitySchedule)
+  public WorkBreak(Time aBreakStarts, Time aBreakEnds, WorkHour aWorkHour)
   {
     breakStarts = aBreakStarts;
     breakEnds = aBreakEnds;
-    boolean didAddAvailabilitySchedule = setAvailabilitySchedule(aAvailabilitySchedule);
-    if (!didAddAvailabilitySchedule)
+    boolean didAddWorkHour = setWorkHour(aWorkHour);
+    if (!didAddWorkHour)
     {
-      throw new RuntimeException("Unable to create workBreak due to availabilitySchedule. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+      throw new RuntimeException("Unable to create workBreak due to workHour. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
 
@@ -64,46 +64,37 @@ public class WorkBreak
     return breakEnds;
   }
   /* Code from template association_GetOne */
-  public AvailabilitySchedule getAvailabilitySchedule()
+  public WorkHour getWorkHour()
   {
-    return availabilitySchedule;
+    return workHour;
   }
-  /* Code from template association_SetOneToOptionalOne */
-  public boolean setAvailabilitySchedule(AvailabilitySchedule aNewAvailabilitySchedule)
+  /* Code from template association_SetOneToMany */
+  public boolean setWorkHour(WorkHour aWorkHour)
   {
     boolean wasSet = false;
-    if (aNewAvailabilitySchedule == null)
+    if (aWorkHour == null)
     {
-      //Unable to setAvailabilitySchedule to null, as workBreak must always be associated to a availabilitySchedule
       return wasSet;
     }
-    
-    WorkBreak existingWorkBreak = aNewAvailabilitySchedule.getWorkBreak();
-    if (existingWorkBreak != null && !equals(existingWorkBreak))
-    {
-      //Unable to setAvailabilitySchedule, the current availabilitySchedule already has a workBreak, which would be orphaned if it were re-assigned
-      return wasSet;
-    }
-    
-    AvailabilitySchedule anOldAvailabilitySchedule = availabilitySchedule;
-    availabilitySchedule = aNewAvailabilitySchedule;
-    availabilitySchedule.setWorkBreak(this);
 
-    if (anOldAvailabilitySchedule != null)
+    WorkHour existingWorkHour = workHour;
+    workHour = aWorkHour;
+    if (existingWorkHour != null && !existingWorkHour.equals(aWorkHour))
     {
-      anOldAvailabilitySchedule.setWorkBreak(null);
+      existingWorkHour.removeWorkBreak(this);
     }
+    workHour.addWorkBreak(this);
     wasSet = true;
     return wasSet;
   }
 
   public void delete()
   {
-    AvailabilitySchedule existingAvailabilitySchedule = availabilitySchedule;
-    availabilitySchedule = null;
-    if (existingAvailabilitySchedule != null)
+    WorkHour placeholderWorkHour = workHour;
+    this.workHour = null;
+    if(placeholderWorkHour != null)
     {
-      existingAvailabilitySchedule.setWorkBreak(null);
+      placeholderWorkHour.removeWorkBreak(this);
     }
   }
 
@@ -113,6 +104,6 @@ public class WorkBreak
     return super.toString() + "["+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "breakStarts" + "=" + (getBreakStarts() != null ? !getBreakStarts().equals(this)  ? getBreakStarts().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "breakEnds" + "=" + (getBreakEnds() != null ? !getBreakEnds().equals(this)  ? getBreakEnds().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "availabilitySchedule = "+(getAvailabilitySchedule()!=null?Integer.toHexString(System.identityHashCode(getAvailabilitySchedule())):"null");
+            "  " + "workHour = "+(getWorkHour()!=null?Integer.toHexString(System.identityHashCode(getWorkHour())):"null");
   }
 }

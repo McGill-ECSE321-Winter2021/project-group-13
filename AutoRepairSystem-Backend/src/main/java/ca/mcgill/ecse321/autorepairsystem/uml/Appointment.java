@@ -4,8 +4,9 @@
 package ca.mcgill.ecse321.autorepairsystem.uml;
 import java.sql.Time;
 import java.sql.Date;
+import java.util.*;
 
-// line 50 "../../../../../AutoRepairSystem.ump"
+// line 59 "../../../../../AutoRepairSystem.ump"
 public class Appointment
 {
 
@@ -20,7 +21,7 @@ public class Appointment
 
   //Appointment Associations
   private Technician technician;
-  private ServiceCombo serviceCombo;
+  private List<Service> services;
   private Customer customer;
   private AppointmentManager appointmentManager;
 
@@ -28,15 +29,21 @@ public class Appointment
   // CONSTRUCTOR
   //------------------------
 
-  public Appointment(Time aStartTime, Time aEndTime, Date aDate, ServiceCombo aServiceCombo, AppointmentManager aAppointmentManager)
+  public Appointment(Time aStartTime, Time aEndTime, Date aDate, Technician aTechnician, Customer aCustomer, AppointmentManager aAppointmentManager)
   {
     startTime = aStartTime;
     endTime = aEndTime;
     date = aDate;
-    boolean didAddServiceCombo = setServiceCombo(aServiceCombo);
-    if (!didAddServiceCombo)
+    boolean didAddTechnician = setTechnician(aTechnician);
+    if (!didAddTechnician)
     {
-      throw new RuntimeException("Unable to create appointment due to serviceCombo. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+      throw new RuntimeException("Unable to create appointment due to technician. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
+    services = new ArrayList<Service>();
+    boolean didAddCustomer = setCustomer(aCustomer);
+    if (!didAddCustomer)
+    {
+      throw new RuntimeException("Unable to create appointment due to customer. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
     boolean didAddAppointmentManager = setAppointmentManager(aAppointmentManager);
     if (!didAddAppointmentManager)
@@ -92,83 +99,163 @@ public class Appointment
   {
     return technician;
   }
-
-  public boolean hasTechnician()
+  /* Code from template association_GetMany */
+  public Service getService(int index)
   {
-    boolean has = technician != null;
+    Service aService = services.get(index);
+    return aService;
+  }
+
+  public List<Service> getServices()
+  {
+    List<Service> newServices = Collections.unmodifiableList(services);
+    return newServices;
+  }
+
+  public int numberOfServices()
+  {
+    int number = services.size();
+    return number;
+  }
+
+  public boolean hasServices()
+  {
+    boolean has = services.size() > 0;
     return has;
   }
-  /* Code from template association_GetOne */
-  public ServiceCombo getServiceCombo()
+
+  public int indexOfService(Service aService)
   {
-    return serviceCombo;
+    int index = services.indexOf(aService);
+    return index;
   }
   /* Code from template association_GetOne */
   public Customer getCustomer()
   {
     return customer;
   }
-
-  public boolean hasCustomer()
-  {
-    boolean has = customer != null;
-    return has;
-  }
   /* Code from template association_GetOne */
   public AppointmentManager getAppointmentManager()
   {
     return appointmentManager;
   }
-  /* Code from template association_SetOptionalOneToMany */
+  /* Code from template association_SetOneToMany */
   public boolean setTechnician(Technician aTechnician)
   {
     boolean wasSet = false;
+    if (aTechnician == null)
+    {
+      return wasSet;
+    }
+
     Technician existingTechnician = technician;
     technician = aTechnician;
     if (existingTechnician != null && !existingTechnician.equals(aTechnician))
     {
       existingTechnician.removeAppointment(this);
     }
-    if (aTechnician != null)
-    {
-      aTechnician.addAppointment(this);
-    }
+    technician.addAppointment(this);
     wasSet = true;
     return wasSet;
   }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfServices()
+  {
+    return 0;
+  }
+  /* Code from template association_AddManyToManyMethod */
+  public boolean addService(Service aService)
+  {
+    boolean wasAdded = false;
+    if (services.contains(aService)) { return false; }
+    services.add(aService);
+    if (aService.indexOfAppointment(this) != -1)
+    {
+      wasAdded = true;
+    }
+    else
+    {
+      wasAdded = aService.addAppointment(this);
+      if (!wasAdded)
+      {
+        services.remove(aService);
+      }
+    }
+    return wasAdded;
+  }
+  /* Code from template association_RemoveMany */
+  public boolean removeService(Service aService)
+  {
+    boolean wasRemoved = false;
+    if (!services.contains(aService))
+    {
+      return wasRemoved;
+    }
+
+    int oldIndex = services.indexOf(aService);
+    services.remove(oldIndex);
+    if (aService.indexOfAppointment(this) == -1)
+    {
+      wasRemoved = true;
+    }
+    else
+    {
+      wasRemoved = aService.removeAppointment(this);
+      if (!wasRemoved)
+      {
+        services.add(oldIndex,aService);
+      }
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addServiceAt(Service aService, int index)
+  {  
+    boolean wasAdded = false;
+    if(addService(aService))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfServices()) { index = numberOfServices() - 1; }
+      services.remove(aService);
+      services.add(index, aService);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveServiceAt(Service aService, int index)
+  {
+    boolean wasAdded = false;
+    if(services.contains(aService))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfServices()) { index = numberOfServices() - 1; }
+      services.remove(aService);
+      services.add(index, aService);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addServiceAt(aService, index);
+    }
+    return wasAdded;
+  }
   /* Code from template association_SetOneToMany */
-  public boolean setServiceCombo(ServiceCombo aServiceCombo)
+  public boolean setCustomer(Customer aCustomer)
   {
     boolean wasSet = false;
-    if (aServiceCombo == null)
+    if (aCustomer == null)
     {
       return wasSet;
     }
 
-    ServiceCombo existingServiceCombo = serviceCombo;
-    serviceCombo = aServiceCombo;
-    if (existingServiceCombo != null && !existingServiceCombo.equals(aServiceCombo))
-    {
-      existingServiceCombo.removeAppointment(this);
-    }
-    serviceCombo.addAppointment(this);
-    wasSet = true;
-    return wasSet;
-  }
-  /* Code from template association_SetOptionalOneToMany */
-  public boolean setCustomer(Customer aCustomer)
-  {
-    boolean wasSet = false;
     Customer existingCustomer = customer;
     customer = aCustomer;
     if (existingCustomer != null && !existingCustomer.equals(aCustomer))
     {
       existingCustomer.removeAppointment(this);
     }
-    if (aCustomer != null)
-    {
-      aCustomer.addAppointment(this);
-    }
+    customer.addAppointment(this);
     wasSet = true;
     return wasSet;
   }
@@ -194,22 +281,22 @@ public class Appointment
 
   public void delete()
   {
-    if (technician != null)
+    Technician placeholderTechnician = technician;
+    this.technician = null;
+    if(placeholderTechnician != null)
     {
-      Technician placeholderTechnician = technician;
-      this.technician = null;
       placeholderTechnician.removeAppointment(this);
     }
-    ServiceCombo placeholderServiceCombo = serviceCombo;
-    this.serviceCombo = null;
-    if(placeholderServiceCombo != null)
+    ArrayList<Service> copyOfServices = new ArrayList<Service>(services);
+    services.clear();
+    for(Service aService : copyOfServices)
     {
-      placeholderServiceCombo.removeAppointment(this);
+      aService.removeAppointment(this);
     }
-    if (customer != null)
+    Customer placeholderCustomer = customer;
+    this.customer = null;
+    if(placeholderCustomer != null)
     {
-      Customer placeholderCustomer = customer;
-      this.customer = null;
       placeholderCustomer.removeAppointment(this);
     }
     AppointmentManager placeholderAppointmentManager = appointmentManager;
@@ -228,7 +315,6 @@ public class Appointment
             "  " + "endTime" + "=" + (getEndTime() != null ? !getEndTime().equals(this)  ? getEndTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "date" + "=" + (getDate() != null ? !getDate().equals(this)  ? getDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "technician = "+(getTechnician()!=null?Integer.toHexString(System.identityHashCode(getTechnician())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "serviceCombo = "+(getServiceCombo()!=null?Integer.toHexString(System.identityHashCode(getServiceCombo())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "appointmentManager = "+(getAppointmentManager()!=null?Integer.toHexString(System.identityHashCode(getAppointmentManager())):"null");
   }

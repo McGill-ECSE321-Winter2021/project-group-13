@@ -3,8 +3,10 @@
 
 package ca.mcgill.ecse321.autorepairsystem.model;
 import java.util.*;
+import java.sql.Time;
+import java.sql.Date;
 
-// line 31 "../../../../../AutoRepairSystem.ump"
+// line 29 "../../../../../AutoRepairSystem.ump"
 public class Technician extends User
 {
 
@@ -22,7 +24,7 @@ public class Technician extends User
   private int id;
 
   //Technician Associations
-  private List<AvailabilitySchedule> workHour;
+  private List<TechnicianHour> technicianHours;
   private List<Appointment> appointments;
 
   //------------------------
@@ -33,7 +35,7 @@ public class Technician extends User
   {
     super(aUsername, aPassword, aName, aEmail, aAppointmentManager);
     id = nextId++;
-    workHour = new ArrayList<AvailabilitySchedule>();
+    technicianHours = new ArrayList<TechnicianHour>();
     appointments = new ArrayList<Appointment>();
   }
 
@@ -46,33 +48,33 @@ public class Technician extends User
     return id;
   }
   /* Code from template association_GetMany */
-  public AvailabilitySchedule getWorkHour(int index)
+  public TechnicianHour getTechnicianHour(int index)
   {
-    AvailabilitySchedule aWorkHour = workHour.get(index);
-    return aWorkHour;
+    TechnicianHour aTechnicianHour = technicianHours.get(index);
+    return aTechnicianHour;
   }
 
-  public List<AvailabilitySchedule> getWorkHour()
+  public List<TechnicianHour> getTechnicianHours()
   {
-    List<AvailabilitySchedule> newWorkHour = Collections.unmodifiableList(workHour);
-    return newWorkHour;
+    List<TechnicianHour> newTechnicianHours = Collections.unmodifiableList(technicianHours);
+    return newTechnicianHours;
   }
 
-  public int numberOfWorkHour()
+  public int numberOfTechnicianHours()
   {
-    int number = workHour.size();
+    int number = technicianHours.size();
     return number;
   }
 
-  public boolean hasWorkHour()
+  public boolean hasTechnicianHours()
   {
-    boolean has = workHour.size() > 0;
+    boolean has = technicianHours.size() > 0;
     return has;
   }
 
-  public int indexOfWorkHour(AvailabilitySchedule aWorkHour)
+  public int indexOfTechnicianHour(TechnicianHour aTechnicianHour)
   {
-    int index = workHour.indexOf(aWorkHour);
+    int index = technicianHours.indexOf(aTechnicianHour);
     return index;
   }
   /* Code from template association_GetMany */
@@ -106,73 +108,74 @@ public class Technician extends User
     return index;
   }
   /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfWorkHour()
+  public static int minimumNumberOfTechnicianHours()
   {
     return 0;
   }
-  /* Code from template association_AddManyToOptionalOne */
-  public boolean addWorkHour(AvailabilitySchedule aWorkHour)
+  /* Code from template association_AddManyToOne */
+  public TechnicianHour addTechnicianHour(Time aStartTime, Time aEndTime, Date aDate)
+  {
+    return new TechnicianHour(aStartTime, aEndTime, aDate, this);
+  }
+
+  public boolean addTechnicianHour(TechnicianHour aTechnicianHour)
   {
     boolean wasAdded = false;
-    if (workHour.contains(aWorkHour)) { return false; }
-    Technician existingTechnician = aWorkHour.getTechnician();
-    if (existingTechnician == null)
+    if (technicianHours.contains(aTechnicianHour)) { return false; }
+    Technician existingTechnician = aTechnicianHour.getTechnician();
+    boolean isNewTechnician = existingTechnician != null && !this.equals(existingTechnician);
+    if (isNewTechnician)
     {
-      aWorkHour.setTechnician(this);
-    }
-    else if (!this.equals(existingTechnician))
-    {
-      existingTechnician.removeWorkHour(aWorkHour);
-      addWorkHour(aWorkHour);
+      aTechnicianHour.setTechnician(this);
     }
     else
     {
-      workHour.add(aWorkHour);
+      technicianHours.add(aTechnicianHour);
     }
     wasAdded = true;
     return wasAdded;
   }
 
-  public boolean removeWorkHour(AvailabilitySchedule aWorkHour)
+  public boolean removeTechnicianHour(TechnicianHour aTechnicianHour)
   {
     boolean wasRemoved = false;
-    if (workHour.contains(aWorkHour))
+    //Unable to remove aTechnicianHour, as it must always have a technician
+    if (!this.equals(aTechnicianHour.getTechnician()))
     {
-      workHour.remove(aWorkHour);
-      aWorkHour.setTechnician(null);
+      technicianHours.remove(aTechnicianHour);
       wasRemoved = true;
     }
     return wasRemoved;
   }
   /* Code from template association_AddIndexControlFunctions */
-  public boolean addWorkHourAt(AvailabilitySchedule aWorkHour, int index)
+  public boolean addTechnicianHourAt(TechnicianHour aTechnicianHour, int index)
   {  
     boolean wasAdded = false;
-    if(addWorkHour(aWorkHour))
+    if(addTechnicianHour(aTechnicianHour))
     {
       if(index < 0 ) { index = 0; }
-      if(index > numberOfWorkHour()) { index = numberOfWorkHour() - 1; }
-      workHour.remove(aWorkHour);
-      workHour.add(index, aWorkHour);
+      if(index > numberOfTechnicianHours()) { index = numberOfTechnicianHours() - 1; }
+      technicianHours.remove(aTechnicianHour);
+      technicianHours.add(index, aTechnicianHour);
       wasAdded = true;
     }
     return wasAdded;
   }
 
-  public boolean addOrMoveWorkHourAt(AvailabilitySchedule aWorkHour, int index)
+  public boolean addOrMoveTechnicianHourAt(TechnicianHour aTechnicianHour, int index)
   {
     boolean wasAdded = false;
-    if(workHour.contains(aWorkHour))
+    if(technicianHours.contains(aTechnicianHour))
     {
       if(index < 0 ) { index = 0; }
-      if(index > numberOfWorkHour()) { index = numberOfWorkHour() - 1; }
-      workHour.remove(aWorkHour);
-      workHour.add(index, aWorkHour);
+      if(index > numberOfTechnicianHours()) { index = numberOfTechnicianHours() - 1; }
+      technicianHours.remove(aTechnicianHour);
+      technicianHours.add(index, aTechnicianHour);
       wasAdded = true;
     } 
     else 
     {
-      wasAdded = addWorkHourAt(aWorkHour, index);
+      wasAdded = addTechnicianHourAt(aTechnicianHour, index);
     }
     return wasAdded;
   }
@@ -181,20 +184,21 @@ public class Technician extends User
   {
     return 0;
   }
-  /* Code from template association_AddManyToOptionalOne */
+  /* Code from template association_AddManyToOne */
+  public Appointment addAppointment(Time aStartTime, Time aEndTime, Date aDate, Customer aCustomer, AppointmentManager aAppointmentManager)
+  {
+    return new Appointment(aStartTime, aEndTime, aDate, this, aCustomer, aAppointmentManager);
+  }
+
   public boolean addAppointment(Appointment aAppointment)
   {
     boolean wasAdded = false;
     if (appointments.contains(aAppointment)) { return false; }
     Technician existingTechnician = aAppointment.getTechnician();
-    if (existingTechnician == null)
+    boolean isNewTechnician = existingTechnician != null && !this.equals(existingTechnician);
+    if (isNewTechnician)
     {
       aAppointment.setTechnician(this);
-    }
-    else if (!this.equals(existingTechnician))
-    {
-      existingTechnician.removeAppointment(aAppointment);
-      addAppointment(aAppointment);
     }
     else
     {
@@ -207,10 +211,10 @@ public class Technician extends User
   public boolean removeAppointment(Appointment aAppointment)
   {
     boolean wasRemoved = false;
-    if (appointments.contains(aAppointment))
+    //Unable to remove aAppointment, as it must always have a technician
+    if (!this.equals(aAppointment.getTechnician()))
     {
       appointments.remove(aAppointment);
-      aAppointment.setTechnician(null);
       wasRemoved = true;
     }
     return wasRemoved;
@@ -250,16 +254,17 @@ public class Technician extends User
 
   public void delete()
   {
-    while (workHour.size() > 0)
+    while (technicianHours.size() > 0)
     {
-      AvailabilitySchedule aWorkHour = workHour.get(workHour.size() - 1);
-      aWorkHour.delete();
-      workHour.remove(aWorkHour);
+      TechnicianHour aTechnicianHour = technicianHours.get(technicianHours.size() - 1);
+      aTechnicianHour.delete();
+      technicianHours.remove(aTechnicianHour);
     }
     
-    while( !appointments.isEmpty() )
+    for(int i=appointments.size(); i > 0; i--)
     {
-      appointments.get(0).setTechnician(null);
+      Appointment aAppointment = appointments.get(i - 1);
+      aAppointment.delete();
     }
     super.delete();
   }

@@ -4,7 +4,7 @@
 package ca.mcgill.ecse321.autorepairsystem.uml;
 import java.util.*;
 
-// line 28 "../../../../../AutoRepairSystem.ump"
+// line 20 "../../../../../AutoRepairSystem.ump"
 public abstract class User
 {
 

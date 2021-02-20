@@ -6,22 +6,16 @@ import java.util.*;
 import java.sql.Time;
 import java.sql.Date;
 
-// line 6 "../../../../../AutoRepairSystem.ump"
+// line 4 "../../../../../AutoRepairSystem.ump"
 public class AppointmentManager
 {
-
-  //------------------------
-  // ENUMERATIONS
-  //------------------------
-
-  public enum DayOfWeek { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //AppointmentManager Associations
-  private List<AvailabilitySchedule> businessHour;
+  private Business business;
   private List<Service> services;
   private List<User> users;
   private List<Appointment> appointments;
@@ -30,9 +24,21 @@ public class AppointmentManager
   // CONSTRUCTOR
   //------------------------
 
+  public AppointmentManager(Business aBusiness)
+  {
+    if (aBusiness == null || aBusiness.getAppointmentManager() != null)
+    {
+      throw new RuntimeException("Unable to create AppointmentManager due to aBusiness. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
+    business = aBusiness;
+    services = new ArrayList<Service>();
+    users = new ArrayList<User>();
+    appointments = new ArrayList<Appointment>();
+  }
+
   public AppointmentManager()
   {
-    businessHour = new ArrayList<AvailabilitySchedule>();
+    business = new Business(this);
     services = new ArrayList<Service>();
     users = new ArrayList<User>();
     appointments = new ArrayList<Appointment>();
@@ -41,35 +47,10 @@ public class AppointmentManager
   //------------------------
   // INTERFACE
   //------------------------
-  /* Code from template association_GetMany */
-  public AvailabilitySchedule getBusinessHour(int index)
+  /* Code from template association_GetOne */
+  public Business getBusiness()
   {
-    AvailabilitySchedule aBusinessHour = businessHour.get(index);
-    return aBusinessHour;
-  }
-
-  public List<AvailabilitySchedule> getBusinessHour()
-  {
-    List<AvailabilitySchedule> newBusinessHour = Collections.unmodifiableList(businessHour);
-    return newBusinessHour;
-  }
-
-  public int numberOfBusinessHour()
-  {
-    int number = businessHour.size();
-    return number;
-  }
-
-  public boolean hasBusinessHour()
-  {
-    boolean has = businessHour.size() > 0;
-    return has;
-  }
-
-  public int indexOfBusinessHour(AvailabilitySchedule aBusinessHour)
-  {
-    int index = businessHour.indexOf(aBusinessHour);
-    return index;
+    return business;
   }
   /* Code from template association_GetMany */
   public Service getService(int index)
@@ -160,77 +141,6 @@ public class AppointmentManager
   {
     int index = appointments.indexOf(aAppointment);
     return index;
-  }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfBusinessHour()
-  {
-    return 0;
-  }
-  /* Code from template association_AddManyToOptionalOne */
-  public boolean addBusinessHour(AvailabilitySchedule aBusinessHour)
-  {
-    boolean wasAdded = false;
-    if (businessHour.contains(aBusinessHour)) { return false; }
-    AppointmentManager existingAppointmentManager = aBusinessHour.getAppointmentManager();
-    if (existingAppointmentManager == null)
-    {
-      aBusinessHour.setAppointmentManager(this);
-    }
-    else if (!this.equals(existingAppointmentManager))
-    {
-      existingAppointmentManager.removeBusinessHour(aBusinessHour);
-      addBusinessHour(aBusinessHour);
-    }
-    else
-    {
-      businessHour.add(aBusinessHour);
-    }
-    wasAdded = true;
-    return wasAdded;
-  }
-
-  public boolean removeBusinessHour(AvailabilitySchedule aBusinessHour)
-  {
-    boolean wasRemoved = false;
-    if (businessHour.contains(aBusinessHour))
-    {
-      businessHour.remove(aBusinessHour);
-      aBusinessHour.setAppointmentManager(null);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addBusinessHourAt(AvailabilitySchedule aBusinessHour, int index)
-  {  
-    boolean wasAdded = false;
-    if(addBusinessHour(aBusinessHour))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfBusinessHour()) { index = numberOfBusinessHour() - 1; }
-      businessHour.remove(aBusinessHour);
-      businessHour.add(index, aBusinessHour);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveBusinessHourAt(AvailabilitySchedule aBusinessHour, int index)
-  {
-    boolean wasAdded = false;
-    if(businessHour.contains(aBusinessHour))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfBusinessHour()) { index = numberOfBusinessHour() - 1; }
-      businessHour.remove(aBusinessHour);
-      businessHour.add(index, aBusinessHour);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addBusinessHourAt(aBusinessHour, index);
-    }
-    return wasAdded;
   }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfServices()
@@ -379,9 +289,9 @@ public class AppointmentManager
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Appointment addAppointment(Time aStartTime, Time aEndTime, Date aDate, ServiceCombo aServiceCombo)
+  public Appointment addAppointment(Time aStartTime, Time aEndTime, Date aDate, Technician aTechnician, Customer aCustomer)
   {
-    return new Appointment(aStartTime, aEndTime, aDate, aServiceCombo, this);
+    return new Appointment(aStartTime, aEndTime, aDate, aTechnician, aCustomer, this);
   }
 
   public boolean addAppointment(Appointment aAppointment)
@@ -448,13 +358,12 @@ public class AppointmentManager
 
   public void delete()
   {
-    while (businessHour.size() > 0)
+    Business existingBusiness = business;
+    business = null;
+    if (existingBusiness != null)
     {
-      AvailabilitySchedule aBusinessHour = businessHour.get(businessHour.size() - 1);
-      aBusinessHour.delete();
-      businessHour.remove(aBusinessHour);
+      existingBusiness.delete();
     }
-    
     while (services.size() > 0)
     {
       Service aService = services.get(services.size() - 1);
