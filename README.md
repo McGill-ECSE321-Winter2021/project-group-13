@@ -6,7 +6,7 @@
 
 Name            | Student ID         
 --------------- |------------------- 
-Edgar Desnos    || 
+Edgar Desnos    |260910150| 
 Charles Wetaski ||
 Ezra Gomolin    |260926917|                   
 Hassan Kanj     ||
@@ -26,7 +26,7 @@ Henri Rofiq     |260805473|
 
 Name            | Team Roles         | Individual Efforts
 --------------- |------------------- |-------------------
-Edgar Desnos    | Requirements Model | 100000000 hours
+Edgar Desnos    | Github Setup, Requirements, Use-Case Diagram | 14 hours
 Charles Wetaski ||
 Ezra Gomolin    | Requirements Model, UML Diagram, Use Case Specification |15 hours                   
 Hassan Kanj     ||
