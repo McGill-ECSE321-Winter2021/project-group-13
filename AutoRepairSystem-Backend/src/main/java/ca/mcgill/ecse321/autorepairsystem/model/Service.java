@@ -3,8 +3,11 @@
 
 package ca.mcgill.ecse321.autorepairsystem.model;
 import java.util.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 // line 15 "../../../../../AutoRepairSystem.ump"
+@Entity
 public class Service
 {
 
@@ -14,8 +17,50 @@ public class Service
 
   //Service Attributes
   private String name;
+  
+  public boolean setName(String aName)
+  {
+    boolean wasSet = false;
+    name = aName;
+    wasSet = true;
+    return wasSet;
+  }
+  
+  @Id
+  public String getName()
+  {
+    return name;
+  }
+  
   private int duration;
+  
+  public boolean setDuration(int aDuration)
+  {
+    boolean wasSet = false;
+    duration = aDuration;
+    wasSet = true;
+    return wasSet;
+  }
+  
+  public int getDuration()
+  {
+    return duration;
+  }
+  
   private int price;
+  
+  public boolean setPrice(int aPrice)
+  {
+    boolean wasSet = false;
+    price = aPrice;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public int getPrice()
+  {
+    return price;
+  }
 
   //Service Associations
   private AppointmentManager appointmentManager;
@@ -41,45 +86,6 @@ public class Service
   //------------------------
   // INTERFACE
   //------------------------
-
-  public boolean setName(String aName)
-  {
-    boolean wasSet = false;
-    name = aName;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setDuration(int aDuration)
-  {
-    boolean wasSet = false;
-    duration = aDuration;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setPrice(int aPrice)
-  {
-    boolean wasSet = false;
-    price = aPrice;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public String getName()
-  {
-    return name;
-  }
-
-  public int getDuration()
-  {
-    return duration;
-  }
-
-  public int getPrice()
-  {
-    return price;
-  }
   /* Code from template association_GetOne */
   public AppointmentManager getAppointmentManager()
   {
