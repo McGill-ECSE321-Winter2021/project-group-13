@@ -3,8 +3,11 @@
 
 package ca.mcgill.ecse321.autorepairsystem.model;
 import java.util.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 // line 22 "../../../../../AutoRepairSystem.ump"
+@Entity
 public abstract class User
 {
 
@@ -21,10 +24,88 @@ public abstract class User
 
   //User Attributes
   private String username;
+  
+  public boolean setUsername(String aUsername)
+  {
+    boolean wasSet = false;
+    String anOldUsername = getUsername();
+    if (anOldUsername != null && anOldUsername.equals(aUsername)) {
+      return true;
+    }
+    if (hasWithUsername(aUsername)) {
+      return wasSet;
+    }
+    username = aUsername;
+    wasSet = true;
+    if (anOldUsername != null) {
+      usersByUsername.remove(anOldUsername);
+    }
+    usersByUsername.put(aUsername, this);
+    return wasSet;
+  }
+  
+  @Id
+  public String getUsername()
+  {
+    return username;
+  }
+  
   private String password;
+  
+  public boolean setPassword(String aPassword)
+  {
+    boolean wasSet = false;
+    password = aPassword;
+    wasSet = true;
+    return wasSet;
+  }
+  
+  public String getPassword()
+  {
+    return password;
+  }
+  
   private String name;
+  
+  public boolean setName(String aName)
+  {
+    boolean wasSet = false;
+    name = aName;
+    wasSet = true;
+    return wasSet;
+  }
+  
+  public String getName()
+  {
+    return name;
+  }
+  
   private String email;
 
+  public boolean setEmail(String aEmail)
+  {
+    boolean wasSet = false;
+    String anOldEmail = getEmail();
+    if (anOldEmail != null && anOldEmail.equals(aEmail)) {
+      return true;
+    }
+    if (hasWithEmail(aEmail)) {
+      return wasSet;
+    }
+    email = aEmail;
+    wasSet = true;
+    if (anOldEmail != null) {
+      usersByEmail.remove(anOldEmail);
+    }
+    usersByEmail.put(aEmail, this);
+    return wasSet;
+  }
+  
+  public String getEmail()
+  {
+    return email;
+  }
+  
   //User Associations
   private AppointmentManager appointmentManager;
 
@@ -55,64 +136,6 @@ public abstract class User
   // INTERFACE
   //------------------------
 
-  public boolean setUsername(String aUsername)
-  {
-    boolean wasSet = false;
-    String anOldUsername = getUsername();
-    if (anOldUsername != null && anOldUsername.equals(aUsername)) {
-      return true;
-    }
-    if (hasWithUsername(aUsername)) {
-      return wasSet;
-    }
-    username = aUsername;
-    wasSet = true;
-    if (anOldUsername != null) {
-      usersByUsername.remove(anOldUsername);
-    }
-    usersByUsername.put(aUsername, this);
-    return wasSet;
-  }
-
-  public boolean setPassword(String aPassword)
-  {
-    boolean wasSet = false;
-    password = aPassword;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setName(String aName)
-  {
-    boolean wasSet = false;
-    name = aName;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setEmail(String aEmail)
-  {
-    boolean wasSet = false;
-    String anOldEmail = getEmail();
-    if (anOldEmail != null && anOldEmail.equals(aEmail)) {
-      return true;
-    }
-    if (hasWithEmail(aEmail)) {
-      return wasSet;
-    }
-    email = aEmail;
-    wasSet = true;
-    if (anOldEmail != null) {
-      usersByEmail.remove(anOldEmail);
-    }
-    usersByEmail.put(aEmail, this);
-    return wasSet;
-  }
-
-  public String getUsername()
-  {
-    return username;
-  }
   /* Code from template attribute_GetUnique */
   public static User getWithUsername(String aUsername)
   {
@@ -124,20 +147,6 @@ public abstract class User
     return getWithUsername(aUsername) != null;
   }
 
-  public String getPassword()
-  {
-    return password;
-  }
-
-  public String getName()
-  {
-    return name;
-  }
-
-  public String getEmail()
-  {
-    return email;
-  }
   /* Code from template attribute_GetUnique */
   public static User getWithEmail(String aEmail)
   {
