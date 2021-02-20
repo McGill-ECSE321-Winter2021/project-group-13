@@ -5,8 +5,10 @@ package ca.mcgill.ecse321.autorepairsystem.model;
 import java.util.*;
 import java.sql.Time;
 import java.sql.Date;
+import javax.persistence.*;
 
 // line 3 "../../../../../AutoRepairSystem.ump"
+@Entity
 public class AppointmentManager
 {
 
@@ -16,22 +18,53 @@ public class AppointmentManager
 
   //AppointmentManager Associations
   private List<AvailabilitySchedule> businessHour;
-  private List<Service> services;
-  private List<User> users;
-  private List<Appointment> appointments;
-
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
-
-  public AppointmentManager()
+  
+  @OneToMany(cascade= {CascadeType.ALL})
+  public List<AvailabilitySchedule> getBusinessHour()
   {
-    businessHour = new ArrayList<AvailabilitySchedule>();
-    services = new ArrayList<Service>();
-    users = new ArrayList<User>();
-    appointments = new ArrayList<Appointment>();
+    return this.businessHour;
   }
-
+  
+  public void setBusinessHour(List<AvailabilitySchedule> businessHour) {
+	  this.businessHour = businessHour; 
+  }
+  
+  private List<Service> services;
+  
+  @OneToMany(cascade= {CascadeType.ALL})
+  public List<Service> getServices()
+  {
+    return  this.services;
+  }
+  
+  public void setServices(List<Service> services) {
+	  this.services = services; 
+  }
+  
+  private List<User> users;
+  
+  @OneToMany(cascade= {CascadeType.ALL})
+  public List<User> getUsers()
+  {
+    return this.users;
+  }
+  
+  public void setUsers(List<User> users) {
+	  this.users = users; 
+  }
+  
+  private List<Appointment> appointments;
+  
+  @OneToMany(cascade= {CascadeType.ALL})
+  public List<Appointment> getAppointments()
+  {
+    return this.appointments;
+  }
+  
+  public void setAppointments(List<Appointment> appointments) {
+	  this.appointments = appointments; 
+  }
+  
   //------------------------
   // INTERFACE
   //------------------------
@@ -40,12 +73,6 @@ public class AppointmentManager
   {
     AvailabilitySchedule aBusinessHour = businessHour.get(index);
     return aBusinessHour;
-  }
-
-  public List<AvailabilitySchedule> getBusinessHour()
-  {
-    List<AvailabilitySchedule> newBusinessHour = Collections.unmodifiableList(businessHour);
-    return newBusinessHour;
   }
 
   public int numberOfBusinessHour()
@@ -72,11 +99,6 @@ public class AppointmentManager
     return aService;
   }
 
-  public List<Service> getServices()
-  {
-    List<Service> newServices = Collections.unmodifiableList(services);
-    return newServices;
-  }
 
   public int numberOfServices()
   {
@@ -102,11 +124,6 @@ public class AppointmentManager
     return aUser;
   }
 
-  public List<User> getUsers()
-  {
-    List<User> newUsers = Collections.unmodifiableList(users);
-    return newUsers;
-  }
 
   public int numberOfUsers()
   {
@@ -132,11 +149,6 @@ public class AppointmentManager
     return aAppointment;
   }
 
-  public List<Appointment> getAppointments()
-  {
-    List<Appointment> newAppointments = Collections.unmodifiableList(appointments);
-    return newAppointments;
-  }
 
   public int numberOfAppointments()
   {
