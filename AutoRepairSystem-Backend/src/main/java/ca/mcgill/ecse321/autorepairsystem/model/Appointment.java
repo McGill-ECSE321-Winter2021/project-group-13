@@ -5,8 +5,11 @@ package ca.mcgill.ecse321.autorepairsystem.model;
 import java.sql.Time;
 import java.sql.Date;
 import java.util.*;
+import javax.persistence.*;
+
 
 // line 44 "../../../../../AutoRepairSystem.ump"
+@Entity
 public class Appointment
 {
 
@@ -18,12 +21,147 @@ public class Appointment
   private Time startTime;
   private Time endTime;
   private Date date;
+  
+  
+  private Integer id;
+  
+  @Id
+  public Integer getId() {
+	  return this.id;
+  }
+  
+  public void setId(Integer newId) {
+	  this.id = newId;
+  }
 
   //Appointment Associations
   private Technician technician;
+  
+  @ManyToOne
+  public Technician getTechnician()
+  {
+    return technician;
+  }
+  
+  public boolean setTechnician(Technician aTechnician)
+  {
+    boolean wasSet = false;
+    Technician existingTechnician = technician;
+    technician = aTechnician;
+    if (existingTechnician != null && !existingTechnician.equals(aTechnician))
+    {
+      existingTechnician.removeAppointment(this);
+    }
+    if (aTechnician != null)
+    {
+      aTechnician.addAppointment(this);
+    }
+    wasSet = true;
+    return wasSet;
+  }
+  
   private List<Service> services;
+  
+  @ManyToOne
+  public List<Service> getServices()
+  {
+    List<Service> newServices = Collections.unmodifiableList(services);
+    return newServices;
+  }
+  
+  public boolean setServices(Service... newServices)
+  {
+    boolean wasSet = false;
+    ArrayList<Service> verifiedServices = new ArrayList<Service>();
+    for (Service aService : newServices)
+    {
+      if (verifiedServices.contains(aService))
+      {
+        continue;
+      }
+      verifiedServices.add(aService);
+    }
+
+    if (verifiedServices.size() != newServices.length || verifiedServices.size() < minimumNumberOfServices())
+    {
+      return wasSet;
+    }
+
+    ArrayList<Service> oldServices = new ArrayList<Service>(services);
+    services.clear();
+    for (Service aNewService : verifiedServices)
+    {
+      services.add(aNewService);
+      if (oldServices.contains(aNewService))
+      {
+        oldServices.remove(aNewService);
+      }
+      else
+      {
+        aNewService.addAppointment(this);
+      }
+    }
+
+    for (Service anOldService : oldServices)
+    {
+      anOldService.removeAppointment(this);
+    }
+    wasSet = true;
+    return wasSet;
+  }
+  
   private Customer customer;
+  
+  @ManyToOne
+  public Customer getCustomer()
+  {
+    return customer;
+  }
+  
+  public boolean setCustomer(Customer aCustomer)
+  {
+    boolean wasSet = false;
+    Customer existingCustomer = customer;
+    customer = aCustomer;
+    if (existingCustomer != null && !existingCustomer.equals(aCustomer))
+    {
+      existingCustomer.removeAppointment(this);
+    }
+    if (aCustomer != null)
+    {
+      aCustomer.addAppointment(this);
+    }
+    wasSet = true;
+    return wasSet;
+  }
+  
+  
   private AppointmentManager appointmentManager;
+  
+  @ManyToOne
+  public AppointmentManager getAppointmentManager()
+  {
+    return appointmentManager;
+  }
+  
+  public boolean setAppointmentManager(AppointmentManager aAppointmentManager)
+  {
+    boolean wasSet = false;
+    if (aAppointmentManager == null)
+    {
+      return wasSet;
+    }
+
+    AppointmentManager existingAppointmentManager = appointmentManager;
+    appointmentManager = aAppointmentManager;
+    if (existingAppointmentManager != null && !existingAppointmentManager.equals(aAppointmentManager))
+    {
+      existingAppointmentManager.removeAppointment(this);
+    }
+    appointmentManager.addAppointment(this);
+    wasSet = true;
+    return wasSet;
+  }
 
   //------------------------
   // CONSTRUCTOR
@@ -90,10 +228,6 @@ public class Appointment
     return date;
   }
   /* Code from template association_GetOne */
-  public Technician getTechnician()
-  {
-    return technician;
-  }
 
   public boolean hasTechnician()
   {
@@ -105,12 +239,6 @@ public class Appointment
   {
     Service aService = services.get(index);
     return aService;
-  }
-
-  public List<Service> getServices()
-  {
-    List<Service> newServices = Collections.unmodifiableList(services);
-    return newServices;
   }
 
   public int numberOfServices()
@@ -131,10 +259,7 @@ public class Appointment
     return index;
   }
   /* Code from template association_GetOne */
-  public Customer getCustomer()
-  {
-    return customer;
-  }
+ 
 
   public boolean hasCustomer()
   {
@@ -142,27 +267,8 @@ public class Appointment
     return has;
   }
   /* Code from template association_GetOne */
-  public AppointmentManager getAppointmentManager()
-  {
-    return appointmentManager;
-  }
   /* Code from template association_SetOptionalOneToMany */
-  public boolean setTechnician(Technician aTechnician)
-  {
-    boolean wasSet = false;
-    Technician existingTechnician = technician;
-    technician = aTechnician;
-    if (existingTechnician != null && !existingTechnician.equals(aTechnician))
-    {
-      existingTechnician.removeAppointment(this);
-    }
-    if (aTechnician != null)
-    {
-      aTechnician.addAppointment(this);
-    }
-    wasSet = true;
-    return wasSet;
-  }
+  
   /* Code from template association_IsNumberOfValidMethod */
   public boolean isNumberOfServicesValid()
   {
@@ -225,46 +331,6 @@ public class Appointment
     return wasRemoved;
   }
   /* Code from template association_SetMStarToMany */
-  public boolean setServices(Service... newServices)
-  {
-    boolean wasSet = false;
-    ArrayList<Service> verifiedServices = new ArrayList<Service>();
-    for (Service aService : newServices)
-    {
-      if (verifiedServices.contains(aService))
-      {
-        continue;
-      }
-      verifiedServices.add(aService);
-    }
-
-    if (verifiedServices.size() != newServices.length || verifiedServices.size() < minimumNumberOfServices())
-    {
-      return wasSet;
-    }
-
-    ArrayList<Service> oldServices = new ArrayList<Service>(services);
-    services.clear();
-    for (Service aNewService : verifiedServices)
-    {
-      services.add(aNewService);
-      if (oldServices.contains(aNewService))
-      {
-        oldServices.remove(aNewService);
-      }
-      else
-      {
-        aNewService.addAppointment(this);
-      }
-    }
-
-    for (Service anOldService : oldServices)
-    {
-      anOldService.removeAppointment(this);
-    }
-    wasSet = true;
-    return wasSet;
-  }
   /* Code from template association_AddIndexControlFunctions */
   public boolean addServiceAt(Service aService, int index)
   {  
@@ -298,41 +364,8 @@ public class Appointment
     return wasAdded;
   }
   /* Code from template association_SetOptionalOneToMany */
-  public boolean setCustomer(Customer aCustomer)
-  {
-    boolean wasSet = false;
-    Customer existingCustomer = customer;
-    customer = aCustomer;
-    if (existingCustomer != null && !existingCustomer.equals(aCustomer))
-    {
-      existingCustomer.removeAppointment(this);
-    }
-    if (aCustomer != null)
-    {
-      aCustomer.addAppointment(this);
-    }
-    wasSet = true;
-    return wasSet;
-  }
+  
   /* Code from template association_SetOneToMany */
-  public boolean setAppointmentManager(AppointmentManager aAppointmentManager)
-  {
-    boolean wasSet = false;
-    if (aAppointmentManager == null)
-    {
-      return wasSet;
-    }
-
-    AppointmentManager existingAppointmentManager = appointmentManager;
-    appointmentManager = aAppointmentManager;
-    if (existingAppointmentManager != null && !existingAppointmentManager.equals(aAppointmentManager))
-    {
-      existingAppointmentManager.removeAppointment(this);
-    }
-    appointmentManager.addAppointment(this);
-    wasSet = true;
-    return wasSet;
-  }
 
   public void delete()
   {
