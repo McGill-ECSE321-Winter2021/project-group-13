@@ -15,6 +15,17 @@ public class AppointmentManager
   //------------------------
   // MEMBER VARIABLES
   //------------------------
+	
+	private Integer id;
+	  
+	  @Id
+	  public Integer getId() {
+		  return this.id;
+	  }
+	  
+	  public void setId(Integer newId) {
+		  this.id = newId;
+	  }
 
   //AppointmentManager Associations
   private List<Business> businesses;
