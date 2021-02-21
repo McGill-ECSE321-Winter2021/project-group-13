@@ -30,7 +30,7 @@ Edgar Desnos    | Github Setup, Requirements, Use-Case Diagram | 14 hours
 Charles Wetaski ||
 Ezra Gomolin    | Requirements Model, UML Diagram, Use Case Specification |15 hours                   
 Hassan Kanj     ||
-Henri Rofiq     |Persistence and Management|420 hours
+Henri Rofiq     |Persistence and Management|15 hours
 
 [Sprint 2:](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-2)
 
