@@ -24,17 +24,11 @@ public class Business
 
   public Business(AppointmentManager aAppointmentManager)
   {
-    if (aAppointmentManager == null || aAppointmentManager.getBusiness() != null)
+    boolean didAddAppointmentManager = setAppointmentManager(aAppointmentManager);
+    if (!didAddAppointmentManager)
     {
-      throw new RuntimeException("Unable to create Business due to aAppointmentManager. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+      throw new RuntimeException("Unable to create business due to appointmentManager. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
-    appointmentManager = aAppointmentManager;
-    businessHours = new ArrayList<BusinessHour>();
-  }
-
-  public Business()
-  {
-    appointmentManager = new AppointmentManager(this);
     businessHours = new ArrayList<BusinessHour>();
   }
 
@@ -75,6 +69,25 @@ public class Business
   {
     int index = businessHours.indexOf(aBusinessHour);
     return index;
+  }
+  /* Code from template association_SetOneToMany */
+  public boolean setAppointmentManager(AppointmentManager aAppointmentManager)
+  {
+    boolean wasSet = false;
+    if (aAppointmentManager == null)
+    {
+      return wasSet;
+    }
+
+    AppointmentManager existingAppointmentManager = appointmentManager;
+    appointmentManager = aAppointmentManager;
+    if (existingAppointmentManager != null && !existingAppointmentManager.equals(aAppointmentManager))
+    {
+      existingAppointmentManager.removeBusiness(this);
+    }
+    appointmentManager.addBusiness(this);
+    wasSet = true;
+    return wasSet;
   }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfBusinessHours()
@@ -151,11 +164,11 @@ public class Business
 
   public void delete()
   {
-    AppointmentManager existingAppointmentManager = appointmentManager;
-    appointmentManager = null;
-    if (existingAppointmentManager != null)
+    AppointmentManager placeholderAppointmentManager = appointmentManager;
+    this.appointmentManager = null;
+    if(placeholderAppointmentManager != null)
     {
-      existingAppointmentManager.delete();
+      placeholderAppointmentManager.removeBusiness(this);
     }
     while (businessHours.size() > 0)
     {

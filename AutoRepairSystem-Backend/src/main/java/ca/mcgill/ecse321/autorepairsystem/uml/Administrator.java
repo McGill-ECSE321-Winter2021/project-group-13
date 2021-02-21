@@ -3,10 +3,8 @@
 
 package ca.mcgill.ecse321.autorepairsystem.uml;
 import java.util.*;
-import javax.persistence.*;
 
 // line 38 "../../../../../AutoRepairSystem.ump"
-@Entity
 public class Administrator extends User
 {
 
