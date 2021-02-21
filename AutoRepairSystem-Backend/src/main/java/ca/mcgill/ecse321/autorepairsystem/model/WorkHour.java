@@ -5,8 +5,10 @@ package ca.mcgill.ecse321.autorepairsystem.model;
 import java.sql.Time;
 import java.sql.Date;
 import java.util.*;
+import javax.persistence.*;
 
 // line 42 "../../../../../AutoRepairSystem.ump"
+@Entity
 public abstract class WorkHour
 {
 
@@ -18,10 +20,31 @@ public abstract class WorkHour
   private Time startTime;
   private Time endTime;
   private Date date;
+  
+  private Integer id;
+  
+  @Id
+  public Integer getId() {
+	  return this.id;
+  }
+  
+  public void setId(Integer newId) {
+	  this.id = newId;
+  }	
 
   //WorkHour Associations
   private List<WorkBreak> workBreaks;
+  
+  @OneToMany
+  public List<WorkBreak> getWorkBreaks()
+  {
+    List<WorkBreak> newWorkBreaks = Collections.unmodifiableList(workBreaks);
+    return newWorkBreaks;
+  }
 
+  public void setWorkBreaks(List<WorkBreak> newWorkBreaks) {
+	  this.workBreaks = newWorkBreaks;
+  }
   //------------------------
   // CONSTRUCTOR
   //------------------------
@@ -81,12 +104,6 @@ public abstract class WorkHour
   {
     WorkBreak aWorkBreak = workBreaks.get(index);
     return aWorkBreak;
-  }
-
-  public List<WorkBreak> getWorkBreaks()
-  {
-    List<WorkBreak> newWorkBreaks = Collections.unmodifiableList(workBreaks);
-    return newWorkBreaks;
   }
 
   public int numberOfWorkBreaks()
