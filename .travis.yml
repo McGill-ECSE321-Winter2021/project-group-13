@@ -1,3 +1,5 @@
 language: java
+before_script:
+ - chmod a+x gradlew
 script:
-- chmod +x ./gradlew build
+- ./gradlew build
