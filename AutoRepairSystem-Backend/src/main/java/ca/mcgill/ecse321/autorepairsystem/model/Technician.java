@@ -3,10 +3,12 @@
 
 package ca.mcgill.ecse321.autorepairsystem.model;
 import java.util.*;
+import javax.persistence.*;
 import java.sql.Time;
 import java.sql.Date;
 
 // line 29 "../../../../../AutoRepairSystem.ump"
+@Entity
 public class Technician extends User
 {
 
@@ -25,7 +27,32 @@ public class Technician extends User
 
   //Technician Associations
   private List<TechnicianHour> technicianHours;
+  
+  @OneToMany
+  public List<TechnicianHour> getTechnicianHours()
+  {
+    List<TechnicianHour> newTechnicianHours = Collections.unmodifiableList(technicianHours);
+    return newTechnicianHours;
+  }
+  
+  public void setTechnicianHours(List<TechnicianHour> newTechnicianHours) {
+	  this.technicianHours = newTechnicianHours;
+  }
+  
   private List<Appointment> appointments;
+  
+  @OneToMany
+  public List<Appointment> getAppointments()
+  {
+    List<Appointment> newAppointments = Collections.unmodifiableList(appointments);
+    return newAppointments;
+  }
+  
+  public void setAppointments(List<Appointment> newAppointments) {
+	  this.appointments = newAppointments;
+  }
+  
+  
 
   //------------------------
   // CONSTRUCTOR
@@ -54,11 +81,6 @@ public class Technician extends User
     return aTechnicianHour;
   }
 
-  public List<TechnicianHour> getTechnicianHours()
-  {
-    List<TechnicianHour> newTechnicianHours = Collections.unmodifiableList(technicianHours);
-    return newTechnicianHours;
-  }
 
   public int numberOfTechnicianHours()
   {
@@ -82,12 +104,6 @@ public class Technician extends User
   {
     Appointment aAppointment = appointments.get(index);
     return aAppointment;
-  }
-
-  public List<Appointment> getAppointments()
-  {
-    List<Appointment> newAppointments = Collections.unmodifiableList(appointments);
-    return newAppointments;
   }
 
   public int numberOfAppointments()
