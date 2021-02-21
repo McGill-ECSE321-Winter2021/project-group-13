@@ -5,8 +5,10 @@ package ca.mcgill.ecse321.autorepairsystem.model;
 import java.util.*;
 import java.sql.Time;
 import java.sql.Date;
+import javax.persistence.*;
 
 // line 4 "../../../../../AutoRepairSystem.ump"
+@Entity
 public class AppointmentManager
 {
 
@@ -16,9 +18,55 @@ public class AppointmentManager
 
   //AppointmentManager Associations
   private Business business;
+  
+  @OneToOne
+  public Business getBusiness()
+  {
+    return business;
+  }
+  
+  public void setBusiness(Business newBusiness) {
+	this.business = newBusiness;
+  }
+  
   private List<Service> services;
+  
+  @OneToMany(cascade= {CascadeType.ALL})
+  public List<Service> getServices()
+  {
+    List<Service> newServices = Collections.unmodifiableList(services);
+    return newServices;
+  }
+  
+  public void setServices(List<Service> services) {
+	  this.services = services; 
+  }
+  
   private List<User> users;
+  
+  @OneToMany(cascade= {CascadeType.ALL})
+  public List<User> getUsers()
+  {
+    List<User> newUsers = Collections.unmodifiableList(users);
+    return newUsers;
+  }
+  
+  public void setUsers(List<User> users) {
+	  this.users = users; 
+  }
+  
   private List<Appointment> appointments;
+  
+  @OneToMany(cascade= {CascadeType.ALL})
+  public List<Appointment> getAppointments()
+  {
+    List<Appointment> newAppointments = Collections.unmodifiableList(appointments);
+    return newAppointments;
+  }
+  
+  public void setAppointments(List<Appointment> appointments) {
+	  this.appointments = appointments; 
+  }
 
   //------------------------
   // CONSTRUCTOR
@@ -48,10 +96,6 @@ public class AppointmentManager
   // INTERFACE
   //------------------------
   /* Code from template association_GetOne */
-  public Business getBusiness()
-  {
-    return business;
-  }
   /* Code from template association_GetMany */
   public Service getService(int index)
   {
@@ -59,11 +103,6 @@ public class AppointmentManager
     return aService;
   }
 
-  public List<Service> getServices()
-  {
-    List<Service> newServices = Collections.unmodifiableList(services);
-    return newServices;
-  }
 
   public int numberOfServices()
   {
@@ -89,11 +128,6 @@ public class AppointmentManager
     return aUser;
   }
 
-  public List<User> getUsers()
-  {
-    List<User> newUsers = Collections.unmodifiableList(users);
-    return newUsers;
-  }
 
   public int numberOfUsers()
   {
@@ -117,12 +151,6 @@ public class AppointmentManager
   {
     Appointment aAppointment = appointments.get(index);
     return aAppointment;
-  }
-
-  public List<Appointment> getAppointments()
-  {
-    List<Appointment> newAppointments = Collections.unmodifiableList(appointments);
-    return newAppointments;
   }
 
   public int numberOfAppointments()
