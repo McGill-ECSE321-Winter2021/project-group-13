@@ -3,20 +3,56 @@
 
 package ca.mcgill.ecse321.autorepairsystem.model;
 import java.util.*;
+import javax.persistence.*;
 import java.sql.Time;
 import java.sql.Date;
 
 // line 7 "../../../../../AutoRepairSystem.ump"
+@Entity
 public class Business
 {
-
+	
+	private Integer id;
+	  
+	  @Id
+	  public Integer getId() {
+		  return this.id;
+	  }
+	  
+	  public void setId(Integer newId) {
+		  this.id = newId;
+	  }
+	
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //Business Associations
   private AppointmentManager appointmentManager;
+  
+  @OneToOne
+  public AppointmentManager getAppointmentManager()
+  {
+    return appointmentManager;
+  }
+  
+  public void setAppointmentManager(AppointmentManager newAppointmentManager) {
+	  this.appointmentManager = newAppointmentManager;
+  }
+  
   private List<BusinessHour> businessHours;
+  
+  @OneToMany
+  public List<BusinessHour> getBusinessHours()
+  {
+    List<BusinessHour> newBusinessHours = Collections.unmodifiableList(businessHours);
+    return newBusinessHours;
+  }
+  
+  public void setBusinessHours(List<BusinessHour> newBusinessHour) {
+	  this.businessHours = newBusinessHour;
+  }
+  
 
   //------------------------
   // CONSTRUCTOR
@@ -42,21 +78,11 @@ public class Business
   // INTERFACE
   //------------------------
   /* Code from template association_GetOne */
-  public AppointmentManager getAppointmentManager()
-  {
-    return appointmentManager;
-  }
   /* Code from template association_GetMany */
   public BusinessHour getBusinessHour(int index)
   {
     BusinessHour aBusinessHour = businessHours.get(index);
     return aBusinessHour;
-  }
-
-  public List<BusinessHour> getBusinessHours()
-  {
-    List<BusinessHour> newBusinessHours = Collections.unmodifiableList(businessHours);
-    return newBusinessHours;
   }
 
   public int numberOfBusinessHours()
