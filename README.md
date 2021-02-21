@@ -9,7 +9,7 @@ Name            | Student ID
 Edgar Desnos    |260910150| 
 Charles Wetaski ||
 Ezra Gomolin    |260926917|                   
-Hassan Kanj     ||
+Hassan Kanj     |260920737|
 Henri Rofiq     |260805473|
 
 ## Project Scope:
@@ -29,7 +29,7 @@ Name            | Team Roles         | Individual Efforts
 Edgar Desnos    | Github Setup, Requirements, Use-Case Diagram | 14 hours
 Charles Wetaski ||
 Ezra Gomolin    | Requirements Model, UML Diagram, Use Case Specification |15 hours                   
-Hassan Kanj     ||
+Hassan Kanj     | Spring, Travis CI, Heroku | 14 hours
 Henri Rofiq     |Persistence and Management|15 hours
 
 [Sprint 2:](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-2)
