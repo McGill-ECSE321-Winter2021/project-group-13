@@ -17,16 +17,17 @@ public class AppointmentManager
   //------------------------
 
   //AppointmentManager Associations
-  private Business business;
+  private List<Business> businesses;
   
-  @OneToOne
-  public Business getBusiness()
+  @OneToMany(cascade= {CascadeType.ALL})
+  public List<Business> getBusinesses()
   {
-    return business;
+    List<Business> newBusinesses = Collections.unmodifiableList(businesses);
+    return newBusinesses;
   }
-  
-  public void setBusiness(Business newBusiness) {
-	this.business = newBusiness;
+
+  public void setBusinesses(List<Business> newBusinesses) {
+	  this.businesses = newBusinesses;
   }
   
   private List<Service> services;
@@ -54,7 +55,7 @@ public class AppointmentManager
   public void setUsers(List<User> users) {
 	  this.users = users; 
   }
-  
+  	
   private List<Appointment> appointments;
   
   @OneToMany(cascade= {CascadeType.ALL})
@@ -72,21 +73,9 @@ public class AppointmentManager
   // CONSTRUCTOR
   //------------------------
 
-  public AppointmentManager(Business aBusiness)
-  {
-    if (aBusiness == null || aBusiness.getAppointmentManager() != null)
-    {
-      throw new RuntimeException("Unable to create AppointmentManager due to aBusiness. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    business = aBusiness;
-    services = new ArrayList<Service>();
-    users = new ArrayList<User>();
-    appointments = new ArrayList<Appointment>();
-  }
-
   public AppointmentManager()
   {
-    business = new Business(this);
+    businesses = new ArrayList<Business>();
     services = new ArrayList<Service>();
     users = new ArrayList<User>();
     appointments = new ArrayList<Appointment>();
@@ -95,14 +84,37 @@ public class AppointmentManager
   //------------------------
   // INTERFACE
   //------------------------
-  /* Code from template association_GetOne */
+  /* Code from template association_GetMany */
+  public Business getBusiness(int index)
+  {
+    Business aBusiness = businesses.get(index);
+    return aBusiness;
+  }
+
+
+  public int numberOfBusinesses()
+  {
+    int number = businesses.size();
+    return number;
+  }
+
+  public boolean hasBusinesses()
+  {
+    boolean has = businesses.size() > 0;
+    return has;
+  }
+
+  public int indexOfBusiness(Business aBusiness)
+  {
+    int index = businesses.indexOf(aBusiness);
+    return index;
+  }
   /* Code from template association_GetMany */
   public Service getService(int index)
   {
     Service aService = services.get(index);
     return aService;
   }
-
 
   public int numberOfServices()
   {
@@ -169,6 +181,78 @@ public class AppointmentManager
   {
     int index = appointments.indexOf(aAppointment);
     return index;
+  }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfBusinesses()
+  {
+    return 0;
+  }
+  /* Code from template association_AddManyToOne */
+  public Business addBusiness()
+  {
+    return new Business(this);
+  }
+
+  public boolean addBusiness(Business aBusiness)
+  {
+    boolean wasAdded = false;
+    if (businesses.contains(aBusiness)) { return false; }
+    AppointmentManager existingAppointmentManager = aBusiness.getAppointmentManager();
+    boolean isNewAppointmentManager = existingAppointmentManager != null && !this.equals(existingAppointmentManager);
+    if (isNewAppointmentManager)
+    {
+      aBusiness.setAppointmentManager(this);
+    }
+    else
+    {
+      businesses.add(aBusiness);
+    }
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeBusiness(Business aBusiness)
+  {
+    boolean wasRemoved = false;
+    //Unable to remove aBusiness, as it must always have a appointmentManager
+    if (!this.equals(aBusiness.getAppointmentManager()))
+    {
+      businesses.remove(aBusiness);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addBusinessAt(Business aBusiness, int index)
+  {  
+    boolean wasAdded = false;
+    if(addBusiness(aBusiness))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfBusinesses()) { index = numberOfBusinesses() - 1; }
+      businesses.remove(aBusiness);
+      businesses.add(index, aBusiness);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveBusinessAt(Business aBusiness, int index)
+  {
+    boolean wasAdded = false;
+    if(businesses.contains(aBusiness))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfBusinesses()) { index = numberOfBusinesses() - 1; }
+      businesses.remove(aBusiness);
+      businesses.add(index, aBusiness);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addBusinessAt(aBusiness, index);
+    }
+    return wasAdded;
   }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfServices()
@@ -386,12 +470,13 @@ public class AppointmentManager
 
   public void delete()
   {
-    Business existingBusiness = business;
-    business = null;
-    if (existingBusiness != null)
+    while (businesses.size() > 0)
     {
-      existingBusiness.delete();
+      Business aBusiness = businesses.get(businesses.size() - 1);
+      aBusiness.delete();
+      businesses.remove(aBusiness);
     }
+    
     while (services.size() > 0)
     {
       Service aService = services.get(services.size() - 1);
