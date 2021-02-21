@@ -3,10 +3,12 @@
 
 package ca.mcgill.ecse321.autorepairsystem.model;
 import java.sql.Time;
+import javax.persistence.*;
 import java.sql.Date;
 import java.util.*;
 
 // line 59 "../../../../../AutoRepairSystem.ump"
+@Entity
 public class Appointment
 {
 
@@ -18,12 +20,113 @@ public class Appointment
   private Time startTime;
   private Time endTime;
   private Date date;
+  
+  private Integer id;
+  
+  @Id
+  public Integer getId() {
+	  return this.id;
+  }
+  
+  public void setId(Integer newId) {
+	  this.id = newId;
+  }
 
   //Appointment Associations
   private Technician technician;
+  
+  @ManyToOne
+  public Technician getTechnician()
+  {
+    return technician;
+  }
+  
+  public boolean setTechnician(Technician aTechnician)
+  {
+    boolean wasSet = false;
+    if (aTechnician == null)
+    {
+      return wasSet;
+    }
+
+    Technician existingTechnician = technician;
+    technician = aTechnician;
+    if (existingTechnician != null && !existingTechnician.equals(aTechnician))
+    {
+      existingTechnician.removeAppointment(this);
+    }
+    technician.addAppointment(this);
+    wasSet = true;
+    return wasSet;
+  }
+  
   private List<Service> services;
+  
+  @ManyToMany
+  public List<Service> getServices()
+  {
+    List<Service> newServices = Collections.unmodifiableList(services);
+    return newServices;
+  }
+  
+  public void setServices(List<Service> newServices) {
+	  this.services = newServices;
+  }
+  
   private Customer customer;
+  
+  @ManyToOne
+  public Customer getCustomer()
+  {
+    return customer;
+  }
+  
+  public boolean setCustomer(Customer aCustomer)
+  {
+    boolean wasSet = false;
+    if (aCustomer == null)
+    {
+      return wasSet;
+    }
+
+    Customer existingCustomer = customer;
+    customer = aCustomer;
+    if (existingCustomer != null && !existingCustomer.equals(aCustomer))
+    {
+      existingCustomer.removeAppointment(this);
+    }
+    customer.addAppointment(this);
+    wasSet = true;
+    return wasSet;
+  }
+  
   private AppointmentManager appointmentManager;
+  
+  public boolean setAppointmentManager(AppointmentManager aAppointmentManager)
+  {
+    boolean wasSet = false;
+    if (aAppointmentManager == null)
+    {
+      return wasSet;
+    }
+
+    AppointmentManager existingAppointmentManager = appointmentManager;
+    appointmentManager = aAppointmentManager;
+    if (existingAppointmentManager != null && !existingAppointmentManager.equals(aAppointmentManager))
+    {
+      existingAppointmentManager.removeAppointment(this);
+    }
+    appointmentManager.addAppointment(this);
+    wasSet = true;
+    return wasSet;
+  }
+  
+  @ManyToOne
+  public AppointmentManager getAppointmentManager()
+  {
+    return appointmentManager;
+  }
+  
 
   //------------------------
   // CONSTRUCTOR
@@ -95,21 +198,11 @@ public class Appointment
     return date;
   }
   /* Code from template association_GetOne */
-  public Technician getTechnician()
-  {
-    return technician;
-  }
   /* Code from template association_GetMany */
   public Service getService(int index)
   {
     Service aService = services.get(index);
     return aService;
-  }
-
-  public List<Service> getServices()
-  {
-    List<Service> newServices = Collections.unmodifiableList(services);
-    return newServices;
   }
 
   public int numberOfServices()
@@ -130,34 +223,9 @@ public class Appointment
     return index;
   }
   /* Code from template association_GetOne */
-  public Customer getCustomer()
-  {
-    return customer;
-  }
   /* Code from template association_GetOne */
-  public AppointmentManager getAppointmentManager()
-  {
-    return appointmentManager;
-  }
   /* Code from template association_SetOneToMany */
-  public boolean setTechnician(Technician aTechnician)
-  {
-    boolean wasSet = false;
-    if (aTechnician == null)
-    {
-      return wasSet;
-    }
 
-    Technician existingTechnician = technician;
-    technician = aTechnician;
-    if (existingTechnician != null && !existingTechnician.equals(aTechnician))
-    {
-      existingTechnician.removeAppointment(this);
-    }
-    technician.addAppointment(this);
-    wasSet = true;
-    return wasSet;
-  }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfServices()
   {
@@ -241,43 +309,8 @@ public class Appointment
     return wasAdded;
   }
   /* Code from template association_SetOneToMany */
-  public boolean setCustomer(Customer aCustomer)
-  {
-    boolean wasSet = false;
-    if (aCustomer == null)
-    {
-      return wasSet;
-    }
-
-    Customer existingCustomer = customer;
-    customer = aCustomer;
-    if (existingCustomer != null && !existingCustomer.equals(aCustomer))
-    {
-      existingCustomer.removeAppointment(this);
-    }
-    customer.addAppointment(this);
-    wasSet = true;
-    return wasSet;
-  }
   /* Code from template association_SetOneToMany */
-  public boolean setAppointmentManager(AppointmentManager aAppointmentManager)
-  {
-    boolean wasSet = false;
-    if (aAppointmentManager == null)
-    {
-      return wasSet;
-    }
 
-    AppointmentManager existingAppointmentManager = appointmentManager;
-    appointmentManager = aAppointmentManager;
-    if (existingAppointmentManager != null && !existingAppointmentManager.equals(aAppointmentManager))
-    {
-      existingAppointmentManager.removeAppointment(this);
-    }
-    appointmentManager.addAppointment(this);
-    wasSet = true;
-    return wasSet;
-  }
 
   public void delete()
   {
