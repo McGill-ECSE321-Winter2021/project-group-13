@@ -3,8 +3,10 @@
 
 package ca.mcgill.ecse321.autorepairsystem.model;
 import java.sql.Time;
+import javax.persistence.*;
 
 // line 70 "../../../../../AutoRepairSystem.ump"
+@Entity
 public class WorkBreak
 {
 
@@ -15,9 +17,45 @@ public class WorkBreak
   //WorkBreak Attributes
   private Time breakStarts;
   private Time breakEnds;
+  
+  private Integer id;
+  
+  @Id
+  public Integer getId() {
+	  return this.id;
+  }
+  
+  public void setId(Integer newId) {
+	  this.id = newId;
+  }	 
 
   //WorkBreak Associations
   private WorkHour workHour;
+  
+  @ManyToOne
+  public WorkHour getWorkHour()
+  {
+    return workHour;
+  }
+  
+  public boolean setWorkHour(WorkHour aWorkHour)
+  {
+    boolean wasSet = false;
+    if (aWorkHour == null)
+    {
+      return wasSet;
+    }
+
+    WorkHour existingWorkHour = workHour;
+    workHour = aWorkHour;
+    if (existingWorkHour != null && !existingWorkHour.equals(aWorkHour))
+    {
+      existingWorkHour.removeWorkBreak(this);
+    }
+    workHour.addWorkBreak(this);
+    wasSet = true;
+    return wasSet;
+  }
 
   //------------------------
   // CONSTRUCTOR
@@ -64,29 +102,7 @@ public class WorkBreak
     return breakEnds;
   }
   /* Code from template association_GetOne */
-  public WorkHour getWorkHour()
-  {
-    return workHour;
-  }
   /* Code from template association_SetOneToMany */
-  public boolean setWorkHour(WorkHour aWorkHour)
-  {
-    boolean wasSet = false;
-    if (aWorkHour == null)
-    {
-      return wasSet;
-    }
-
-    WorkHour existingWorkHour = workHour;
-    workHour = aWorkHour;
-    if (existingWorkHour != null && !existingWorkHour.equals(aWorkHour))
-    {
-      existingWorkHour.removeWorkBreak(this);
-    }
-    workHour.addWorkBreak(this);
-    wasSet = true;
-    return wasSet;
-  }
 
   public void delete()
   {
