@@ -3,10 +3,12 @@
 
 package ca.mcgill.ecse321.autorepairsystem.model;
 import java.sql.Time;
+import javax.persistence.*;
 import java.sql.Date;
 import java.util.*;
 
 // line 49 "../../../../../AutoRepairSystem.ump"
+@Entity
 public class TechnicianHour extends WorkHour
 {
 
@@ -16,6 +18,31 @@ public class TechnicianHour extends WorkHour
 
   //TechnicianHour Associations
   private Technician technician;
+  
+  @ManyToOne
+  public Technician getTechnician()
+  {
+    return technician;
+  }
+  
+  public boolean setTechnician(Technician aTechnician)
+  {
+    boolean wasSet = false;
+    if (aTechnician == null)
+    {
+      return wasSet;
+    }
+
+    Technician existingTechnician = technician;
+    technician = aTechnician;
+    if (existingTechnician != null && !existingTechnician.equals(aTechnician))
+    {
+      existingTechnician.removeTechnicianHour(this);
+    }
+    technician.addTechnicianHour(this);
+    wasSet = true;
+    return wasSet;
+  }
 
   //------------------------
   // CONSTRUCTOR
@@ -35,29 +62,7 @@ public class TechnicianHour extends WorkHour
   // INTERFACE
   //------------------------
   /* Code from template association_GetOne */
-  public Technician getTechnician()
-  {
-    return technician;
-  }
   /* Code from template association_SetOneToMany */
-  public boolean setTechnician(Technician aTechnician)
-  {
-    boolean wasSet = false;
-    if (aTechnician == null)
-    {
-      return wasSet;
-    }
-
-    Technician existingTechnician = technician;
-    technician = aTechnician;
-    if (existingTechnician != null && !existingTechnician.equals(aTechnician))
-    {
-      existingTechnician.removeTechnicianHour(this);
-    }
-    technician.addTechnicianHour(this);
-    wasSet = true;
-    return wasSet;
-  }
 
   public void delete()
   {
