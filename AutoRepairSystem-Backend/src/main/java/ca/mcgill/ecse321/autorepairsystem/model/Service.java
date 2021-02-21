@@ -3,8 +3,10 @@
 
 package ca.mcgill.ecse321.autorepairsystem.model;
 import java.util.*;
+import javax.persistence.*;
 
 // line 13 "../../../../../AutoRepairSystem.ump"
+@Entity
 public class Service
 {
 
@@ -14,12 +16,91 @@ public class Service
 
   //Service Attributes
   private String name;
+  
+  public boolean setName(String aName)
+  {
+    boolean wasSet = false;
+    name = aName;
+    wasSet = true;
+    return wasSet;
+  }
+  
+  @Id
+  public String getName()
+  {
+    return name;
+  }
+  
   private int duration;
+  
+  public boolean setDuration(int aDuration)
+  {
+    boolean wasSet = false;
+    duration = aDuration;
+    wasSet = true;
+    return wasSet;
+  }
+  
+  public int getDuration()
+  {
+    return duration;
+  }
+  
   private int price;
+  
+  public boolean setPrice(int aPrice)
+  {
+    boolean wasSet = false;
+    price = aPrice;
+    wasSet = true;
+    return wasSet;
+  }
+  
+  public int getPrice()
+  {
+    return price;
+  }
 
   //Service Associations
   private AppointmentManager appointmentManager;
+  
+  public boolean setAppointmentManager(AppointmentManager aAppointmentManager)
+  {
+    boolean wasSet = false;
+    if (aAppointmentManager == null)
+    {
+      return wasSet;
+    }
+
+    AppointmentManager existingAppointmentManager = appointmentManager;
+    appointmentManager = aAppointmentManager;
+    if (existingAppointmentManager != null && !existingAppointmentManager.equals(aAppointmentManager))
+    {
+      existingAppointmentManager.removeService(this);
+    }
+    appointmentManager.addService(this);
+    wasSet = true;
+    return wasSet;
+  }
+  
+  @ManyToOne
+  public AppointmentManager getAppointmentManager()
+  {
+    return appointmentManager;
+  }
+  
   private List<Appointment> appointments;
+  
+  public void setAppointments(List<Appointment> newAppointments){
+	  this.appointments = newAppointments;
+  }
+  
+  @ManyToMany
+  public List<Appointment> getAppointments()
+  {
+    List<Appointment> newAppointments = Collections.unmodifiableList(appointments);
+    return newAppointments;
+  }
 
   //------------------------
   // CONSTRUCTOR
@@ -42,49 +123,8 @@ public class Service
   // INTERFACE
   //------------------------
 
-  public boolean setName(String aName)
-  {
-    boolean wasSet = false;
-    name = aName;
-    wasSet = true;
-    return wasSet;
-  }
 
-  public boolean setDuration(int aDuration)
-  {
-    boolean wasSet = false;
-    duration = aDuration;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setPrice(int aPrice)
-  {
-    boolean wasSet = false;
-    price = aPrice;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public String getName()
-  {
-    return name;
-  }
-
-  public int getDuration()
-  {
-    return duration;
-  }
-
-  public int getPrice()
-  {
-    return price;
-  }
   /* Code from template association_GetOne */
-  public AppointmentManager getAppointmentManager()
-  {
-    return appointmentManager;
-  }
   /* Code from template association_GetMany */
   public Appointment getAppointment(int index)
   {
@@ -92,11 +132,6 @@ public class Service
     return aAppointment;
   }
 
-  public List<Appointment> getAppointments()
-  {
-    List<Appointment> newAppointments = Collections.unmodifiableList(appointments);
-    return newAppointments;
-  }
 
   public int numberOfAppointments()
   {
@@ -116,24 +151,7 @@ public class Service
     return index;
   }
   /* Code from template association_SetOneToMany */
-  public boolean setAppointmentManager(AppointmentManager aAppointmentManager)
-  {
-    boolean wasSet = false;
-    if (aAppointmentManager == null)
-    {
-      return wasSet;
-    }
 
-    AppointmentManager existingAppointmentManager = appointmentManager;
-    appointmentManager = aAppointmentManager;
-    if (existingAppointmentManager != null && !existingAppointmentManager.equals(aAppointmentManager))
-    {
-      existingAppointmentManager.removeService(this);
-    }
-    appointmentManager.addService(this);
-    wasSet = true;
-    return wasSet;
-  }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfAppointments()
   {
