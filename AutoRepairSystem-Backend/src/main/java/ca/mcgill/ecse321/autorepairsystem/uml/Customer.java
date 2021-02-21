@@ -3,10 +3,12 @@
 
 package ca.mcgill.ecse321.autorepairsystem.uml;
 import java.util.*;
+import javax.persistence.*;
 import java.sql.Time;
 import java.sql.Date;
 
 // line 34 "../../../../../AutoRepairSystem.ump"
+@Entity
 public class Customer extends User
 {
 
@@ -15,7 +17,19 @@ public class Customer extends User
   //------------------------
 
   //Customer Associations
+	
   private List<Appointment> appointments;
+  
+  @OneToMany
+  public List<Appointment> getAppointments()
+  {
+    List<Appointment> newAppointments = Collections.unmodifiableList(appointments);
+    return newAppointments;
+  }
+  
+  public void setAppointments(List<Appointment> newAppointments) {
+	  this.appointments = newAppointments;
+  }
 
   //------------------------
   // CONSTRUCTOR
@@ -35,12 +49,6 @@ public class Customer extends User
   {
     Appointment aAppointment = appointments.get(index);
     return aAppointment;
-  }
-
-  public List<Appointment> getAppointments()
-  {
-    List<Appointment> newAppointments = Collections.unmodifiableList(appointments);
-    return newAppointments;
   }
 
   public int numberOfAppointments()
