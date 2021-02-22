@@ -15,7 +15,7 @@ public class AutoRepairSystemApplication {
 
 	@RequestMapping("/")
 	public String greeting(){
-		return "Hello world!";
+		return "Hello world! ECSE 321";
 	}
 
 }

@@ -4,12 +4,6 @@ namespace ca.mcgill.ecse321.autorepairsystem.uml;
 class AppointmentManager{
 }
 
-class Business {
-  * -<@> 1 AppointmentManager;
-}
-
-
-
 class Service {
   * -<@> 1 AppointmentManager;
   String name;
@@ -28,7 +22,6 @@ class User{
 
 class Technician {
     isA User;
-    autounique id;
 }
 
 class Customer {
@@ -53,7 +46,7 @@ class TechnicianHour {
 
 class BusinessHour {
   isA WorkHour;
-  * -<@> 1 Business;
+  * -<@> 1 AppointmentManager;
 }
 	
 class Appointment {

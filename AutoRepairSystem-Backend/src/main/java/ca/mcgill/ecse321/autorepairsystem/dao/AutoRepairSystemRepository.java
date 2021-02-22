@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.mcgill.ecse321.autorepairsystem.model.Administrator;
 import ca.mcgill.ecse321.autorepairsystem.model.Appointment;
 import ca.mcgill.ecse321.autorepairsystem.model.AppointmentManager;
-import ca.mcgill.ecse321.autorepairsystem.model.Business;
 import ca.mcgill.ecse321.autorepairsystem.model.BusinessHour;
 import ca.mcgill.ecse321.autorepairsystem.model.Customer;
 import ca.mcgill.ecse321.autorepairsystem.model.Service;
@@ -30,16 +29,16 @@ public class AutoRepairSystemRepository {
 	EntityManager entityManager;
 
 	@Transactional
-	public Business createBusiness(AppointmentManager appointmentManager) {
-		Business b = new Business(appointmentManager);
-		entityManager.persist(b);
-		return b;
+	public Service createService(String name, int duration, int price) {
+		Service s = new Service(name,duration,price);
+		entityManager.persist(s);
+		return s;
 	}
 
 	@Transactional
-	public Business getBusiness(Integer id) {
-		Business b = entityManager.find(Business.class, id);
-		return b;
+	public Service getService(String name) {
+		Service s = entityManager.find(Service.class, name);
+		return s;
 	}
 
 	@Transactional
