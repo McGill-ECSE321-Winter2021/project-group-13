@@ -32,9 +32,4 @@ public class Service{
 	    return this.price;
 	}
 	
-	public Service(String name, int duration, int price) {
-		this.name = name;
-		this.duration = duration;
-		this.price = price;
-	}
 }

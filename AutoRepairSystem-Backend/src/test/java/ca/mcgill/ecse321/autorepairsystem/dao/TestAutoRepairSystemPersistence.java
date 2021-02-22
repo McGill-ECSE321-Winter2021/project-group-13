@@ -96,6 +96,28 @@ public class TestAutoRepairSystemPersistence {
 		assertEquals(username, administrator.getUsername());
 		
 	}
+	@Test
+	public void testPersistAndLoadService() {
+		String name = "tire change";
+		int duration = 2;
+		int price = 30;
+		
+		Service service = new Service (); 
+		
+		service.setName(name);
+		service.setDuration(duration);
+		service.setPrice(price);
+	
+		serviceRepository.save(service);
+	
+		service=null;
+		
+		service=serviceRepository.findServiceByname(name);
+		assertNotNull(service);
+		assertEquals(name, service.getName());
+		
+		
+	}
 	
 
 }

@@ -30,7 +30,10 @@ public class AutoRepairSystemRepository {
 
 	@Transactional
 	public Service createService(String name, int duration, int price) {
-		Service s = new Service(name,duration,price);
+		Service s = new Service();
+		s.setName(name);
+		s.setDuration(duration);
+		s.setPrice(price);
 		entityManager.persist(s);
 		return s;
 	}
