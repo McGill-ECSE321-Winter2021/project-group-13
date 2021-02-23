@@ -28,7 +28,7 @@ Name            | Team Roles         | Individual Efforts
 --------------- |------------------- |-------------------
 Edgar Desnos    | Github Setup, Requirements, Use-Case Diagram | 14 hours
 Charles Wetaski ||
-Ezra Gomolin    | Requirements Model, UML Diagram, Use Case Specification |15 hours                   
+Ezra Gomolin    | Requirements Model, Persistance Test, Use Case Specification |15 hours                   
 Hassan Kanj     | Spring, Travis CI, Heroku | 14 hours
 Henri Rofiq     |Persistence and Management|15 hours
 
