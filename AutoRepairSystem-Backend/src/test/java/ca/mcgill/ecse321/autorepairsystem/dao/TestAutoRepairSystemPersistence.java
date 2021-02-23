@@ -192,17 +192,26 @@ public class TestAutoRepairSystemPersistence {
 	assertNotNull(customer);
 	assertEquals(username,customer.getUsername());
 	}
-
-	private Date getCurrentDate() {
-		long millis=System.currentTimeMillis();
-		java.sql.Date date = new java.sql.Date(millis);
-		return date;
-	}
-	
-	private Time getCurrentTime() {
-		long millis=System.currentTimeMillis();
-		java.sql.Time time = new java.sql.Time(millis);
-		return time;
+		
+	public void testPersistAndLoadBusinessHour() {
+		Time starttime =java.sql.Time.valueOf(LocalTime.of(11, 35));;
+		Time endtime =java.sql.Time.valueOf(LocalTime.of(12, 35));;
+		Date date = java.sql.Date.valueOf(LocalDate.of(2020, Month.JANUARY, 31));
+		
+		BusinessHour workhour = new BusinessHour();
+		workhour.setId(2);
+		workhour.setDate(date);
+		workhour.setEndTime(endtime);
+		workhour.setStartTime(starttime);
+		workhour.setWorkBreak(null);
+		
+		businessHourRepository.save(workhour);
+		
+		workhour = null;
+		
+		workhour = businessHourRepository.findBusinessHourById(2);
+		assertNotNull(workhour);
+		assertEquals(2, workhour.getId());
 	}
 	
 	
@@ -310,4 +319,78 @@ public class TestAutoRepairSystemPersistence {
 		
 	}
 	
+	@Test	
+	public void testPersistAndLoadTechnician() {
+		
+		Technician tech = new Technician ();
+		tech.setAppointment(null);
+		tech.setEmail(null);
+		tech.setName(null);
+		tech.setPassword(null);
+		tech.setTechnicianHour(null);
+		tech.setUsername("Ezra1");
+		technicianRepository.save(tech);
+		
+		technicianRepository.save(tech);
+		tech = null;
+		
+		tech = technicianRepository.findTechnicianByUsername("Ezra1");
+		assertNotNull(tech);
+		assertEquals("Ezra1", tech.getUsername());
+		
+		
+	} 
+	
+
+	@Test
+	public void testPersistAndLoadTechnicianHour() {
+		
+	
+		Technician tech = new Technician ();
+		tech.setAppointment(null);
+		tech.setEmail(null);
+		tech.setName(null);
+		tech.setPassword(null);
+		tech.setTechnicianHour(null);
+		tech.setUsername("Ezra");
+		technicianRepository.save(tech);
+		
+		TechnicianHour workhour = new TechnicianHour ();
+		workhour.setDate(null);
+		workhour.setEndTime(null);
+		workhour.setId(2);
+		workhour.setStartTime(null);
+		workhour.setWorkBreak(null);
+		workhour.setTechnician(tech);
+		technicianHourRepository.save(workhour);
+		
+		
+		workhour = null;
+		
+		workhour = technicianHourRepository.findTechnicianHourByTechnician(tech);
+		assertNotNull(workhour);
+		assertEquals(2, workhour.getId());
+		
+        workhour = null;
+		
+		workhour = technicianHourRepository.findTechnicianHourById(2);
+		assertNotNull(workhour);
+		assertEquals(2, workhour.getId());
+		
+	}
+	
+
+	
+	
+	private Date getCurrentDate() {
+		long millis=System.currentTimeMillis();
+		java.sql.Date date = new java.sql.Date(millis);
+		return date;
+	}
+	
+	private Time getCurrentTime() {
+		long millis=System.currentTimeMillis();
+		java.sql.Time time = new java.sql.Time(millis);
+		return time;
+	}
 }

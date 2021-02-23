@@ -7,7 +7,7 @@
 Name            | Student ID         
 --------------- |------------------- 
 Edgar Desnos    |260910150| 
-Charles Wetaski ||
+Charles Wetaski |260714346|
 Ezra Gomolin    |260926917|                   
 Hassan Kanj     |260920737|
 Henri Rofiq     |260805473|
@@ -27,7 +27,7 @@ Henri Rofiq     |260805473|
 Name            | Team Roles         | Individual Efforts
 --------------- |------------------- |-------------------
 Edgar Desnos    | Github Setup, Requirements, Use-Case Diagram | 14 hours
-Charles Wetaski ||
+Charles Wetaski |UML Modeling, Persistance and Persistence Testing, creating CRUD repo| 15 hours
 Ezra Gomolin    | Requirements Model, Persistance Test, Use Case Specification |15 hours                   
 Hassan Kanj     | Spring, Travis CI, Heroku | 14 hours
 Henri Rofiq     |Persistence and Management|15 hours

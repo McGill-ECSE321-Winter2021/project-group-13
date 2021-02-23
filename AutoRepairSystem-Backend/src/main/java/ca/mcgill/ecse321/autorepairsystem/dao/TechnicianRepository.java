@@ -6,5 +6,6 @@ import java.util.*;
 import ca.mcgill.ecse321.autorepairsystem.model.Technician;
 
 public interface TechnicianRepository extends CrudRepository<Technician, String>{
+	Technician findTechnicianByUsername(String username);
 
 }
