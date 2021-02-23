@@ -1,18 +1,21 @@
 package ca.mcgill.ecse321.autorepairsystem.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+
 import java.util.Set;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Id;
 import java.sql.Time;
 import java.sql.Date;
-
+import javax.persistence.JoinColumn;
 @Entity
 public class Appointment{
    private Set<Service> service;
    
-   @ManyToMany
+   @ManyToMany(cascade = {CascadeType.ALL})
    public Set<Service> getService() {
       return this.service;
    }
@@ -23,7 +26,8 @@ public class Appointment{
    
    private Technician technician;
    
-   @ManyToOne(optional=false)
+   @ManyToOne(optional=true, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+   @JoinColumn(name="technicianUsername")
    public Technician getTechnician() {
       return this.technician;
    }
@@ -34,7 +38,8 @@ public class Appointment{
    
    private Customer customer;
    
-   @ManyToOne(optional=false)
+   @ManyToOne(optional=true, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+   @JoinColumn(name="customerUsername")
    public Customer getCustomer() {
       return this.customer;
    }

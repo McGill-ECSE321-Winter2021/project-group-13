@@ -11,6 +11,8 @@ public interface AppointmentRepository extends CrudRepository<Appointment, Strin
 
 	List<Appointment> findByCustomer(Customer username);
 	
+	List<Appointment> findByTechnician(Customer username);
+	
 	boolean existsByCustomerAndService(Customer username, Service serviceName);
 	
 	List<Appointment> findByCustomerAndService(Customer username, Service serviceName);

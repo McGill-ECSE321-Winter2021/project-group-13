@@ -2,6 +2,8 @@ package ca.mcgill.ecse321.autorepairsystem.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.*;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -117,6 +119,88 @@ public class TestAutoRepairSystemPersistence {
 		assertEquals(name, service.getName());
 		
 		
+	}
+	
+	@Test
+	public void testPersistAndLoadCustomer() {
+
+	String username = "TestPerson";
+	String name = "Henri";
+	String password = "123Sesame";
+	String email = "mail.mcgill.ca";
+	
+	String username2 = "TestTechnician";
+	String name2 = "TechnicianName";
+	String password2 = "1234Sesame";
+	String email2 = "mail.mcgill.ca2";
+	
+	Date date = getCurrentDate();
+	Time startTime = getCurrentTime();
+	LocalTime localtime = startTime.toLocalTime();
+	localtime = localtime.plusMinutes(60);
+	Time endTime = java.sql.Time.valueOf(localtime.toString());
+	
+	
+	Set<Appointment> appointments = new HashSet<>();
+	Appointment testAppointment = new Appointment();
+	testAppointment.setId(321);
+	appointments.add(testAppointment);
+	Customer customer = new Customer();
+	customer.setUsername(username);
+	customer.setName(name);
+	customer.setPassword(password);
+	customer.setEmail(email);
+	customer.setAppointment(appointments);
+	
+	
+	Technician technician = new Technician();
+	technician.setUsername(username2);
+	technician.setName(name2);
+	technician.setPassword(password2);
+	technician.setEmail(email2);
+	technician.setAppointment(appointments);
+	
+	Service service = new Service();
+	service.setName("service1");
+	service.setDuration(10);
+	service.setPrice(100);
+	Set<Service> services = new HashSet<>();
+	services.add(service);
+	
+	testAppointment.setCustomer(customer);
+	testAppointment.setTechnician(technician);
+	testAppointment.setService(services);
+	testAppointment.setDate(date);
+	testAppointment.setStartTime(startTime);
+	testAppointment.setEndTime(endTime);
+
+	userRepository.save(customer);
+	appointmentRepository.save(testAppointment);
+	customerRepository.save(customer);
+	technicianRepository.save(technician);
+	System.out.println("Test1" + customer.getAppointment().toString());
+	
+	customer = null;
+	//testAppointment = null;
+	customer = customerRepository.findCustomerByUsername(username);
+	assertNotNull(customer);
+	assertEquals(username, customer.getUsername());
+	customer = null;
+	customer = customerRepository.findCustomerByAppointment(testAppointment);
+	assertNotNull(customer);
+	assertEquals(username,customer.getUsername());
+	}
+
+	private Date getCurrentDate() {
+		long millis=System.currentTimeMillis();
+		java.sql.Date date = new java.sql.Date(millis);
+		return date;
+	}
+	
+	private Time getCurrentTime() {
+		long millis=System.currentTimeMillis();
+		java.sql.Time time = new java.sql.Time(millis);
+		return time;
 	}
 	
 
