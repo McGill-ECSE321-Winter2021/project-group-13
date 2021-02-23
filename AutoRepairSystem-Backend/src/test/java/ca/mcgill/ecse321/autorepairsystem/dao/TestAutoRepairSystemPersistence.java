@@ -192,29 +192,7 @@ public class TestAutoRepairSystemPersistence {
 	assertNotNull(customer);
 	assertEquals(username,customer.getUsername());
 	}
-		
-	public void testPersistAndLoadBusinessHour() {
-		Time starttime =java.sql.Time.valueOf(LocalTime.of(11, 35));;
-		Time endtime =java.sql.Time.valueOf(LocalTime.of(12, 35));;
-		Date date = java.sql.Date.valueOf(LocalDate.of(2020, Month.JANUARY, 31));
-		
-		BusinessHour workhour = new BusinessHour();
-		workhour.setId(2);
-		workhour.setDate(date);
-		workhour.setEndTime(endtime);
-		workhour.setStartTime(starttime);
-		workhour.setWorkBreak(null);
-		
-		businessHourRepository.save(workhour);
-		
-		workhour = null;
-		
-		workhour = businessHourRepository.findBusinessHourById(2);
-		assertNotNull(workhour);
-		assertEquals(2, workhour.getId());
-	}
-	
-	
+			
 	@Test
 	public void testPersistAndLoadAppointment() {
 		Time starttime =java.sql.Time.valueOf(LocalTime.of(11, 35));;
