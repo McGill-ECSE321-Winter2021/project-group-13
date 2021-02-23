@@ -8,6 +8,7 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -96,6 +97,7 @@ public class TestAutoRepairSystemPersistence {
 		assertEquals(username, administrator.getUsername());
 		
 	}
+	
 	@Test
 	public void testPersistAndLoadService() {
 		String name = "tire change";
@@ -119,5 +121,109 @@ public class TestAutoRepairSystemPersistence {
 		
 	}
 	
-
+	
+	@Test
+	public void testPersistAndLoadAppointment() {
+		Time starttime =java.sql.Time.valueOf(LocalTime.of(11, 35));;
+		Time endtime =java.sql.Time.valueOf(LocalTime.of(12, 35));;
+		Date date = java.sql.Date.valueOf(LocalDate.of(2020, Month.JANUARY, 31));
+		Integer id=25;
+		
+	
+		Technician tech = new Technician ();
+		tech.setAppointment(null);
+		tech.setEmail(null);
+		tech.setName(null);
+		tech.setPassword(null);
+		tech.setTechnicianHour(null);
+		tech.setUsername("Ezra1");
+		technicianRepository.save(tech);
+		
+		Customer customer = new Customer ();
+		customer.setAppointment(null);
+		customer.setEmail("Ezra2");
+		customer.setName("Ezra3");
+		customer.setPassword("Ezra4");
+		customer.setUsername("Ezra5");
+		customerRepository.save(customer);
+		
+		Appointment appointment = new Appointment ();
+		appointment.setCustomer(customer);
+		appointment.setTechnician(tech);
+		appointment.setService(null);;
+		appointment.setStartTime(starttime);
+		appointment.setEndTime(endtime);
+		appointment.setDate(date);
+		appointment.setId(id);
+		
+		appointmentRepository.save(appointment);
+		
+		appointment=null;
+		
+		appointment=appointmentRepository.findAppointmentByCustomer(customer);
+		assertNotNull(appointment);
+		assertEquals(id, appointment.getId());
+		
+		appointment=null;
+		appointment=appointmentRepository.findAppointmentByTechnician(tech);
+		assertNotNull(appointment);
+		assertEquals(date, appointment.getDate());
+		
+		appointment=null;
+		appointment=appointmentRepository.findAppointmentById(id);
+		assertNotNull(appointment);
+		assertEquals(id, appointment.getId());
+		
+		
+			
+	}
+	
+	@Test
+	public void testPersistAndLoadWorkBreak() {
+		Time startbreak =java.sql.Time.valueOf(LocalTime.of(11, 35));;
+		Time endbreak =java.sql.Time.valueOf(LocalTime.of(12, 35));;
+	
+	
+		Technician tech = new Technician ();
+		tech.setAppointment(null);
+		tech.setEmail(null);
+		tech.setName(null);
+		tech.setPassword(null);
+		tech.setTechnicianHour(null);
+		tech.setUsername("Ezra");
+		technicianRepository.save(tech);
+		
+		TechnicianHour workhour = new TechnicianHour ();
+		workhour.setDate(null);
+		workhour.setEndTime(null);
+		workhour.setId(2);
+		workhour.setStartTime(null);
+		workhour.setWorkBreak(null);
+		workhour.setTechnician(tech);
+		technicianHourRepository.save(workhour);
+		
+		
+		WorkBreak workbreak = new WorkBreak ();
+		workbreak.setStartBreak(startbreak);
+		workbreak.setEndBreak(endbreak);
+		workbreak.setWorkHour(workhour);
+		
+		
+		
+		workBreakRepository.save(workbreak);
+		
+		workbreak=null;
+		
+		workbreak=workBreakRepository.findWorkBreakByStartBreak(startbreak);
+		assertNotNull(workbreak);
+		assertEquals(startbreak, workbreak.getStartBreak());
+		
+		workbreak=null;
+		
+		workbreak=workBreakRepository.findWorkBreakByWorkHour(workhour);
+		assertNotNull(workbreak);
+		assertEquals(startbreak, workbreak.getStartBreak());
+		
+	}
+	
 }
