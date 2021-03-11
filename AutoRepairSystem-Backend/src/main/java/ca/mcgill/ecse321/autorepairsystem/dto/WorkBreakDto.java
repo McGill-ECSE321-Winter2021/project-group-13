@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.eventregistration.dto;
+package ca.mcgill.ecse321.autorepairsystem.dto;
 
 public class WorkBreakDto {
 
