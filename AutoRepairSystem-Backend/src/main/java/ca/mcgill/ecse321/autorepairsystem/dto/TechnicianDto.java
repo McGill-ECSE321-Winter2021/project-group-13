@@ -6,7 +6,7 @@ import java.util.Set;
 public class TechnicianDto extends UserDto {
 	
 	private Set <AppointmentDto> appointments;
-	private Set<TechnicianHourDto> technicianhours;
+	private Set <TechnicianHourDto> technicianhours;
 	
 	public TechnicianDto() {}
 	
