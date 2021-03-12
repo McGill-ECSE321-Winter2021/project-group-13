@@ -24,6 +24,8 @@ public class AutoRepairSystemService {
 	UserRepository userRepository;
 	@Autowired
 	AdministratorRepository administratorRepository;
+	@Autowired
+	TechnicianRepository technicianRepository;
 	
 	//Log-in generic user...either customer, technician, or admin
 		@Transactional
@@ -189,6 +191,144 @@ public class AutoRepairSystemService {
 	@Transactional
 	public List<User> getAllUsers() {
 		return toList(userRepository.findAll());
+	}
+	
+	//Technician service methods
+	@Transactional
+	public Technician createTechnician(String username, String password, String name, String email) throws IllegalArgumentException {
+		
+		if (username == null || username == "") {
+			throw new IllegalArgumentException("A valid username must be provided");
+		}
+		
+		if (technicianRepository.findTechnicianByUsername(username) != null) {
+			throw new IllegalArgumentException("Technician with username " + username + " already exists");
+		}
+		
+		
+		if (password == null || password == "") {
+			throw new IllegalArgumentException("A valid password must be provided");
+		}
+		
+		if (name == null || name == "") {
+			throw new IllegalArgumentException("A valid name must be provided");
+		}
+		
+		if (email == null || email == "") {
+			throw new IllegalArgumentException("An valid email must be provided");
+		}
+		
+		if (userRepository.findUserByEmail(email) != null) {
+			throw new IllegalArgumentException("The email already exits!");
+		}
+		
+		Technician technician = new Technician();
+		technician.setUsername(username);
+		technician.setPassword(password);
+		technician.setName(name);
+		technician.setEmail(email);
+		
+		Set<Appointment> emptyAppointments = new HashSet<Appointment>();
+		technician.setAppointment(emptyAppointments);
+		Set<TechnicianHour> emptyTechnicianHour = new HashSet<TechnicianHour>();
+		technician.setTechnicianHour(emptyTechnicianHour);
+		
+		technicianRepository.save(technician);
+		return technician;
+	}
+	
+	@Transactional
+	public Technician getTechnicianByUsername(String username) throws IllegalArgumentException{
+		Technician technician = technicianRepository.findTechnicianByUsername(username);
+		
+		if (technician == null) {
+			throw new IllegalArgumentException("Technician cannot be found.");
+		}
+		
+		return technician;
+	}
+	
+	@Transactional
+	public Technician getTechnicianByAppointment(Appointment appointment) {
+		Technician technician = technicianRepository.findTechnicianByAppointment(appointment);
+		
+		if (technician == null) {
+			throw new IllegalArgumentException("Technician cannot be found.");
+		}
+		
+		return technician;
+	}
+	
+	@Transactional
+	public Technician getTechnicianByTechnicianHour(TechnicianHour technicianHour) {
+		Technician technician = technicianRepository.findTechnicianByTechnicianHour(technicianHour);
+		
+		if (technician == null) {
+			throw new IllegalArgumentException("Technician cannot be found.");
+		}
+		
+		return technician;
+	}
+	
+	
+	@Transactional
+	public List<Technician> getAllTechnician(){
+		return toList(technicianRepository.findAll());
+	}
+	
+	@Transactional
+	public Technician deleteTechnician(String username) throws IllegalArgumentException{
+		Technician technician = technicianRepository.findTechnicianByUsername(username);
+		
+		if (technician == null) {
+			throw new IllegalArgumentException("Technician cannot be found.");
+		}
+		
+		technicianRepository.delete(technician);
+		
+		return technician;
+	}
+	
+	
+	@Transactional
+	public Technician updateTechnician(String username, String password, String name, String email, Set<TechnicianHour> technicianHour, Set<Appointment> appointment) throws IllegalArgumentException {
+		
+		if (username == null || username == "") {
+			throw new IllegalArgumentException("A valid username must be provided");
+		}
+		
+		Technician technician = technicianRepository.findTechnicianByUsername(username);
+		
+		if (technician == null) {
+			throw new IllegalArgumentException("Username cannot be found!");
+		}
+		
+		if (password == null || password == "") {
+			throw new IllegalArgumentException("A valid password must be provided");
+		}
+		
+		if (name == null || name == "") {
+			throw new IllegalArgumentException("A valid name must be provided");
+		}
+		
+		if (email == null || email == "") {
+			throw new IllegalArgumentException("An valid email must be provided");
+		}
+		
+		if ((!email.equals(technician.getEmail())&&(userRepository.findUserByEmail(email) != null))) {
+			throw new IllegalArgumentException("Email already exists!");
+		}
+		
+		technician.setUsername(username);
+		technician.setPassword(password);
+		technician.setName(name);
+		technician.setEmail(email);
+		
+		technician.setAppointment(appointment);
+		technician.setTechnicianHour(technicianHour);
+		
+		technicianRepository.save(technician);
+		return technician;
 	}
 	
 	
