@@ -28,17 +28,19 @@ public class AutoRepairSystemService {
 	TechnicianRepository technicianRepository;
 	
 	//Log-in generic user...either customer, technician, or admin
-		@Transactional
-		public User signIn(String userID, String password) throws IllegalArgumentException {
-			User user = userRepository.findById(userID).orElse(null);
-			if(user == null) {
-				throw new IllegalArgumentException("Username cannot be found!");
-			} else if(user.getPassword().equals(password) == false) {
-				throw new IllegalArgumentException("Password is wrong!.");
-			}
-			
-			return user;
+	@Transactional
+	public User signIn(String userID, String password) throws IllegalArgumentException {
+		User user = userRepository.findById(userID).orElse(null);
+		if(user == null) {
+			throw new IllegalArgumentException("Username cannot be found!");
+		} else if(user.getPassword().equals(password) == false) {
+			throw new IllegalArgumentException("Password is wrong!.");
 		}
+		
+		return user;
+	}
+		
+		
 	//Customer service methods
 	
 	@Transactional
@@ -48,20 +50,24 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Customer with username " + username + " already exists");
 		}
 		
-		if (username == null || username == "") {
+		if (username == null || username.isEmpty()) {
 			throw new IllegalArgumentException("A username must be provided");
 		}
 		
-		if (password == null || password == "") {
+		if (password == null || password.isEmpty()) {
 			throw new IllegalArgumentException("A password must be provided");
 		}
 		
-		if (name == null || name == "") {
+		if (name == null || name.isEmpty()) {
 			throw new IllegalArgumentException("A name must be provided");
 		}
 		
-		if (email == null || email == "") {
+		if (email == null || email.isEmpty()) {
 			throw new IllegalArgumentException("An email must be provided");
+		}
+		
+		if (customerRepository.findCustomerByEmail(email) == null) {
+			throw new IllegalArgumentException("Account with the provided email already exists");
 		}
 		
 		Customer customer = new Customer();
@@ -76,14 +82,24 @@ public class AutoRepairSystemService {
 	}
 	
 	@Transactional
-	public Customer getCustomerByUsername(String username) {
+	public Customer getCustomerByUsername(String username) throws IllegalArgumentException {
 		Customer customer = customerRepository.findCustomerByUsername(username);
+		
+		if (customer == null) {
+			throw new IllegalArgumentException("No customer exists with username " + username);
+		}
+		
 		return customer;
 	}
 	
 	@Transactional
-	public Customer getCustomerByAppointment(Appointment appointment) {
+	public Customer getCustomerByAppointment(Appointment appointment) throws IllegalArgumentException {
 		Customer customer = customerRepository.findCustomerByAppointment(appointment);
+		
+		if (customer == null) {
+			throw new IllegalArgumentException("No customer linked to the provided appointment");
+		}
+		
 		return customer;
 	}
 	
@@ -115,8 +131,13 @@ public class AutoRepairSystemService {
 
 	
 	@Transactional
-	public Administrator getAdministrator(String username) {
+	public Administrator getAdministrator(String username) throws IllegalArgumentException {
 		Administrator administrator = administratorRepository.findAdministratorByUsername(username);
+		
+		if (administrator == null) {
+			throw new IllegalArgumentException("Administrator cannot be found");
+		}
+		
 		return administrator;
 	}
 	
@@ -193,7 +214,9 @@ public class AutoRepairSystemService {
 		return toList(userRepository.findAll());
 	}
 	
+	
 	//Technician service methods
+	
 	@Transactional
 	public Technician createTechnician(String username, String password, String name, String email) throws IllegalArgumentException {
 		
@@ -272,7 +295,7 @@ public class AutoRepairSystemService {
 	
 	
 	@Transactional
-	public List<Technician> getAllTechnician(){
+	public List<Technician> getAllTechnicians(){
 		return toList(technicianRepository.findAll());
 	}
 	
