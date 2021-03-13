@@ -26,6 +26,8 @@ public class AutoRepairSystemService {
 	AdministratorRepository administratorRepository;
 	@Autowired
 	TechnicianRepository technicianRepository;
+	@Autowired
+	AppointmentRepository appointmentRepository;
 	
 	//Log-in generic user...either customer, technician, or admin
 	@Transactional
@@ -66,7 +68,7 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("An email must be provided");
 		}
 		
-		if (customerRepository.findCustomerByEmail(email) == null) {
+		if (customerRepository.findCustomerByEmail(email) != null) {
 			throw new IllegalArgumentException("Account with the provided email already exists");
 		}
 		
@@ -119,13 +121,13 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Specified customer does not exist");
 		}
 		
+		customerRepository.delete(customer);
 		Administrator administrator = new Administrator();
 		administrator.setUsername(username);
 		administrator.setPassword(customer.getPassword());
 		administrator.setName(customer.getName());
 		administrator.setEmail(customer.getEmail());
 		administratorRepository.save(administrator);
-		customerRepository.delete(customer);
 		return administrator;
 	}
 
@@ -352,6 +354,17 @@ public class AutoRepairSystemService {
 		
 		technicianRepository.save(technician);
 		return technician;
+	}
+	
+	//Appointment service methods
+	
+	@Transactional
+	public Set<Appointment> getAppointmentsAttendedByCustomer(Customer customer) {
+		Set<Appointment> appointmentsAttendedByCustomer = new HashSet<Appointment>();
+		for (Appointment a : appointmentRepository.findByCustomer(customer)) {
+			appointmentsAttendedByCustomer.add(a);
+		}
+		return appointmentsAttendedByCustomer;
 	}
 	
 	
