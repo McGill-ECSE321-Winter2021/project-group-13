@@ -116,7 +116,7 @@ public class TestAutoRepairSystemPersistence {
 	
 		service=null;
 		
-		service=serviceRepository.findServiceByname(name);
+		service=serviceRepository.findServiceByName(name);
 		assertNotNull(service);
 		assertEquals(name, service.getName());
 		

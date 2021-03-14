@@ -28,6 +28,10 @@ public class AutoRepairSystemService {
 	TechnicianRepository technicianRepository;
 	@Autowired
 	AppointmentRepository appointmentRepository;
+	@Autowired
+	ServiceRepository serviceRepository;
+	@Autowired
+	WorkHourRepository workHourRepository;
 	
 	//Log-in generic user...either customer, technician, or admin
 	@Transactional
@@ -201,6 +205,11 @@ public class AutoRepairSystemService {
 	
 	@Transactional
 	public User deleteUser(String username) throws IllegalArgumentException {
+		
+		if (nonValidString(username)) {
+			throw new IllegalArgumentException("Must enter a proper username!");
+		}
+		
 		User user = userRepository.findUserByUsername(username);
 		
 		if (user == null) {
@@ -264,6 +273,11 @@ public class AutoRepairSystemService {
 	
 	@Transactional
 	public Technician getTechnicianByUsername(String username) throws IllegalArgumentException{
+		
+		if (username == null || username == "") {
+			throw new IllegalArgumentException("A valid username must be provided");
+		}
+		
 		Technician technician = technicianRepository.findTechnicianByUsername(username);
 		
 		if (technician == null) {
@@ -303,6 +317,11 @@ public class AutoRepairSystemService {
 	
 	@Transactional
 	public Technician deleteTechnician(String username) throws IllegalArgumentException{
+		
+		if (username == null || username == "") {
+			throw new IllegalArgumentException("A valid username must be provided");
+		}
+		
 		Technician technician = technicianRepository.findTechnicianByUsername(username);
 		
 		if (technician == null) {
@@ -316,7 +335,7 @@ public class AutoRepairSystemService {
 	
 	
 	@Transactional
-	public Technician updateTechnician(String username, String password, String name, String email, Set<TechnicianHour> technicianHour, Set<Appointment> appointment) throws IllegalArgumentException {
+	public Technician updateTechnician(String username, String password, String name, String email) throws IllegalArgumentException {
 		
 		if (username == null || username == "") {
 			throw new IllegalArgumentException("A valid username must be provided");
@@ -344,12 +363,48 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Email already exists!");
 		}
 		
+		
 		technician.setUsername(username);
 		technician.setPassword(password);
 		technician.setName(name);
 		technician.setEmail(email);
 		
+		technicianRepository.save(technician);
+		return technician;
+	}
+	
+	@Transactional
+	public Technician updateTechnicianAppointment(String username, Set<Appointment> appointment) throws IllegalArgumentException {
+		
+		if (username == null || username == "") {
+			throw new IllegalArgumentException("A valid username must be provided");
+		}
+		
+		Technician technician = technicianRepository.findTechnicianByUsername(username);
+		
+		if (technician == null) {
+			throw new IllegalArgumentException("Username cannot be found!");
+		}
+
 		technician.setAppointment(appointment);
+		
+		technicianRepository.save(technician);
+		return technician;
+	}
+	
+	@Transactional
+	public Technician updateTechnicianTechnicianHour(String username, Set<TechnicianHour> technicianHour) throws IllegalArgumentException {
+		
+		if (username == null || username == "") {
+			throw new IllegalArgumentException("A valid username must be provided");
+		}
+		
+		Technician technician = technicianRepository.findTechnicianByUsername(username);
+		
+		if (technician == null) {
+			throw new IllegalArgumentException("Username cannot be found!");
+		}
+
 		technician.setTechnicianHour(technicianHour);
 		
 		technicianRepository.save(technician);
@@ -367,6 +422,103 @@ public class AutoRepairSystemService {
 		return appointmentsAttendedByCustomer;
 	}
 	
+	//Service service methods
+	
+	@Transactional
+	public Service createService(String name, int duration, int price) throws IllegalArgumentException {
+		if (name == null || name == "" ) {
+			throw new IllegalArgumentException("A valid service name must be provide!");
+		}
+		
+		if (serviceRepository.findServiceByName(name) != null) {
+			throw new IllegalArgumentException("Service with username " + name + " already exists");
+		}
+		
+		if (duration < 0) {
+			throw new IllegalArgumentException("Duration cannot be less than zero!");
+		}
+		
+		if(price < 0) {
+			throw new IllegalArgumentException("Price cannot be less than zero!");
+		}
+		
+		return null;
+		
+		/*Service service = new Service();
+		service.setName(name);
+		service.setDuration(duration);
+		service.setPrice(price);
+		
+		serviceRepository.save(service);
+		return service;*/
+	}
+	 //WorkHour service methods
+	
+	@Transactional
+	public WorkHour getWorkHour(Integer id) throws IllegalArgumentException {
+		WorkHour workHour = workHourRepository.findWorkHourById(id);
+		
+		if (workHour == null) {
+			throw new IllegalArgumentException("Work Hour cannot be found!");
+		}
+		return workHour;
+	}
+	
+	
+	@Transactional
+	public WorkHour updateWorkHour(Integer id, Time startTime, Time endTime, Date date) throws IllegalArgumentException {
+		
+		if (id == null) {
+			throw new IllegalArgumentException("A valid work hour ID must be provided!");
+		}
+		
+		WorkHour workHour = workHourRepository.findWorkHourById(id);
+		
+		if (workHour == null) {
+			throw new IllegalArgumentException("Work Hour cannot be found");
+		}
+		
+		if (date == null) {
+			throw new IllegalArgumentException("A valid date must be provided!");
+		}
+		
+		if (startTime == null || startTime.after(endTime) == true) {
+			throw new IllegalArgumentException("A valid start time must be provided! (non-empty or before end time)");
+		}
+		
+		if (endTime == null || endTime.before(startTime) == true) {
+			throw new IllegalArgumentException("A valid end time must be provided! (non-empty or after start time)");
+		}
+		
+		workHour.setDate(date);
+		workHour.setStartTime(startTime);
+		workHour.setEndTime(endTime);
+		workHourRepository.save(workHour);
+		
+		return workHour;
+	}
+	
+	@Transactional
+	public WorkHour deleteWorkHour(Integer id) throws IllegalArgumentException {
+		
+		if (id == null) {
+			throw new IllegalArgumentException("A valid work hour ID must be provided!");
+		}
+		
+		WorkHour workHour = workHourRepository.findWorkHourById(id);
+		
+		if (workHour == null) {
+			throw new IllegalArgumentException("Specified Work Hour doesn't exist!");
+		}
+		
+		workHourRepository.delete(workHour);
+		return workHour;
+	}
+	
+	@Transactional
+	public List<WorkHour> getAllWorkHours(){
+		return toList(workHourRepository.findAll());
+	}
 	
 	//Helper methods
 	
