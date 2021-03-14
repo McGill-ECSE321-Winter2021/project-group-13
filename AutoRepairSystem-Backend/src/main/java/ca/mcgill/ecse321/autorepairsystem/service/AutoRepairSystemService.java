@@ -32,6 +32,8 @@ public class AutoRepairSystemService {
 	ServiceRepository serviceRepository;
 	@Autowired
 	WorkHourRepository workHourRepository;
+	@Autowired
+	WorkBreakRepository workBreakRepository;
 	
 	//Log-in generic user...either customer, technician, or admin
 	@Transactional
@@ -551,6 +553,147 @@ public class AutoRepairSystemService {
 	public List<WorkHour> getAllWorkHours(){
 		return toList(workHourRepository.findAll());
 	}
+	
+	// WorkBreak service methods
+	@Transactional
+	public WorkBreak createWorkBreak(Integer workHourId, Time startTime, Time endTime) throws IllegalArgumentException {
+		
+		if (workHourId == null) {
+			throw new IllegalArgumentException("A valid work hour ID must be provided!");
+		}
+		
+		if (startTime.toLocalTime().isAfter(endTime.toLocalTime())) {
+			throw new IllegalArgumentException("Start time must be before end time");
+		}
+		
+		WorkHour workHour = workHourRepository.findWorkHourById(workHourId);
+		
+		if (workHour == null) {
+			throw new IllegalArgumentException("Specified Work Hour doesn't exist!");
+		}
+		
+		Set<WorkBreak> workBreaks = workHour.getWorkBreak();
+		
+		// Make sure work break does not overlap with existing work break
+		for(WorkBreak w : workBreaks) {
+			
+			if(!(startTime.toLocalTime().isBefore(w.getEndBreak().toLocalTime()))) {
+				continue;
+			} else if(!(w.getStartBreak().toLocalTime().isBefore(endTime.toLocalTime()))) {
+				continue;
+			} else {
+				throw new IllegalArgumentException("Work Hour overlaps with existing work hour");
+			}
+		}
+		
+		WorkBreak workBreak = new WorkBreak();
+		workBreak.setStartBreak(startTime);
+		workBreak.setEndBreak(endTime);
+		
+		workBreaks.add(workBreak);
+		
+		workHour.setWorkBreak(workBreaks);
+		workHourRepository.save(workHour);
+		workBreakRepository.save(workBreak);
+		
+		return workBreak;
+	}
+	
+	@Transactional
+	public WorkBreak getWorkBreak(Integer workHourId, Time startTime) throws IllegalArgumentException {
+		
+		if (workHourId == null) {
+			throw new IllegalArgumentException("A valid work hour ID must be provided!");
+		}
+		
+		WorkHour workHour = workHourRepository.findWorkHourById(workHourId);
+		
+		if (workHour == null) {
+			throw new IllegalArgumentException("Specified Work Hour doesn't exist!");
+		}
+
+		WorkBreak workBreak = workBreakRepository.findByWorkHourAndStartBreak(workHour, startTime);
+		
+		if(workBreak == null) {
+			throw new IllegalArgumentException("Specified Work Break doesn't exist for specified Work Hour");
+		}
+		
+		return workBreak;
+		
+	}
+	
+	@Transactional
+	public WorkBreak updateWorkBreak(Integer workHourId, Time startTime, Time newStartTime, Time newEndTime) {
+		
+		if (workHourId == null) {
+			throw new IllegalArgumentException("A valid work hour ID must be provided!");
+		}
+		
+		WorkHour workHour = workHourRepository.findWorkHourById(workHourId);
+		
+		if (workHour == null) {
+			throw new IllegalArgumentException("Specified Work Hour doesn't exist!");
+		}
+		
+		Set<WorkBreak> workBreaks = workHour.getWorkBreak();
+		WorkBreak workBreak = workBreakRepository.findByWorkHourAndStartBreak(workHour, startTime);
+		
+
+		for (WorkBreak w : workBreaks) {
+			if(w.getStartBreak().toLocalTime().equals(workBreak.getStartBreak().toLocalTime())) {
+				continue;
+			} else if(!(newStartTime.toLocalTime().isBefore(w.getEndBreak().toLocalTime()))) {
+				continue;
+			} else if(!(w.getStartBreak().toLocalTime().isBefore(newEndTime.toLocalTime()))) {
+				continue;
+			} else {
+				throw new IllegalArgumentException("Updated Work Hour overlaps with existing work hour");
+			}
+		}
+		
+		workBreaks.remove(workBreak);
+		workBreak.setStartBreak(newStartTime);
+		workBreak.setEndBreak(newEndTime);
+		
+		workBreaks.add(workBreak);
+		
+		workHour.setWorkBreak(workBreaks);
+		workHourRepository.save(workHour);
+		workBreakRepository.save(workBreak);
+		return workBreak;
+		
+	}
+	
+	@Transactional
+	public WorkBreak DeleteWorkBreak(Integer workHourId, Time startTime) throws IllegalArgumentException {
+		
+		if (workHourId == null) {
+			throw new IllegalArgumentException("A valid work hour ID must be provided!");
+		}
+		
+		WorkHour workHour = workHourRepository.findWorkHourById(workHourId);
+		
+		if (workHour == null) {
+			throw new IllegalArgumentException("Specified Work Hour doesn't exist!");
+		}
+		
+		Set<WorkBreak> workBreaks = workHour.getWorkBreak();
+		
+		for (WorkBreak w : workBreaks) {
+			if(w.getStartBreak().equals(startTime)) {
+				workBreaks.remove(w);
+				workBreakRepository.delete(w);
+				workHour.setWorkBreak(workBreaks);
+				workHourRepository.save(workHour);
+				return(w);
+			}
+		}
+		
+		throw new IllegalArgumentException("Specified Work Break doesn't exist for specified Work Hour");
+		
+	}
+	
+	
 	
 	//Helper methods
 	
