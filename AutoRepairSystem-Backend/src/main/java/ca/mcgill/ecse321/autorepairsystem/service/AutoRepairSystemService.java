@@ -386,6 +386,10 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Username cannot be found!");
 		}
 
+		if (appointment == null) {
+			throw new IllegalArgumentException("Valid appointments must be provided!");
+		}
+		
 		technician.setAppointment(appointment);
 		
 		technicianRepository.save(technician);
@@ -403,6 +407,10 @@ public class AutoRepairSystemService {
 		
 		if (technician == null) {
 			throw new IllegalArgumentException("Username cannot be found!");
+		}
+		
+		if (technicianHour == null) {
+			throw new IllegalArgumentException("Valid technician hours must be provided!");
 		}
 
 		technician.setTechnicianHour(technicianHour);
@@ -493,6 +501,30 @@ public class AutoRepairSystemService {
 		workHour.setDate(date);
 		workHour.setStartTime(startTime);
 		workHour.setEndTime(endTime);
+		workHourRepository.save(workHour);
+		
+		
+		return workHour;
+	}
+	
+	@Transactional
+	public WorkHour updateWorkHourWorkBreak(Integer id, Set<WorkBreak> workBreak) throws IllegalArgumentException {
+		
+		if (id == null) {
+			throw new IllegalArgumentException("A valid work hour ID must be provided!");
+		}
+		
+		WorkHour workHour = workHourRepository.findWorkHourById(id);
+		
+		if (workHour == null) {
+			throw new IllegalArgumentException("Work Hour cannot be found");
+		}
+		
+		if (workBreak == null) {
+			throw new IllegalArgumentException("A valid work break must be provided!");
+		}
+		
+		workHour.setWorkBreak(workBreak);
 		workHourRepository.save(workHour);
 		
 		return workHour;
