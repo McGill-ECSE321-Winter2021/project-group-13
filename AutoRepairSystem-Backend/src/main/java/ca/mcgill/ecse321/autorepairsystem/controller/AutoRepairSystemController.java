@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.mcgill.ecse321.autorepairsystem.dto.UserDto;
+import ca.mcgill.ecse321.autorepairsystem.dto.WorkBreakDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkHourDto;
 import ca.mcgill.ecse321.autorepairsystem.model.Customer;
 import ca.mcgill.ecse321.autorepairsystem.model.User;
@@ -208,6 +209,58 @@ public class AutoRepairSystemController {
 	//workBreak controller methods
 	
 	
+	@PostMapping(value = { "/workbreak/{startbreak}", "/workbreak/{startbreak}/" })
+	public ResponseEntity<?> createWorkBreak(@PathVariable("startbreak") Time startbreak, 
+			@RequestParam Integer workhourid, 
+			@RequestParam Time  endbreak) throws IllegalArgumentException {
+		try {
+			WorkBreak workbreak = service.createWorkBreak(workhourid, startbreak, endbreak);
+			return new ResponseEntity<>(convertToDto(workbreak), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	@PostMapping(value = { "/workbreak/{startbreak}", "/workbreak/{startbreak}/" })
+	public ResponseEntity<?> getWorkBreak(@PathVariable("startbreak") Time startbreak, 
+			@RequestParam Integer workhourid 
+			) throws IllegalArgumentException {
+		try {
+			WorkBreak workbreak = service.getWorkBreak(workhourid, startbreak);
+			return new ResponseEntity<>(convertToDto(workbreak), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	@PutMapping(value = { "/workbreak/{startbreak}", "/workbreak/{startbreak}/"})
+	public ResponseEntity<?> updateWorkBreak(@PathVariable("starttime") Integer workhourId, 
+			@RequestParam Time newstarttime,
+			@RequestParam Time starttime, 
+			@RequestParam Time newendtime) {
+		try {
+			return new ResponseEntity<>(convertToDto(service.updateWorkBreak(workhourId, starttime, newstarttime, newendtime)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	@PostMapping(value = { "/workbreak/{startbreak}", "/workbreak/{startbreak}/" })
+	public ResponseEntity<?> deleteWorkBreak(@PathVariable("startbreak") Time startbreak, 
+			@RequestParam Integer workhourid 
+			) throws IllegalArgumentException {
+		try {
+			WorkBreak workbreak = service.DeleteWorkBreak(workhourid, startbreak);
+			return new ResponseEntity<>(convertToDto(workbreak), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
 	
 	//Convert to Dto methods
 
@@ -226,6 +279,15 @@ public class AutoRepairSystemController {
 		}
 		WorkHourDto WorkHourDto = new WorkHourDto(u.getStartTime(), u.getEndTime(), u.getDate(), u.getId(), null);
 		return WorkHourDto;
+		
+	}
+	
+	private WorkBreakDto convertToDto(WorkBreak u) {
+		if (u == null) {
+			throw new IllegalArgumentException("There is no such WorkBreak!");
+		}
+		WorkBreakDto WorkBreakDto = new WorkBreakDto(u.getStartBreak(), u.getEndBreak(), convertToDto(u.getWorkHour()));
+		return WorkBreakDto;
 		
 	}
 
