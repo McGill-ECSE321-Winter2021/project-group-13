@@ -41,9 +41,6 @@ public class AutoRepairSystemService {
 	@Autowired
 	WorkBreakRepository workBreakRepository;
 	  
-	  //always set Date when creating slots
-	  //did I forget to copy array anywhere?
-	  
 	  @Transactional
 	  public List<Appointment> getAllAppointments() {
 	 
@@ -199,8 +196,7 @@ public class AutoRepairSystemService {
 	  }
 	  
 	  public List<WorkBreak> cleanupWorkBreaks(List<WorkBreak> workBreaks){
-	    
-	    //sort
+
 	    List<WorkBreak> sorted = new ArrayList<WorkBreak>(workBreaks);
 	    Collections.sort(sorted, new Comparator<WorkBreak>() {
 	      @Override
@@ -217,7 +213,6 @@ public class AutoRepairSystemService {
 	      }
 	    });
 	    
-	    //merge
 	    List<WorkBreak> merged = new ArrayList<WorkBreak>();
 	    int i = 0;
 	    
@@ -243,7 +238,7 @@ public class AutoRepairSystemService {
 	    
 	    java.sql.Time start = technicianHour.getStartTime();
 	    
-	    //add condition for when w.getStartBreak() == start
+	    //add condition for when w.getStartBreak() == start?
 	    for (WorkBreak w : workBreaksToList) {
 	      TechnicianHour newHour = new TechnicianHour();
 	      newHour.setStartTime(start);
@@ -371,11 +366,6 @@ public class AutoRepairSystemService {
 	    return result;
 	    
 	  }
-	
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
 	
 	//Log-in generic user...either customer, technician, or admin
 	@Transactional
@@ -652,7 +642,6 @@ public class AutoRepairSystemService {
 		
 		return technician;
 	}
-	
 	
 	@Transactional
 	public List<Technician> getAllTechnicians(){

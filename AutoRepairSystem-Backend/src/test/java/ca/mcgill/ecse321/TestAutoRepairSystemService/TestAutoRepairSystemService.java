@@ -27,6 +27,7 @@ import ca.mcgill.ecse321.autorepairsystem.model.*;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
 import ca.mcgill.ecse321.autorepairsystem.dao.*;
 
+@ExtendWith(MockitoExtension.class)
 public class TestAutoRepairSystemService {
 	
 	@Mock
@@ -61,9 +62,23 @@ public class TestAutoRepairSystemService {
 
 	}
 	
+	/*
+	@Test
+	public void testCreateTechnician(){
+	  service.createTechnician("u", "p", "n", "ub@ujb.com");
+	  Technician t = service.getTechnicianByUsername("u");
+	  
+	  assertEquals(t.getUsername(), "u");
+	}
 	
 	
-	
-	
+	@Test
+    public void testCreateCustomer() {
+	  Customer createdCustomer = service.createCustomer("user", "pass", "foobar", "foo@bar.com");
+	  Customer foundCustomer = service.getCustomerByUsername("user");
+	  
+	  assertEquals(createdCustomer.getUsername(), foundCustomer.getUsername());
+	}
+	*/
 	
 }
