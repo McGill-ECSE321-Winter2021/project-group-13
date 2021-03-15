@@ -21,6 +21,10 @@ dependencies {
 	testImplementation 'org.mockito:mockito-junit-jupiter:2.18.3'
 	testImplementation 'org.junit.platform:junit-platform-launcher:1.4.1'
 	
+	testImplementation "junit:junit:4.12"
+	implementation 'junit:junit:4.12'
+	testCompile 'junit:junit:4.12'
+    compile 'junit:junit:4.12'
 	testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 	
 }

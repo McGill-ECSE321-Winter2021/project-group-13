@@ -61,6 +61,20 @@ public class TestAutoRepairSystemService {
 
 	}
 	
+	// Test Administrator Service Methods
+	
+	@Test
+	public void testMakeCustomer() {
+		String name = "testName";
+		Customer customer = new Customer();
+		customer.setUsername("testName");
+		customerDao.save(customer);
+		try {
+			
+		} catch(Exception e) {
+		}
+	}
+	
 	
 	
 	
