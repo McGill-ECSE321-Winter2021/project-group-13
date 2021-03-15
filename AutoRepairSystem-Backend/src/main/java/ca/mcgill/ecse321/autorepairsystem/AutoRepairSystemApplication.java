@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AutoRepairSystemApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AutoRepairSystemApplication.class, args);
+	  
+	  SpringApplication.run(AutoRepairSystemApplication.class, args);
+	 
 	}
 
 	@RequestMapping("/")
