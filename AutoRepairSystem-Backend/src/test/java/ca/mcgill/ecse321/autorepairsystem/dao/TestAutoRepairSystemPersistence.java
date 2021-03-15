@@ -39,8 +39,8 @@ public class TestAutoRepairSystemPersistence {
 	private AdministratorRepository administratorRepository;
 	@Autowired
 	private AppointmentRepository appointmentRepository;
-	@Autowired
-	private AutoRepairSystemRepository autoRepairSystemRepository;
+	//@Autowired
+	//private AutoRepairSystemRepository autoRepairSystemRepository;
 	@Autowired
 	private BusinessHourRepository businessHourRepository;
 	@Autowired
