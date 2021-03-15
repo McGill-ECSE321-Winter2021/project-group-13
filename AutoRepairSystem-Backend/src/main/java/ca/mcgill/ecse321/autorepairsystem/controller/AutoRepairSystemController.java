@@ -261,6 +261,11 @@ public class AutoRepairSystemController {
 		}
 	}
 	
+	@PutMapping(value = { "/workbreak/{Id}", "/workbreak/{Id}/"})
+	public ResponseEntity<?> getAllWorkBreaks(@PathVariable("Id") Integer Id) {
+		return new ResponseEntity<>(service.getAllWorkBreaks(Id).stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
+	}
+	
 	
 	//Convert to Dto methods
 
@@ -273,14 +278,6 @@ public class AutoRepairSystemController {
 	}
 	
 	
-	private WorkHourDto convertToDto(WorkHour u) {
-		if (u == null) {
-			throw new IllegalArgumentException("There is no such WorkHour!");
-		}
-		WorkHourDto WorkHourDto = new WorkHourDto(u.getStartTime(), u.getEndTime(), u.getDate(), u.getId(), null);
-		return WorkHourDto;
-		
-	}
 	
 	private WorkBreakDto convertToDto(WorkBreak u) {
 		if (u == null) {
@@ -288,6 +285,15 @@ public class AutoRepairSystemController {
 		}
 		WorkBreakDto WorkBreakDto = new WorkBreakDto(u.getStartBreak(), u.getEndBreak(), convertToDto(u.getWorkHour()));
 		return WorkBreakDto;
+		
+	}
+	
+	private WorkHourDto convertToDto(WorkHour u) {
+		if (u == null) {
+			throw new IllegalArgumentException("There is no such WorkHour!");
+		}
+		WorkHourDto WorkHourDto = new WorkHourDto(u.getStartTime(), u.getEndTime(), u.getDate(), u.getId(), null);
+		return WorkHourDto;
 		
 	}
 
