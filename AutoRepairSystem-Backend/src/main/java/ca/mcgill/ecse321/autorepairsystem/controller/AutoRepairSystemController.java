@@ -180,7 +180,7 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	@PutMapping(value = { "/workhour/{Id}", "/workhour/{Id}/"})
+	@PutMapping(value = { "/workhour/Id/{Id}", "/workhour/Id/{Id}/"})
 	public ResponseEntity<?> updateWorkHourBreak(@PathVariable("Id") Integer Id,  
 			@RequestParam Set<WorkBreak> workBreak) {
 		try {
@@ -191,7 +191,7 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	@PutMapping(value = { "/workhour/{Id}", "/workhour/{Id}/"})
+	@PutMapping(value = { "/workhour/date/{Id}", "/workhour/date/{Id}/"})
 	public ResponseEntity<?> deleteWorkHour(@PathVariable("Id") Integer Id){
 		try {
 			return new ResponseEntity<>(convertToDto(service.deleteWorkHour(Id)), HttpStatus.OK);
@@ -206,10 +206,11 @@ public class AutoRepairSystemController {
 		return new ResponseEntity<>(service.getAllWorkHours().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
 	}
 	
+	
 	//workBreak controller methods
 	
 	
-	@PostMapping(value = { "/workbreak/{startbreak}", "/workbreak/{startbreak}/" })
+	@PostMapping(value = { "/workbreak/Id/{starttime}", "/workbreak/Id/{starttime}/" })
 	public ResponseEntity<?> createWorkBreak(@PathVariable("startbreak") Time startbreak, 
 			@RequestParam Integer workhourid, 
 			@RequestParam Time  endbreak) throws IllegalArgumentException {
@@ -248,13 +249,12 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	@PostMapping(value = { "/workbreak/{startbreak}", "/workbreak/{startbreak}/" })
-	public ResponseEntity<?> deleteWorkBreak(@PathVariable("startbreak") Time startbreak, 
-			@RequestParam Integer workhourid 
+	@PostMapping(value = { "/workbreak/Id/{startbreak}", "/workbreak/Id/{startbreak}/" })
+	public ResponseEntity<?> deleteWorkBreak(@PathVariable("startbreak") Integer workhourid, 
+			Time startbreak
 			) throws IllegalArgumentException {
 		try {
-			WorkBreak workbreak = service.DeleteWorkBreak(workhourid, startbreak);
-			return new ResponseEntity<>(convertToDto(workbreak), HttpStatus.OK);
+			return new ResponseEntity<>(convertToDto(service.DeleteWorkBreak(workhourid, startbreak)), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
