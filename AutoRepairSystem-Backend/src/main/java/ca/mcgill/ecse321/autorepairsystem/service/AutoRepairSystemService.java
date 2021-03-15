@@ -623,6 +623,22 @@ public class AutoRepairSystemService {
 	}
 	
 	@Transactional
+	public List<WorkBreak> getAllWorkBreaks(Integer workHourId) throws IllegalArgumentException {
+		
+		if (workHourId == null) {
+			throw new IllegalArgumentException("A valid work hour ID must be provided!");
+		}
+		
+		WorkHour workHour = workHourRepository.findWorkHourById(workHourId);
+		
+		if (workHour == null) {
+			throw new IllegalArgumentException("Specified Work Hour doesn't exist!");
+		}
+		
+		return toList(workHour.getWorkBreak());
+	}
+	
+	@Transactional
 	public WorkBreak updateWorkBreak(Integer workHourId, Time startTime, Time newStartTime, Time newEndTime) {
 		
 		if (workHourId == null) {
@@ -638,7 +654,7 @@ public class AutoRepairSystemService {
 		Set<WorkBreak> workBreaks = workHour.getWorkBreak();
 		WorkBreak workBreak = workBreakRepository.findByWorkHourAndStartBreak(workHour, startTime);
 		
-
+		// Make sure work break does not overlap with existing work break (not including the work break being updated)
 		for (WorkBreak w : workBreaks) {
 			if(w.getStartBreak().toLocalTime().equals(workBreak.getStartBreak().toLocalTime())) {
 				continue;
