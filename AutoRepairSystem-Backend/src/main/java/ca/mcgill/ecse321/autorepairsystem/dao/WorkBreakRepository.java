@@ -12,5 +12,5 @@ import ca.mcgill.ecse321.autorepairsystem.model.WorkHour;
 public interface WorkBreakRepository extends CrudRepository<WorkBreak, String>{
 	WorkBreak findWorkBreakByStartBreak(Time startbreak);
 	WorkBreak findWorkBreakByWorkHour(WorkHour workhour);
-
+	WorkBreak findByWorkHourAndStartBreak(WorkHour workhour, Time startBreak);
 }

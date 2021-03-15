@@ -7,5 +7,5 @@ import ca.mcgill.ecse321.autorepairsystem.model.Administrator;
 import ca.mcgill.ecse321.autorepairsystem.model.Service;
 
 public interface ServiceRepository extends CrudRepository<Service, String>{
-	Service findServiceByname(String name);
+	Service findServiceByName(String name);
 }

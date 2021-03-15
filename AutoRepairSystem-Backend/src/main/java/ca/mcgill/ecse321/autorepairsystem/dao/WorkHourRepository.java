@@ -6,5 +6,5 @@ import java.util.*;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkHour;
 
 public interface WorkHourRepository extends CrudRepository<WorkHour, String>{
-
+	WorkHour findWorkHourById(Integer id);
 }
