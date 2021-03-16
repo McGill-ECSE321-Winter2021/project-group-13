@@ -6,15 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,14 +38,8 @@ public class TestAdministratorService {
 	private TechnicianRepository technicianDao;
 	
 	private static final String USERNAME1 = "testAdmin";
-    private static final String PASSWORD1 = "testPassword";
-    private static final String EMAIL1 = "admin@email.com";
-    private static final String NAME1 = "testName";
     
     private static final String USERNAME2 = "testAdmin";
-    private static final String PASSWORD2 = "testPassword";
-    private static final String EMAIL2 = "admin@email.com";
-    private static final String NAME2 = "testName";
     
     
     private static Boolean CUSTOMERDELETE = false;
@@ -68,9 +55,6 @@ public class TestAdministratorService {
             	if(CUSTOMERDELETE == false) {
             		Customer customer = new Customer();
                 	customer.setUsername(USERNAME1);
-                	customer.setPassword(PASSWORD1);
-                	customer.setEmail(EMAIL1);
-                	customer.setName(NAME1);
                     return customer;
             	} else {
             		return null;
@@ -86,9 +70,6 @@ public class TestAdministratorService {
             	if(ADMINDELETE == false) {
             		Administrator administrator = new Administrator();
                 	administrator.setUsername(USERNAME1);
-                	administrator.setPassword(PASSWORD1);
-                	administrator.setEmail(EMAIL1);
-                	administrator.setName(NAME1);
                     return administrator;
             	} else {
             		return null;
