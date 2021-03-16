@@ -13,15 +13,15 @@ import java.sql.Date;
 import javax.persistence.JoinColumn;
 @Entity
 public class Appointment{
-   private Set<Service> service;
+   private Set<WorkItem> workItem;
    
    @ManyToMany(cascade = {CascadeType.ALL})
-   public Set<Service> getService() {
-      return this.service;
+   public Set<WorkItem> getWorkItem() {
+      return this.workItem;
    }
    
-   public void setService(Set<Service> services) {
-      this.service = services;
+   public void setWorkItem(Set<WorkItem> workItems) {
+      this.workItem = workItems;
    }
    
    private Technician technician;

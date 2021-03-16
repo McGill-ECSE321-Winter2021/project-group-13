@@ -1,6 +1,5 @@
 package ca.mcgill.ecse321.autorepairsystem.model;
 
-import javax.persistence.Entity;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.OneToMany;
@@ -18,14 +17,14 @@ public class AppointmentManager{
       this.user = users;
    }
    
-   private Set<Service> service;
+   private Set<WorkItem> service;
    
    @OneToMany(cascade={CascadeType.ALL})
-   public Set<Service> getService() {
+   public Set<WorkItem> getService() {
       return this.service;
    }
    
-   public void setService(Set<Service> services) {
+   public void setService(Set<WorkItem> services) {
       this.service = services;
    }
    
@@ -50,7 +49,4 @@ public class AppointmentManager{
    public void setAppointment(Set<Appointment> appointments) {
       this.appointment = appointments;
    }
-   
-   private String businessName;
-   
-   }
+}

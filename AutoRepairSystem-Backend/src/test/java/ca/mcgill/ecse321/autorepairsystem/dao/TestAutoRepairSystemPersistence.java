@@ -2,7 +2,6 @@ package ca.mcgill.ecse321.autorepairsystem.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.*;
 
 import java.sql.Date;
@@ -21,15 +20,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import ca.mcgill.ecse321.autorepairsystem.model.Administrator;
 import ca.mcgill.ecse321.autorepairsystem.model.Appointment;
-import ca.mcgill.ecse321.autorepairsystem.model.AppointmentManager;
 import ca.mcgill.ecse321.autorepairsystem.model.BusinessHour;
 import ca.mcgill.ecse321.autorepairsystem.model.Customer;
-import ca.mcgill.ecse321.autorepairsystem.model.Service;
+import ca.mcgill.ecse321.autorepairsystem.model.WorkItem;
 import ca.mcgill.ecse321.autorepairsystem.model.Technician;
 import ca.mcgill.ecse321.autorepairsystem.model.TechnicianHour;
-import ca.mcgill.ecse321.autorepairsystem.model.User;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkBreak;
-import ca.mcgill.ecse321.autorepairsystem.model.WorkHour;
 
 
 @ExtendWith(SpringExtension.class)
@@ -46,7 +42,7 @@ public class TestAutoRepairSystemPersistence {
 	@Autowired
 	private CustomerRepository customerRepository;
 	@Autowired
-	private ServiceRepository serviceRepository;
+	private WorkItemRepository workItemRepository;
 	@Autowired
 	private TechnicianHourRepository technicianHourRepository;
 	@Autowired
@@ -71,7 +67,7 @@ public class TestAutoRepairSystemPersistence {
 		administratorRepository.deleteAll();
 		
 		userRepository.deleteAll();
-		serviceRepository.deleteAll();
+		workItemRepository.deleteAll();
 		//autoRepairSystemRepository.deleteAll();
 		
 		
@@ -101,24 +97,24 @@ public class TestAutoRepairSystemPersistence {
 	}
 	
 	@Test
-	public void testPersistAndLoadService() {
+	public void testPersistAndLoadWorkItem() {
 		String name = "tire change";
 		int duration = 2;
 		int price = 30;
 		
-		Service service = new Service (); 
+		WorkItem workItem = new WorkItem (); 
 		
-		service.setName(name);
-		service.setDuration(duration);
-		service.setPrice(price);
+		workItem.setName(name);
+		workItem.setDuration(duration);
+		workItem.setPrice(price);
 	
-		serviceRepository.save(service);
+		workItemRepository.save(workItem);
 	
-		service=null;
+		workItem=null;
 		
-		service=serviceRepository.findServiceByName(name);
-		assertNotNull(service);
-		assertEquals(name, service.getName());
+		workItem=workItemRepository.findWorkItemByName(name);
+		assertNotNull(workItem);
+		assertEquals(name, workItem.getName());
 		
 		
 	}
@@ -152,7 +148,6 @@ public class TestAutoRepairSystemPersistence {
 	customer.setName(name);
 	customer.setPassword(password);
 	customer.setEmail(email);
-	customer.setAppointment(appointments);
 	
 	
 	Technician technician = new Technician();
@@ -160,18 +155,17 @@ public class TestAutoRepairSystemPersistence {
 	technician.setName(name2);
 	technician.setPassword(password2);
 	technician.setEmail(email2);
-	technician.setAppointment(appointments);
 	
-	Service service = new Service();
-	service.setName("service1");
-	service.setDuration(10);
-	service.setPrice(100);
-	Set<Service> services = new HashSet<>();
-	services.add(service);
+	WorkItem workItem = new WorkItem();
+	workItem.setName("workItem1");
+	workItem.setDuration(10);
+	workItem.setPrice(100);
+	Set<WorkItem> workItems = new HashSet<>();
+	workItems.add(workItem);
 	
 	testAppointment.setCustomer(customer);
 	testAppointment.setTechnician(technician);
-	testAppointment.setService(services);
+	testAppointment.setWorkItem(workItems);
 	testAppointment.setDate(date);
 	testAppointment.setStartTime(startTime);
 	testAppointment.setEndTime(endTime);
@@ -180,7 +174,6 @@ public class TestAutoRepairSystemPersistence {
 	appointmentRepository.save(testAppointment);
 	customerRepository.save(customer);
 	technicianRepository.save(technician);
-	System.out.println("Test1" + customer.getAppointment().toString());
 	
 	customer = null;
 	//testAppointment = null;
@@ -202,7 +195,6 @@ public class TestAutoRepairSystemPersistence {
 		
 	
 		Technician tech = new Technician ();
-		tech.setAppointment(null);
 		tech.setEmail(null);
 		tech.setName(null);
 		tech.setPassword(null);
@@ -211,7 +203,6 @@ public class TestAutoRepairSystemPersistence {
 		technicianRepository.save(tech);
 		
 		Customer customer = new Customer ();
-		customer.setAppointment(null);
 		customer.setEmail("Ezra2");
 		customer.setName("Ezra3");
 		customer.setPassword("Ezra4");
@@ -221,7 +212,7 @@ public class TestAutoRepairSystemPersistence {
 		Appointment appointment = new Appointment ();
 		appointment.setCustomer(customer);
 		appointment.setTechnician(tech);
-		appointment.setService(null);;
+		appointment.setWorkItem(null);;
 		appointment.setStartTime(starttime);
 		appointment.setEndTime(endtime);
 		appointment.setDate(date);
@@ -256,7 +247,6 @@ public class TestAutoRepairSystemPersistence {
 	
 	
 		Technician tech = new Technician ();
-		tech.setAppointment(null);
 		tech.setEmail(null);
 		tech.setName(null);
 		tech.setPassword(null);
@@ -270,15 +260,12 @@ public class TestAutoRepairSystemPersistence {
 		workhour.setId(2);
 		workhour.setStartTime(null);
 		workhour.setWorkBreak(null);
-		workhour.setTechnician(tech);
 		technicianHourRepository.save(workhour);
 		
 		
 		WorkBreak workbreak = new WorkBreak ();
 		workbreak.setStartBreak(startbreak);
 		workbreak.setEndBreak(endbreak);
-		workbreak.setWorkHour(workhour);
-		
 		
 		
 		workBreakRepository.save(workbreak);
@@ -301,7 +288,6 @@ public class TestAutoRepairSystemPersistence {
 	public void testPersistAndLoadTechnician() {
 		
 		Technician tech = new Technician ();
-		tech.setAppointment(null);
 		tech.setEmail(null);
 		tech.setName(null);
 		tech.setPassword(null);
@@ -325,7 +311,6 @@ public class TestAutoRepairSystemPersistence {
 		
 	
 		Technician tech = new Technician ();
-		tech.setAppointment(null);
 		tech.setEmail(null);
 		tech.setName(null);
 		tech.setPassword(null);
@@ -339,7 +324,6 @@ public class TestAutoRepairSystemPersistence {
 		workhour.setId(2);
 		workhour.setStartTime(null);
 		workhour.setWorkBreak(null);
-		workhour.setTechnician(tech);
 		technicianHourRepository.save(workhour);
 		
 		

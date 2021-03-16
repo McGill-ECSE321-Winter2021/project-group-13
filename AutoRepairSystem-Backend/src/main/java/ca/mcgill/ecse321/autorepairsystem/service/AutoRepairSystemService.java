@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.autorepairsystem.service;
+/*package ca.mcgill.ecse321.autorepairsystem.service;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -35,7 +35,7 @@ public class AutoRepairSystemService {
 	@Autowired
 	AppointmentRepository appointmentRepository;
 	@Autowired
-	ServiceRepository serviceRepository;
+	WorkItemRepository workItemRepository;
 	@Autowired
 	WorkHourRepository workHourRepository;
 	@Autowired
@@ -78,11 +78,11 @@ public class AutoRepairSystemService {
       
       //set appointment ID?
       @Transactional
-      public Appointment createAppointment(Set<ca.mcgill.ecse321.autorepairsystem.model.Service> services, Customer customer, Technician technician, java.sql.Time startTime, java.sql.Time endTime, java.sql.Date date) throws IllegalArgumentException{
+      public Appointment createAppointment(Set<ca.mcgill.ecse321.autorepairsystem.model.WorkItem> services, Customer customer, Technician technician, java.sql.Time startTime, java.sql.Time endTime, java.sql.Date date) throws IllegalArgumentException{
         
         //sum up service durations
         int sumMin = 0;
-        for (ca.mcgill.ecse321.autorepairsystem.model.Service s : services) {
+        for (ca.mcgill.ecse321.autorepairsystem.model.WorkItem s : services) {
           sumMin += s.getDuration();
         }
         
@@ -159,7 +159,7 @@ public class AutoRepairSystemService {
        * 
        * Not assumed:
        * -no overlap between breaks
-       */
+       *//*
 	  public List<Appointment> cleanupAppointments(List<Appointment> appointments){
 	    
 	    //sort
@@ -272,7 +272,7 @@ public class AutoRepairSystemService {
 	    
 	    List<TechnicianHour> technicianHoursByDate = technicianHourRepository.findByDate(date);
 	    
-	    return technicianHoursByDate.stream().collect(Collectors.groupingBy(TechnicianHour::getTechnician));
+	    return technicianHoursByDate.stream().collect(Collectors.groupingBy(Technician::getTechnicianHour));
 	  }
 	  
 	  //Organized by technician
@@ -303,7 +303,7 @@ public class AutoRepairSystemService {
 	     * 
 	     * j++
 	     * 
-	     */
+	     *//*
 	    
 	    int i = 0;
 	    int j = 0;
@@ -766,12 +766,12 @@ public class AutoRepairSystemService {
 	//Service service methods
 	
 	@Transactional
-	public ca.mcgill.ecse321.autorepairsystem.model.Service createService(String name, int duration, int price) throws IllegalArgumentException {
+	public ca.mcgill.ecse321.autorepairsystem.model.WorkItem createService(String name, int duration, int price) throws IllegalArgumentException {
 		if (name == null || name == "" ) {
 			throw new IllegalArgumentException("A valid service name must be provide!");
 		}
 		
-		if (serviceRepository.findServiceByName(name) != null) {
+		if (workItemRepository.findServiceByName(name) != null) {
 			throw new IllegalArgumentException("Service with username " + name + " already exists");
 		}
 		
@@ -791,7 +791,7 @@ public class AutoRepairSystemService {
 		service.setPrice(price);
 		
 		serviceRepository.save(service);
-		return service;*/
+		return service;*//*
 	}
 	 //WorkHour service methods
 	
@@ -1055,5 +1055,4 @@ public class AutoRepairSystemService {
 	private boolean nonValidString(String string) {
 		return (string==null)||(string.trim().isEmpty());
 	}
-
-}
+}*/

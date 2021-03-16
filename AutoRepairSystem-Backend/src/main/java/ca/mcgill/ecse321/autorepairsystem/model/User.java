@@ -2,10 +2,11 @@ package ca.mcgill.ecse321.autorepairsystem.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 @Entity
-@Table(name="Users")
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User{
    private String username;
 

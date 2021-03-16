@@ -1,11 +1,10 @@
 package ca.mcgill.ecse321.autorepairsystem.model;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.persistence.Id;
 
 @Entity
-public class Service{
+public class WorkItem{
    private String name;
 	   
 	public void setName(String value) {

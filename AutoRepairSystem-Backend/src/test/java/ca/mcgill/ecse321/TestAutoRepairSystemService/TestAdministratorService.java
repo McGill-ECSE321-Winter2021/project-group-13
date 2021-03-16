@@ -32,10 +32,7 @@ public class TestAdministratorService {
 	private AdministratorRepository administratorDao;
 	@Mock
 	private CustomerRepository customerDao;
-	@Mock
-	private UserRepository userDao;
-	@Mock
-	private TechnicianRepository technicianDao;
+	
 	
 	private static final String USERNAME1 = "testAdmin";
     
@@ -85,21 +82,19 @@ public class TestAdministratorService {
         };
         lenient().when(customerDao.save(any(Customer.class))).thenAnswer(returnParameterAsAnswer);
         lenient().when(administratorDao.save(any(Administrator.class))).thenAnswer(returnParameterAsAnswer);
-        lenient().when(technicianDao.save(any(Technician.class))).thenAnswer(returnParameterAsAnswer);
         
         CUSTOMERDELETE = false;
         lenient().doAnswer(invocation -> {
             if(((Customer) invocation.getArgument(0)).getUsername().equals(USERNAME1)) {
             	CUSTOMERDELETE = true;
-            	System.out.println("Hello World");
             }
             return null;
         }).when(customerDao).delete(any(Customer.class));
+        
         ADMINDELETE = false;
         lenient().doAnswer(invocation -> {
             if(((Administrator) invocation.getArgument(0)).getUsername().equals(USERNAME1)) {
             	ADMINDELETE = true;
-            	System.out.println("Hello World");
             }
             return null;
         }).when(administratorDao).delete(any(Administrator.class));
@@ -107,13 +102,10 @@ public class TestAdministratorService {
     
 	@Test
 	public void testMakeAdministrator() {
-		String error = null;
 		Administrator admin = null;
 		try {
 			admin = service.makeAdministrator(USERNAME1);
 		} catch(Exception e) {
-			error = e.getMessage();
-			System.out.println(error);
 		}
 		
 		assertEquals(USERNAME1,admin.getUsername());

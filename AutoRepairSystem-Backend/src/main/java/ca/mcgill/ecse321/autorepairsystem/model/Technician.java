@@ -19,16 +19,4 @@ public class Technician extends User{
    public void setTechnicianHour(Set<TechnicianHour> technicianHours) {
       this.technicianHour = technicianHours;
    }
-   
-   private Set<Appointment> appointment;
-   
-   @OneToMany(mappedBy="technician" , cascade= {CascadeType.ALL})
-   public Set<Appointment> getAppointment() {
-      return this.appointment;
-   }
-   
-   public void setAppointment(Set<Appointment> appointments) {
-      this.appointment = appointments;
-   }
-   
-   }
+}

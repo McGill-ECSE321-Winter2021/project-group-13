@@ -5,7 +5,7 @@ import java.util.*;
 
 import ca.mcgill.ecse321.autorepairsystem.model.Appointment;
 import ca.mcgill.ecse321.autorepairsystem.model.Customer;
-import ca.mcgill.ecse321.autorepairsystem.model.Service;
+import ca.mcgill.ecse321.autorepairsystem.model.WorkItem;
 import ca.mcgill.ecse321.autorepairsystem.model.Technician;
 
 public interface AppointmentRepository extends CrudRepository<Appointment, String>{
@@ -21,9 +21,9 @@ public interface AppointmentRepository extends CrudRepository<Appointment, Strin
 	//I modified this
 	List<Appointment> findByTechnician(Technician technician);
 	
-	boolean existsByCustomerAndService(Customer username, Service serviceName);
+	boolean existsByCustomerAndService(Customer username, WorkItem serviceName);
 	
-	List<Appointment> findByCustomerAndService(Customer username, Service serviceName);
+	List<Appointment> findByCustomerAndService(Customer username, WorkItem serviceName);
 	
 	Appointment findByCustomerAndStartTime(Customer username, Appointment startTime);
 	
