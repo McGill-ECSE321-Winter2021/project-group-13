@@ -4,11 +4,15 @@ import javax.persistence.Entity;
 import java.sql.Time;
 import java.sql.Date;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.OneToMany;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class WorkHour{
    private Time startTime;
 
