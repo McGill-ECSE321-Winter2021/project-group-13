@@ -40,15 +40,14 @@ public void setDate(Date value) {
 public Date getDate() {
     return this.date;
 }
-private Integer workHourId;
+private Integer Id;
 
-public void setWorkHourId(Integer value) {
-    this.workHourId = value;
+public void setId(Integer value) {
+    this.Id = value;
 }
 @Id
-@GeneratedValue
-public Integer getWorkHourId() {
-    return this.workHourId;
+public Integer getId() {
+    return this.Id;
 }
    private Set<WorkBreak> workBreak;
    

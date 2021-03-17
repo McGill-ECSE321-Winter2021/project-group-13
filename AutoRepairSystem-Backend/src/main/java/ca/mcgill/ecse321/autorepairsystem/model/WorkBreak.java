@@ -9,15 +9,14 @@ import javax.persistence.Id;
 @Entity
 public class WorkBreak{
 	
-	private String workBreakId;
+	private Integer Id;
 	
-	public void setWorkBreakId(String value) {
-	    this.workBreakId = value;
+	public void setId(Integer value) {
+	    this.Id = value;
 	}
 	@Id
-	@GeneratedValue
-	public String getWorkBreakId() {
-	    return this.workBreakId;
+	public Integer getId() {
+	    return this.Id;
 	}
 	
 	private Time startBreak;

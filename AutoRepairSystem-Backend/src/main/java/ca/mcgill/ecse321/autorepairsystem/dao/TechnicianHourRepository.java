@@ -7,5 +7,5 @@ import ca.mcgill.ecse321.autorepairsystem.model.TechnicianHour;
 public interface TechnicianHourRepository extends CrudRepository<TechnicianHour, String>{
 
 	TechnicianHour findTechnicianHourById (Integer id);
-	List<TechnicianHour> findByDate(java.sql.Date date);
+	List<TechnicianHour> findTechnicianHourByDate(java.sql.Date date);
 }
