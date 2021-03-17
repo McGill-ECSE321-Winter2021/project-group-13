@@ -3,7 +3,7 @@ package ca.mcgill.ecse321.autorepairsystem.dto;
 import java.util.Collections;
 import java.util.Set;
 
-public class TechnicianDto extends UserDto {
+public class TechnicianDto extends EndUserDto {
 	
 	private Set <AppointmentDto> appointments;
 	private Set <TechnicianHourDto> technicianhours;

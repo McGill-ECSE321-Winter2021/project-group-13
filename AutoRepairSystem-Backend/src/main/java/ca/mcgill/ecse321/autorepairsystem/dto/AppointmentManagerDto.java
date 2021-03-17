@@ -5,19 +5,19 @@ import java.util.Set;
 
 public class AppointmentManagerDto {
 
-	private Set <UserDto> users;
-	private Set <ServiceDto> services;
+	private Set <EndUserDto> users;
+	private Set <WorkItemDto> services;
 	private Set <BusinessHourDto> businesshours;
 	private Set <AppointmentDto> appointments;
 	
 	public AppointmentManagerDto() {}
 	
 	@SuppressWarnings("unchecked")
-	public AppointmentManagerDto(Set <ServiceDto> services,Set <BusinessHourDto> businesshours) {
+	public AppointmentManagerDto(Set <WorkItemDto> services,Set <BusinessHourDto> businesshours) {
 		this(Collections.EMPTY_SET, services, businesshours, Collections.EMPTY_SET);
 	}
 	
-	public AppointmentManagerDto(Set <UserDto> users, Set <ServiceDto> services,Set <BusinessHourDto> businesshours, Set <AppointmentDto> appointments) {
+	public AppointmentManagerDto(Set <EndUserDto> users, Set <WorkItemDto> services,Set <BusinessHourDto> businesshours, Set <AppointmentDto> appointments) {
 		this.users = users;
 		this.services = services;
 		this.businesshours = businesshours;
@@ -32,11 +32,11 @@ public class AppointmentManagerDto {
 		this.appointments = appointments;
 	}
 	
-	public Set <UserDto> getUsers(){
+	public Set <EndUserDto> getUsers(){
 		return users;
 	}
 	
-	public void setUsers(Set <UserDto> users) {
+	public void setUsers(Set <EndUserDto> users) {
 		this.users = users;
 	}
 	
@@ -48,11 +48,11 @@ public class AppointmentManagerDto {
 		this.businesshours = businesshours;
 	}
 	
-	public Set <ServiceDto> getServices(){
+	public Set <WorkItemDto> getServices(){
 		return services;
 	}
 	
-	public void setServices(Set <ServiceDto> services) {
+	public void setServices(Set <WorkItemDto> services) {
 		this.services = services;
 	}
 	

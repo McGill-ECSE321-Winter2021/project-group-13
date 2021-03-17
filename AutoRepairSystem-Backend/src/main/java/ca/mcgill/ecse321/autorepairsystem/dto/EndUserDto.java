@@ -1,21 +1,21 @@
 package ca.mcgill.ecse321.autorepairsystem.dto;
 
-public class UserDto {
+public class EndUserDto {
 
 	private String username;
 	private String password;
 	private String name;
 	private String email;
 	
-	public UserDto() {
+	public EndUserDto() {
 		
 	}
 	
-	public UserDto(String email) {
+	public EndUserDto(String email) {
 		this(null,null,null,email);
 	}
 
-	public UserDto(String username, String password, String name, String email){
+	public EndUserDto(String username, String password, String name, String email){
 		this.username = username;
 		this.password = password;
 		this.name = name;

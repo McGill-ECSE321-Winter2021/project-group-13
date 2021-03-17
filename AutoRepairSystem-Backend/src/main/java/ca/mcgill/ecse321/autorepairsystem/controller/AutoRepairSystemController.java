@@ -1,4 +1,4 @@
-/*package ca.mcgill.ecse321.autorepairsystem.controller;
+package ca.mcgill.ecse321.autorepairsystem.controller;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.mcgill.ecse321.autorepairsystem.dto.UserDto;
+import ca.mcgill.ecse321.autorepairsystem.dto.EndUserDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkBreakDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkHourDto;
 import ca.mcgill.ecse321.autorepairsystem.model.Customer;
@@ -210,8 +210,8 @@ public class AutoRepairSystemController {
 	//workBreak controller methods
 	
 	
-	@PostMapping(value = { "/workbreak/Id/{starttime}", "/workbreak/Id/{starttime}/" })
-	public ResponseEntity<?> createWorkBreak(@PathVariable("startbreak") Time startbreak, 
+	@PostMapping(value = { "/workbreak/{Id}", "/workbreak/{Id}/" })
+	public ResponseEntity<?> createWorkBreak(@PathVariable("Id") Time startbreak, 
 			@RequestParam Integer workhourid, 
 			@RequestParam Time  endbreak) throws IllegalArgumentException {
 		try {
@@ -223,12 +223,12 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	@PostMapping(value = { "/workbreak/{startbreak}", "/workbreak/{startbreak}/" })
-	public ResponseEntity<?> getWorkBreak(@PathVariable("startbreak") Time startbreak, 
-			@RequestParam Integer workhourid 
+	@PostMapping(value = { "/workbreak/{Id}", "/workbreak/{Id}/" })
+	public ResponseEntity<?> getWorkBreak(@PathVariable("Id") 
+			@RequestParam Integer workBreakId
 			) throws IllegalArgumentException {
 		try {
-			WorkBreak workbreak = service.getWorkBreak(workhourid, startbreak);
+			WorkBreak workbreak = service.getWorkBreak(workBreakId);
 			return new ResponseEntity<>(convertToDto(workbreak), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
@@ -236,44 +236,36 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	@PutMapping(value = { "/workbreak/{startbreak}", "/workbreak/{startbreak}/"})
-	public ResponseEntity<?> updateWorkBreak(@PathVariable("starttime") Integer workhourId, 
+	@PutMapping(value = { "/workbreak/{Id}", "/workbreak/{Id}/"})
+	public ResponseEntity<?> updateWorkBreak(@PathVariable("Id") Integer id,
 			@RequestParam Time newstarttime,
-			@RequestParam Time starttime, 
 			@RequestParam Time newendtime) {
 		try {
-			return new ResponseEntity<>(convertToDto(service.updateWorkBreak(workhourId, starttime, newstarttime, newendtime)), HttpStatus.OK);
+			return new ResponseEntity<>(convertToDto(service.updateWorkBreak(id, newstarttime, newendtime)), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 	
-	@PostMapping(value = { "/workbreak/Id/{startbreak}", "/workbreak/Id/{startbreak}/" })
-	public ResponseEntity<?> deleteWorkBreak(@PathVariable("startbreak") Integer workhourid, 
-			Time startbreak
+	@PostMapping(value = { "/workbreak/{Id}", "/workbreak/{Id}/" })
+	public ResponseEntity<?> deleteWorkBreak(@PathVariable("Id") Integer id
 			) throws IllegalArgumentException {
 		try {
-			return new ResponseEntity<>(convertToDto(service.DeleteWorkBreak(workhourid, startbreak)), HttpStatus.OK);
+			return new ResponseEntity<>(convertToDto(service.DeleteWorkBreak(id), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
-	
-	@PutMapping(value = { "/workbreak/{Id}", "/workbreak/{Id}/"})
-	public ResponseEntity<?> getAllWorkBreaks(@PathVariable("Id") Integer Id) {
-		return new ResponseEntity<>(service.getAllWorkBreaks(Id).stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
-	}
-	
 	
 	//Convert to Dto methods
 
-	private UserDto convertToDto(User u) {
+	private EndUserDto convertToDto(EndUser u) {
 		if (u == null) {
-			throw new IllegalArgumentException("There is no such User!");
+			throw new IllegalArgumentException("There is no such EndUser!");
 		}
-		UserDto userDto = new UserDto(u.getUsername(), u.getPassword(), u.getName(), u.getEmail());
+		EndUserDto userDto = new EndUserDto(u.getUsername(), u.getPassword(), u.getName(), u.getEmail());
 		return userDto;
 	}
 	
@@ -283,7 +275,7 @@ public class AutoRepairSystemController {
 		if (u == null) {
 			throw new IllegalArgumentException("There is no such WorkBreak!");
 		}
-		WorkBreakDto WorkBreakDto = new WorkBreakDto(u.getStartBreak(), u.getEndBreak(), convertToDto(u.getWorkHour()));
+		WorkBreakDto WorkBreakDto = new WorkBreakDto(u.getStartBreak(), u.getEndBreak());
 		return WorkBreakDto;
 		
 	}
@@ -297,4 +289,4 @@ public class AutoRepairSystemController {
 		
 	}
 
-}*/
+}

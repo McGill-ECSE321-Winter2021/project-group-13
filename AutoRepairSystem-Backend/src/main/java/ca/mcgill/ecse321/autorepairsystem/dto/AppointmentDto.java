@@ -5,7 +5,7 @@ import java.sql.Time;
 import java.util.Set;
 
 public class AppointmentDto {
-	private Set <ServiceDto> services;
+	private Set <WorkItemDto> services;
 	private TechnicianDto technician;
 	private CustomerDto customer;
 	private Integer id;
@@ -15,7 +15,7 @@ public class AppointmentDto {
 	
 	public AppointmentDto() {}
 	
-	public AppointmentDto(Set <ServiceDto> services,TechnicianDto technician,CustomerDto customer,Integer id, Time starttime, Time endtime, Date date) {
+	public AppointmentDto(Set <WorkItemDto> services,TechnicianDto technician,CustomerDto customer,Integer id, Time starttime, Time endtime, Date date) {
 		this.services = services;
 		this.technician = technician;
 		this.customer = customer;
@@ -26,11 +26,11 @@ public class AppointmentDto {
 			
 	}
 	
-	public void setServices(Set <ServiceDto> services) {
+	public void setServices(Set <WorkItemDto> services) {
 		this.services = services;
 	}
 	
-	public Set <ServiceDto> getServices(){
+	public Set <WorkItemDto> getServices(){
 		return services;
 	}
 	

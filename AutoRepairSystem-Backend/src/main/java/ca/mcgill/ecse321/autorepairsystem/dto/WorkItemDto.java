@@ -1,14 +1,14 @@
 package ca.mcgill.ecse321.autorepairsystem.dto;
 
-public class ServiceDto {
+public class WorkItemDto {
 
 	private String name;
 	private int duration;
 	private int price;
 	
-	public ServiceDto() {}
+	public WorkItemDto() {}
 	
-	public ServiceDto(String name, int duration, int price) {
+	public WorkItemDto(String name, int duration, int price) {
 		this.name = name;
 		this.duration = duration;
 		this.price = price;

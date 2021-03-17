@@ -1,6 +1,6 @@
 package ca.mcgill.ecse321.autorepairsystem.dto;
 
-public class AdministratorDto extends UserDto {
+public class AdministratorDto extends EndUserDto {
 
 	public AdministratorDto() {
 		
