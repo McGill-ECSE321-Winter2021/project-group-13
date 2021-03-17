@@ -17,13 +17,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import ca.mcgill.ecse321.autorepairsystem.dto.BusinessHourDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.EndUserDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkBreakDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkHourDto;
+import ca.mcgill.ecse321.autorepairsystem.dto.WorkItemDto;
+import ca.mcgill.ecse321.autorepairsystem.model.BusinessHour;
 import ca.mcgill.ecse321.autorepairsystem.model.Customer;
 import ca.mcgill.ecse321.autorepairsystem.model.EndUser;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkBreak;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkHour;
+import ca.mcgill.ecse321.autorepairsystem.model.WorkItem;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
 
 @CrossOrigin(origins = "*")
@@ -258,8 +262,155 @@ public class AutoRepairSystemController {
 		}
 	}
 	
+	//work Item Controller Methods
+	
+	@PostMapping(value = { "/workitem/{name}", "/workbreak/{name}/" })
+	public ResponseEntity<?> createWorkItem(@PathVariable("name") String name, 
+			@RequestParam int duration, 
+			@RequestParam int  price) throws IllegalArgumentException {
+		try {
+			WorkItem workitem = service.createWorkItem(name, duration, price);
+			return new ResponseEntity<>(convertToDto(workitem), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	@GetMapping(value = { "/workitem/{name}", "/workitem/{name}/" })
+	public ResponseEntity<?> getWorkItem(@PathVariable("name") 
+			@RequestParam String name
+			) throws IllegalArgumentException {
+		try {
+			WorkItem workitem = service.getWorkItem(name);
+			return new ResponseEntity<>(convertToDto(workitem), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	@PutMapping(value = { "/workitem/{name}", "/workitem/{name}/"})
+	public ResponseEntity<?> updateWorkItem(@PathVariable("name") String name,
+			@RequestParam int duration,
+			@RequestParam int price) {
+		try {
+			return new ResponseEntity<>(convertToDto(service.updateWorkItem(name,duration,price)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	@DeleteMapping(value = {"/workitem/{name}", "/workitem/{name}/"})
+	public ResponseEntity<?> DeleteWorkItem(@PathVariable("name") String name){
+		try {
+			return new ResponseEntity<>(convertToDto(service.deleteWorkItem(name)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	@GetMapping(value = { "/workhour", "/workhour/"})
+	public ResponseEntity<?> getAllWorkItems() {
+		return new ResponseEntity<>(service.getAllWorkItems().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
+	}
+	
+	
+	//business Hour Controller methods
+	
+	@PostMapping(value = { "/businesshour/{date}", "/businesshour/{date}/" })
+	public ResponseEntity<?> createBusinessHour(@PathVariable("name") Date date, 
+			@RequestParam Time start, 
+			@RequestParam Time  end) throws IllegalArgumentException {
+		try {
+			BusinessHour businesshour = service.createBusinessHour(start, end, date);
+			return new ResponseEntity<>(convertToDto(businesshour), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	
+	@GetMapping(value = { "/businesshour/{Id}", "/businesshour/{Id}/" })
+	public ResponseEntity<?> getBusinessHour(@PathVariable("Id") 
+			@RequestParam Integer Id
+			) throws IllegalArgumentException {
+		try {
+			BusinessHour businessHour = service.getBusinessHour(Id);
+			return new ResponseEntity<>(convertToDto(businessHour), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	
+	@PutMapping(value = { "/businesshour/{Id}", "/businesshour/{Id}/"})
+	public ResponseEntity<?> updateBusinessHour(@PathVariable("Id") Integer Id,
+			@RequestParam Time start,
+			@RequestParam Time end,
+			@RequestParam Date date) {
+		try {
+			return new ResponseEntity<>(convertToDto(service.updateBusinessHour(Id, start, end, date)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	
+	@PostMapping(value = { "/businesshour/Id/{Id}", "/businesshour/Id/{Id}/"})
+	public ResponseEntity<?> updateBusinessHourWorkBreak(@PathVariable("Id") Integer Id,  
+			@RequestParam Set<WorkBreak> workBreak) {
+		try {
+			return new ResponseEntity<>(convertToDto(service.updateBusinessHourWorkBreak(Id, workBreak)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	
+	@DeleteMapping(value = {"/businesshour/{Id}", "/businesshour/{Id}/"})
+	public ResponseEntity<?> DeleteBusinessHour(@PathVariable("Id") Integer Id){
+		try {
+			return new ResponseEntity<>(convertToDto(service.deleteBusinessHour(Id)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	
+	@GetMapping(value = { "/workhour", "/workhour/"})
+	public ResponseEntity<?> getAllBusinessHours() {
+		return new ResponseEntity<>(service.getAllBusinessHours().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
+	}
+	
+	
+	
 	
 	//Convert to Dto methods
+	
+	private BusinessHourDto convertToDto(BusinessHour u) {
+		if (u == null) {
+			throw new IllegalArgumentException("There is no such EndUser!");
+		}
+		BusinessHourDto BusinessHourDto = new BusinessHourDto(u.getStartTime(), u.getEndTime(), u.getDate(), u.getId(),u.getWorkBreak().stream().map(p -> convertToDto(p)).collect(Collectors.toSet()));
+		return BusinessHourDto;
+	}
+	
+	private WorkItemDto convertToDto(WorkItem u) {
+		if (u == null) {
+			throw new IllegalArgumentException("There is no such EndUser!");
+		}
+		WorkItemDto WorkItemDto = new WorkItemDto(u.getName(), u.getDuration(), u.getPrice());
+		return WorkItemDto;
+	}
+	
 
 	private EndUserDto convertToDto(EndUser u) {
 		if (u == null) {
