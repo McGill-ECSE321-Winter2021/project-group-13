@@ -40,6 +40,8 @@ public class AutoRepairSystemService {
 	WorkHourRepository workHourRepository;
 	@Autowired
 	WorkBreakRepository workBreakRepository;
+	@Autowired
+	BusinessHourRepository businessHourRepository;
 	  
 	  @Transactional
 	  public List<Appointment> getAllAppointments() {
@@ -490,7 +492,7 @@ public class AutoRepairSystemService {
 	}
 	
 	
-	//User service methods
+	//endUser service methods
 	
 	@Transactional
 	public EndUser getUser(String username) throws IllegalArgumentException {
@@ -741,7 +743,7 @@ public class AutoRepairSystemService {
 		return appointmentsAttendedByCustomer;
 	}
 	
-	//Service service methods
+	//workItem service methods
 	
 	@Transactional
 	public WorkItem createWorkItem(String name, int duration, int price) throws IllegalArgumentException {
@@ -750,7 +752,7 @@ public class AutoRepairSystemService {
 		}
 		
 		if (workItemRepository.findWorkItemByName(name) != null) {
-			throw new IllegalArgumentException("WorkItem with username " + name + " already exists");
+			throw new IllegalArgumentException("WorkItem with name: " + name + " already exists");
 		}
 		
 		if (duration < 0) {
@@ -761,16 +763,75 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Price cannot be less than zero!");
 		}
 		
-		return null;
+		WorkItem workItem = new WorkItem();
+		workItem.setName(name);
+		workItem.setDuration(duration);
+		workItem.setPrice(price);
 		
-		/*Service service = new Service();
-		service.setName(name);
-		service.setDuration(duration);
-		service.setPrice(price);
-		
-		serviceRepository.save(service);
-		return service;*/
+		workItemRepository.save(workItem);
+		return workItem;
 	}
+	
+	@Transactional
+	public WorkItem getWorkItem(String name) {
+		WorkItem workItem = workItemRepository.findWorkItemByName(name);
+		
+			if (workItem == null) {
+				throw new IllegalArgumentException("Work item cannot be found!");
+			}
+		return workItem;
+	}
+	
+	@Transactional
+	public WorkItem updateWorkItem(String name, int duration, int price) {
+		if (name == null || name == "" ) {
+			throw new IllegalArgumentException("A valid service name must be provide!");
+		}
+		
+		WorkItem workItem = workItemRepository.findWorkItemByName(name);
+		
+		if (workItem == null) {
+			throw new IllegalArgumentException("WorkItem with name does not exist!");
+		}
+		
+		if (duration < 0) {
+			throw new IllegalArgumentException("Duration cannot be less than zero!");
+		}
+		
+		if(price < 0) {
+			throw new IllegalArgumentException("Price cannot be less than zero!");
+		}
+		
+		workItem.setName(name);
+		workItem.setDuration(duration);
+		workItem.setPrice(price);
+		
+		workItemRepository.save(workItem);
+		return workItem;
+	}
+	
+	@Transactional
+	public WorkItem deleteWorkItem(String name) {
+		if (name == null || name == "") {
+			throw new IllegalArgumentException("A valid name must be provided");
+		}
+		
+		WorkItem workItem = workItemRepository.findWorkItemByName(name);
+		
+		if (workItem == null) {
+			throw new IllegalArgumentException("Work item cannot be found.");
+		}
+		
+		workItemRepository.delete(workItem);
+		
+		return workItem;
+	}
+	
+	@Transactional
+	public List<WorkItem> getAllWorkItems() {
+			return toList(workItemRepository.findAll());
+	}
+	
 	 //WorkHour service methods
 	
 	@Transactional
@@ -982,7 +1043,281 @@ public class AutoRepairSystemService {
 		return workBreak;
 	}
 	
+	//TechnicianHour service methods
+	@Transactional
+	public TechnicianHour createTechnicianHour(String technicianUsername ,Time startTime, Time endTime, Date date) {
+		
+		//startTime,endTime,date, (technician + potentially workBreak)
+		
+		if (technicianUsername == null || (technicianUsername.trim().isEmpty())) {
+			throw new IllegalArgumentException("A valid technician username must be provided!");
+		}
+		
+		Technician technician = technicianRepository.findTechnicianByUsername(technicianUsername);
+		
+		if (technician == null) {
+			throw new IllegalArgumentException("Specified technician doesn't exist!");
+		}
+		
+		if (startTime == null || startTime.after(endTime) == true) {
+			throw new IllegalArgumentException("A valid start time must be provided! (non-empty or before end time)");
+		}
+		
+		if (endTime == null || endTime.before(startTime) == true) {
+			throw new IllegalArgumentException("A valid end time must be provided! (non-empty or after start time)");
+		}
+		
+		if (date == null) {
+			throw new IllegalArgumentException("A valid date must be provided!");
+		}
+		
+		Set<TechnicianHour> technicianHours = technician.getTechnicianHour();
+		
+		TechnicianHour technicianHour = new TechnicianHour();
+		technicianHour.setStartTime(startTime);
+		technicianHour.setEndTime(endTime);
+		technicianHour.setDate(date);
+		
+		Set<WorkBreak> emptyWorkBreak = new HashSet<WorkBreak>();
+		technicianHour.setWorkBreak(emptyWorkBreak);
+		
+		technicianHours.add(technicianHour);
+		technician.setTechnicianHour(technicianHours);
+		technicianRepository.save(technician);
+		technicianHourRepository.save(technicianHour);
+		
+		return technicianHour;
+	}
 	
+	@Transactional
+	public TechnicianHour getTechnicianHour(Integer id) throws IllegalArgumentException {
+		TechnicianHour technicianHour = technicianHourRepository.findTechnicianHourById(id);
+		
+		if (technicianHour == null) {
+			throw new IllegalArgumentException("Technician Hour cannot be found!");
+		}
+		return technicianHour;
+	}
+	
+	
+	@Transactional
+	public TechnicianHour updateTechnicianHour(Integer id,Time startTime, Time endTime, Date date) throws IllegalArgumentException {
+		
+		if (id == null) {
+			throw new IllegalArgumentException("A valid technican hour I.D. must be provided!");
+		}
+		
+		TechnicianHour technicianHour = technicianHourRepository.findTechnicianHourById(id);
+		
+		if(technicianHour == null) {
+			throw new IllegalArgumentException("A technician hour with this I.D. cannot be found!");
+		}
+		
+		Technician technician = technicianRepository.findTechnicianByTechnicianHour(technicianHour);
+		
+		if (technician == null) {
+			throw new IllegalArgumentException("Specified technician hour doesn't exist for any technician!; please create a new one");
+		}
+		
+		if (date == null) {
+			throw new IllegalArgumentException("A valid date must be provided!");
+		}
+		
+		if (startTime == null || startTime.after(endTime) == true) {
+			throw new IllegalArgumentException("A valid start time must be provided! (non-empty or before end time)");
+		}
+		
+		if (endTime == null || endTime.before(startTime) == true) {
+			throw new IllegalArgumentException("A valid end time must be provided! (non-empty or after start time)");
+		}
+		
+		
+		technicianHour.setStartTime(startTime);
+		technicianHour.setEndTime(endTime);
+		//technicianHour.setId(id);
+		technicianHour.setDate(date);
+		//technicianHour.setTechnician(technician);
+
+		technicianRepository.save(technician);
+		technicianHourRepository.save(technicianHour);
+		
+		return technicianHour;
+	}
+	
+	
+	//could be changed to update singular workBreak
+	@Transactional
+	public TechnicianHour updateTechnicianHourWorkBreak(Integer id, Set<WorkBreak> workBreak) throws IllegalArgumentException {
+		
+		if (id == null) {
+			throw new IllegalArgumentException("A valid technician hour ID must be provided!");
+		}
+		
+		TechnicianHour technicianHour = technicianHourRepository.findTechnicianHourById(id);
+		
+		if (technicianHour == null) {
+			throw new IllegalArgumentException("Technician Hour cannot be found");
+		}
+		
+		if (workBreak == null) {
+			throw new IllegalArgumentException("A valid work break must be provided!");
+		}
+		
+		technicianHour.setWorkBreak(workBreak);
+		technicianHourRepository.save(technicianHour);
+		
+		return technicianHour;
+	}
+	
+	@Transactional
+	public TechnicianHour deleteTechnicianHour(Integer id) throws IllegalArgumentException {
+		
+		if (id == null) {
+			throw new IllegalArgumentException("A valid technician hour ID must be provided!");
+		}
+		
+		TechnicianHour technicianHour = technicianHourRepository.findTechnicianHourById(id);
+		
+		if (technicianHour == null) {
+			throw new IllegalArgumentException("Specified technician Hour doesn't exist!");
+		}
+		
+		technicianHourRepository.delete(technicianHour);
+		return technicianHour;
+	}
+	
+	@Transactional
+	public List<TechnicianHour> getAllTechnicianHours(){
+		return toList(technicianHourRepository.findAll());
+	}
+	
+	
+	//BusinessHour service methods
+	
+	@Transactional
+	public BusinessHour createBusinessHour(Time startTime, Time endTime, Date date) {
+		
+		//startTime,endTime,date, (potentially workBreak)
+		
+		if (startTime == null || startTime.after(endTime) == true) {
+			throw new IllegalArgumentException("A valid start time must be provided! (non-empty or before end time)");
+		}
+		
+		if (endTime == null || endTime.before(startTime) == true) {
+			throw new IllegalArgumentException("A valid end time must be provided! (non-empty or after start time)");
+		}
+		
+		if (date == null) {
+			throw new IllegalArgumentException("A valid date must be provided!");
+		}
+		
+		BusinessHour businessHour = new BusinessHour();
+		businessHour.setStartTime(startTime);
+		businessHour.setEndTime(endTime);
+		businessHour.setDate(date);
+		
+		Set<WorkBreak> emptyWorkBreak = new HashSet<WorkBreak>();
+		businessHour.setWorkBreak(emptyWorkBreak);
+		
+		businessHourRepository.save(businessHour);
+		
+		return businessHour;
+	}
+	
+	@Transactional
+	public BusinessHour getBusinessHour(Integer id) throws IllegalArgumentException {
+		BusinessHour businessHour = businessHourRepository.findBusinessHourById(id);
+		
+		if (businessHour == null) {
+			throw new IllegalArgumentException("business hour cannot be found!");
+		}
+		return businessHour;
+	}
+	
+	
+	@Transactional
+	public BusinessHour updateBusinessHour(Integer id,Time startTime, Time endTime, Date date) throws IllegalArgumentException {
+		
+		if (id == null) {
+			throw new IllegalArgumentException("A valid business hour I.D. must be provided!");
+		}
+		
+		BusinessHour businessHour = businessHourRepository.findBusinessHourById(id);
+		
+		if(businessHour == null) {
+			throw new IllegalArgumentException("A business hour with this I.D. cannot be found!");
+		}
+		
+		if (date == null) {
+			throw new IllegalArgumentException("A valid date must be provided!");
+		}
+		
+		if (startTime == null || startTime.after(endTime) == true) {
+			throw new IllegalArgumentException("A valid start time must be provided! (non-empty or before end time)");
+		}
+		
+		if (endTime == null || endTime.before(startTime) == true) {
+			throw new IllegalArgumentException("A valid end time must be provided! (non-empty or after start time)");
+		}
+		
+		
+		businessHour.setStartTime(startTime);
+		businessHour.setEndTime(endTime);
+		//technicianHour.setId(id);
+		businessHour.setDate(date);
+		//technicianHour.setTechnician(technician);
+
+		businessHourRepository.save(businessHour);
+		
+		return businessHour;
+	}
+	
+	
+	//could be changed to update singular workBreak
+	@Transactional
+	public BusinessHour updateBusinessHourWorkBreak(Integer id, Set<WorkBreak> workBreak) throws IllegalArgumentException {
+		
+		if (id == null) {
+			throw new IllegalArgumentException("A valid business hour ID must be provided!");
+		}
+		
+		BusinessHour businessHour = businessHourRepository.findBusinessHourById(id);
+		
+		if (businessHour == null) {
+			throw new IllegalArgumentException("Business Hour cannot be found");
+		}
+		
+		if (workBreak == null) {
+			throw new IllegalArgumentException("A valid work break must be provided!");
+		}
+		
+		businessHour.setWorkBreak(workBreak);
+		businessHourRepository.save(businessHour);
+		
+		return businessHour;
+	}
+	
+	@Transactional
+	public BusinessHour deleteBusinessHour(Integer id) throws IllegalArgumentException {
+		
+		if (id == null) {
+			throw new IllegalArgumentException("A valid business hour ID must be provided!");
+		}
+		
+		BusinessHour businessHour = businessHourRepository.findBusinessHourById(id);
+		
+		if (businessHour == null) {
+			throw new IllegalArgumentException("Specified business hour doesn't exist!");
+		}
+		
+		businessHourRepository.delete(businessHour);
+		return businessHour;
+	}
+	
+	@Transactional
+	public List<BusinessHour> getAllBusinessHours(){
+		return toList(businessHourRepository.findAll());
+	}
 	
 	//Helper methods
 	
