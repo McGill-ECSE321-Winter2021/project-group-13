@@ -1437,6 +1437,30 @@ public class AutoRepairSystemService {
 		return toList(businessHourRepository.findAll());
 	}
 	
+	
+	//Payment service methods
+	
+	@Transactional
+	public Customer payment(String username, Integer amountPayed) throws IllegalArgumentException {
+		if (nonValidString(username)) {
+			throw new IllegalArgumentException("A valid username must be provided!");
+		}
+		
+		Customer customer = customerRepository.findCustomerByUsername(username);
+		
+		if (customer == null) {
+			throw new IllegalArgumentException("Specified customer does not exist!");
+		}
+		
+		//Makes sure a customer's amount due doesn't go in the negatives
+		Integer amountLeft = 0;
+		if (customer.getAmountOwed() > amountPayed) amountLeft = customer.getAmountOwed() - amountPayed;
+		
+		customer.setAmountOwed(amountLeft);
+		
+		return customer;
+	}
+	
 	//Helper methods
 	
 	private <T> List<T> toList(Iterable<T> iterable){

@@ -555,6 +555,20 @@ public class AutoRepairSystemController {
 	}
 	
 	
+	//Payment controller methods
+	
+	@PutMapping(value = { "/customers/{username}/payment", "/customers/{username}/payment/"})
+	public ResponseEntity<?> payment(@PathVariable("username") String username,
+			@RequestParam Integer amount) {
+		try {
+			return new ResponseEntity<>(convertToDto(service.payment(username, amount)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	
 	//Convert to Dto methods
 	
 	private BusinessHourDto convertToDto(BusinessHour u) {
