@@ -2,13 +2,11 @@ package ca.mcgill.ecse321.autorepairsystem.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import java.util.*;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Month;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
@@ -60,17 +58,24 @@ public class TestAutoRepairSystemPersistence {
 	private static final String PASSWORD = "testPassword";
 	private static final String EMAIL = "testEmail";
 	private static final String NAME = "testName";
+	
+	private static final String USERNAME2 = "testUsername2";
+	private static final String PASSWORD2 = "testPassword2";
+	private static final String EMAIL2 = "testEmail2";
+	private static final String NAME2 = "testName2";
+	
 	private static final int AMOUNTOWED = 20;
 	
 	//Appointment Constants
 	private static final Integer APPOINTMENTID = 101;
 	private static final Time APPOINTMENTSTART = Time.valueOf("12:59:59");
 	private static final Time APPOINTMENTEND = Time.valueOf("23:59:59");
+	private static final Date APPOINTMENTDATE = Date.valueOf("2020-01-01");
 	
 	//WorkItem Constants
-	private static final String SERVICENAME = "testService";
-	private static final int SERVICEDURATION = 20;
-	private static final int SERVICECOST = 20;
+	private static final String WORKITEMNAME = "testWorkItem";
+	private static final int WORKITEMDURATION = 20;
+	private static final int WORKITEMPRICE = 20;
 	
 	//WorkHour Constants
 	private static final Integer WORKHOURID = 102;
@@ -127,14 +132,8 @@ public class TestAutoRepairSystemPersistence {
 	
 	@Test
 	public void testPersistAndLoadAdministrator() {
-		Administrator administrator = createAdministrator(USERNAME,PASSWORD,NAME,EMAIL);
 		
-		
-		administrator.setUsername(USERNAME);
-		administrator.setName(NAME);
-		administrator.setPassword(PASSWORD);
-		administrator.setEmail(EMAIL);
-		
+		Administrator administrator = newAdministrator(USERNAME,PASSWORD,NAME,EMAIL);
 		administratorRepository.save(administrator);
 		
 		administrator = null;
@@ -143,183 +142,185 @@ public class TestAutoRepairSystemPersistence {
 		assertNotNull(administrator);
 		assertEquals(USERNAME, administrator.getUsername());
 		
+		administratorRepository.delete(administrator);
+		assertNull(administratorRepository.findAdministratorByUsername(USERNAME));
+		
 	}
 
 
 	@Test
 	public void testPersistAndLoadWorkItem() {
-		String name = "tire change";
-		int duration = 2;
-		int price = 30;
 		
-		WorkItem workItem = new WorkItem (); 
-		
-		workItem.setName(name);
-		workItem.setDuration(duration);
-		workItem.setPrice(price);
-	
+		WorkItem workItem = newWorkItem(WORKITEMNAME,WORKITEMDURATION,WORKITEMPRICE);
 		workItemRepository.save(workItem);
 	
 		workItem=null;
 		
-		workItem=workItemRepository.findWorkItemByName(name);
+		workItem=workItemRepository.findWorkItemByName(WORKITEMNAME);
 		assertNotNull(workItem);
-		assertEquals(name, workItem.getName());
+		assertEquals(WORKITEMNAME, workItem.getName());
 		
+		// Test Delete
+		workItemRepository.delete(workItem);
+		assertNull(workItemRepository.findWorkItemByName(WORKITEMNAME));
 		
 	}
 	
 	@Test
 	public void testPersistAndLoadCustomer() {
 
-	String username = "TestPerson";
-	String name = "Henri";
-	String password = "123Sesame";
-	String email = "mail.mcgill.ca";
-	int amountOwed = 10;
-
-	Customer customer = new Customer();
-	customer.setUsername(username);
-	customer.setName(name);
-	customer.setPassword(password);
-	customer.setEmail(email);
-	customer.setAmountOwed(amountOwed);
+		Customer customer = newCustomer(USERNAME,PASSWORD,NAME,EMAIL,AMOUNTOWED);
+		customerRepository.save(customer);
+		
+		customer = null;
+		
+		customer = customerRepository.findCustomerByUsername(USERNAME);
+		assertNotNull(customer);
+		assertEquals(USERNAME,customer.getUsername());
+		
+		customer = null;
+		
+		customer = customerRepository.findCustomerByEmail(EMAIL);
+		assertNotNull(customer);
+		assertEquals(USERNAME,customer.getUsername());
+		
+		// Test Delete
+		customerRepository.delete(customer);
+		assertNull(customerRepository.findCustomerByUsername(USERNAME));
 	
-	customerRepository.save(customer);
-	
-	customer = null;
-	customer = customerRepository.findCustomerByUsername(username);
-	assertEquals(customer.getUsername(),username);
 	}
 			
 	@Test
 	public void testPersistAndLoadAppointment() {
-		Time starttime =java.sql.Time.valueOf(LocalTime.of(11, 35));;
-		Time endtime =java.sql.Time.valueOf(LocalTime.of(12, 35));;
-		Date date = java.sql.Date.valueOf(LocalDate.of(2020, Month.JANUARY, 31));
-		Integer id=25;
-	
-		Technician tech = new Technician ();
-		tech.setEmail("techEmail");
-		tech.setName("techName");
-		tech.setPassword("techPassword");
-		tech.setUsername("techUsername");
+		
+		Technician tech = newTechnician(USERNAME,PASSWORD,NAME,EMAIL);
 		technicianRepository.save(tech);
 		
-		
-		//tech.setTechnicianHour(null);
-		
-		Customer customer = new Customer ();
-		customer.setEmail("customerEmail");
-		customer.setName("customerName");
-		customer.setPassword("customerPassword");
-		customer.setUsername("customerUsername");
-		customer.setAmountOwed(0);
+		Customer customer = newCustomer(USERNAME2,PASSWORD2,NAME2,EMAIL2,AMOUNTOWED);
 		customerRepository.save(customer);
 		
+		WorkItem workItem = newWorkItem(WORKITEMNAME,WORKITEMDURATION,WORKITEMPRICE);
 		Set<WorkItem> workItemSet = new HashSet<WorkItem>();
-		WorkItem workItem = new WorkItem();
-		workItem.setName("workItemName");
-		workItem.setDuration(99);
-		workItem.setPrice(999);
 		workItemSet.add(workItem);
 		workItemRepository.save(workItem);
 		
-		Appointment appointment = new Appointment ();
+		Appointment appointment = newAppointment(APPOINTMENTID,APPOINTMENTSTART,APPOINTMENTEND,APPOINTMENTDATE);
 		appointment.setCustomer(customer);
 		appointment.setTechnician(tech);
 		appointment.setWorkItem(workItemSet);
-		appointment.setStartTime(starttime);
-		appointment.setEndTime(endtime);
-		appointment.setDate(date);
-		appointment.setId(id);
-		
 		appointmentRepository.save(appointment);
 		
 		appointment=null;
 		
 		appointment=appointmentRepository.findAppointmentByCustomer(customer);
 		assertNotNull(appointment);
-		assertEquals(id, appointment.getId());
+		assertEquals(APPOINTMENTID, appointment.getId());
 		
 		appointment=null;
 		appointment=appointmentRepository.findAppointmentByTechnician(tech);
 		assertNotNull(appointment);
-		assertEquals(date, appointment.getDate());
+		assertEquals(APPOINTMENTID, appointment.getId());
 		
 		appointment=null;
-		appointment=appointmentRepository.findAppointmentById(id);
+		appointment=appointmentRepository.findAppointmentById(APPOINTMENTID);
 		assertNotNull(appointment);
-		assertEquals(id, appointment.getId());	
+		assertEquals(APPOINTMENTID, appointment.getId());
+		
+		// Test Delete
+		appointmentRepository.delete(appointment);
+		assertNull(appointmentRepository.findAppointmentById(APPOINTMENTID));
+		
+		// Test nonCascading Delete
+		assertNotNull(technicianRepository.findTechnicianByUsername(USERNAME));
+		assertNotNull(customerRepository.findCustomerByUsername(USERNAME2));
+		assertNotNull(workItemRepository.findWorkItemByName(WORKITEMNAME));
 	}
 	
 	@Test
 	public void testPersistAndLoadWorkBreak() {
-		Time startbreak =java.sql.Time.valueOf(LocalTime.of(11, 35));;
-		Time endbreak =java.sql.Time.valueOf(LocalTime.of(12, 35));;
-		Integer workBreakId = 26;
 		
-		WorkBreak workBreak = new WorkBreak();
-		workBreak.setStartBreak(startbreak);
-		workBreak.setEndBreak(endbreak);
-		workBreak.setId(workBreakId);
+		WorkBreak workBreak = newWorkBreak(WORKBREAKID,WORKBREAKSTART,WORKBREAKEND);
 		workBreakRepository.save(workBreak);
 		
 		workBreak=null;
 		
-		workBreak=workBreakRepository.findWorkBreakByWorkBreakId(workBreakId);
+		workBreak=workBreakRepository.findWorkBreakById(WORKBREAKID);
 		assertNotNull(workBreak);
-		assertEquals(workBreakId, workBreak.getId());
+		assertEquals(WORKBREAKID, workBreak.getId());
+		
+		//Test Delete
+		workBreakRepository.delete(workBreak);
+		assertNull(workBreakRepository.findWorkBreakById(WORKBREAKID));
+		
 	}
 	
 	@Test	
 	public void testPersistAndLoadTechnician() {
 		
 		TechnicianHour techHour = newTechnicianHour(WORKHOURID,WORKHOURSTART,WORKHOUREND,WORKHOURDATE);
-		technicianHourRepository.save(techHour);
-		
 		Set<TechnicianHour> techHourSet = new HashSet<TechnicianHour>();
 		techHourSet.add(techHour);
 		
 		Technician tech = newTechnician(USERNAME,PASSWORD,NAME,EMAIL);
 		tech.setTechnicianHour(techHourSet);
+		
 		technicianRepository.save(tech);
-
+		technicianHourRepository.save(techHour);
+		
+		techHour = null;
 		tech = null;
 		
 		tech = technicianRepository.findTechnicianByUsername(USERNAME);
 		assertNotNull(tech);
+		assertNotNull(tech.getTechnicianHour());
 		assertEquals(USERNAME, tech.getUsername());
+
 		
-		tech = null;
+		techHour = toList(tech.getTechnicianHour()).get(0);
+		assertEquals(WORKHOURID,techHour.getId());
+
+		// Test Delete
+		technicianRepository.delete(tech);
+		assertNull(technicianRepository.findTechnicianByUsername(USERNAME));
 		
-		tech = technicianRepository.find
-		
+		// test Cascading Delete
+		assertNull(technicianHourRepository.findTechnicianHourById(WORKHOURID));
 		
 	} 
 	
 
 	@Test
 	public void testPersistAndLoadTechnicianHour() {
-		Time startTime =java.sql.Time.valueOf(LocalTime.of(11, 35));;
-		Time endTime =java.sql.Time.valueOf(LocalTime.of(12, 35));;
-		Date date = java.sql.Date.valueOf("2021-01-01");
-		Integer id = 27;
 		
 		
-		TechnicianHour workhour = new TechnicianHour ();
-		workhour.setDate(date);
-		workhour.setStartTime(startTime);
-		workhour.setEndTime(endTime);
-		workhour.setId(27);
-		workhour.setWorkBreak(null);
-		technicianHourRepository.save(workhour);
+		WorkBreak workBreak = newWorkBreak(WORKBREAKID,WORKBREAKSTART,WORKBREAKEND);
+		Set<WorkBreak> workBreakSet = new HashSet<WorkBreak>();
+		workBreakSet.add(workBreak);
+		workBreakRepository.save(workBreak);
 		
-		workhour = null;
+		TechnicianHour techHour = newTechnicianHour(WORKHOURID,WORKHOURSTART,WORKHOUREND,WORKHOURDATE);
 		
-		workhour = technicianHourRepository.findTechnicianHourById(id);
-		assertNotNull(workhour);
-		assertEquals(id, workhour.getId());
+		techHour.setWorkBreak(workBreakSet);
+		technicianHourRepository.save(techHour);
+		
+		techHour = null;
+		workBreak = null;
+		
+		techHour = technicianHourRepository.findTechnicianHourById(WORKHOURID);
+		assertNotNull(techHour);
+		assertNotNull(techHour.getWorkBreak());
+		assertEquals(WORKHOURID, techHour.getId());
+		
+		workBreak = toList(techHour.getWorkBreak()).get(0);
+		assertNotNull(workBreak);
+		assertEquals(WORKBREAKID,workBreak.getId());
+		
+		//Test Delete
+		technicianHourRepository.delete(techHour);
+		assertNull(technicianHourRepository.findTechnicianHourById(WORKHOURID));
+		
+		//Test Cascading Delete
+		assertNull(workBreakRepository.findWorkBreakById(WORKBREAKID));
 	}
 	
 
@@ -327,77 +328,81 @@ public class TestAutoRepairSystemPersistence {
 	
 	
 	private Administrator newAdministrator(String username, String password, String name, String email) {
-		Administrator a = new Administrator();
-		a.setUsername(username);
-		a.setPassword(password);
-		a.setName(name);
-		a.setEmail(email);
-		return a;
+		Administrator admin = new Administrator();
+		admin.setUsername(username);
+		admin.setPassword(password);
+		admin.setName(name);
+		admin.setEmail(email);
+		return admin;
 	}
 	
 	private Appointment newAppointment(Integer id, Time startTime, Time endTime, Date date) {
-		Appointment a = new Appointment();
-		a.setId(id);
-		a.setStartTime(startTime);
-		a.setEndTime(endTime);
-		a.setDate(date);
-		return a;
+		Appointment apt = new Appointment();
+		apt.setId(id);
+		apt.setStartTime(startTime);
+		apt.setEndTime(endTime);
+		apt.setDate(date);
+		return apt;
 	}
 	
 	private BusinessHour newBusinessHour(Integer id, Time startTime, Time endTime, Date date) {
-		BusinessHour bh = new BusinessHour();
-		bh.setId(id);
-		bh.setStartTime(startTime);
-		bh.setEndTime(endTime);
-		bh.setDate(date);
-		return bh;
+		BusinessHour businessHour = new BusinessHour();
+		businessHour.setId(id);
+		businessHour.setStartTime(startTime);
+		businessHour.setEndTime(endTime);
+		businessHour.setDate(date);
+		return businessHour;
 	}
 	
 	private Customer newCustomer(String username, String password, String name, String email, int amountOwed) {
-		Customer c = new Customer();
-		c.setUsername(username);
-		c.setPassword(password);
-		c.setName(name);
-		c.setEmail(email);
-		c.setAmountOwed(amountOwed);
-		return c;
+		Customer customer = new Customer();
+		customer.setUsername(username);
+		customer.setPassword(password);
+		customer.setName(name);
+		customer.setEmail(email);
+		customer.setAmountOwed(amountOwed);
+		return customer;
 	}
 	
 	private Technician newTechnician(String username, String password, String name, String email) {
-		Technician t = new Technician();
-		t.setUsername(username);
-		t.setPassword(password);
-		t.setName(name);
-		t.setEmail(email);
-		return t;
+		Technician technician = new Technician();
+		technician.setUsername(username);
+		technician.setPassword(password);
+		technician.setName(name);
+		technician.setEmail(email);
+		return technician;
 	}
 	
 	private TechnicianHour newTechnicianHour(Integer id, Time startTime, Time endTime, Date date) {
-		TechnicianHour th = new TechnicianHour();
-		th.setId(id);
-		th.setStartTime(startTime);
-		th.setEndTime(endTime);
-		th.setDate(date);
-		return th;
+		TechnicianHour technicianHour = new TechnicianHour();
+		technicianHour.setId(id);
+		technicianHour.setStartTime(startTime);
+		technicianHour.setEndTime(endTime);
+		technicianHour.setDate(date);
+		return technicianHour;
 	}
 	
 	private WorkBreak newWorkBreak(Integer id, Time startTime, Time endTime) {
-		WorkBreak wb = new WorkBreak();
-		wb.setId(id);
-		wb.setStartBreak(startTime);
-		wb.setEndBreak(endTime);
-		return wb;
+		WorkBreak workBreak = new WorkBreak();
+		workBreak.setId(id);
+		workBreak.setStartBreak(startTime);
+		workBreak.setEndBreak(endTime);
+		return workBreak;
 	}
 	
-	private Date getCurrentDate() {
-		long millis=System.currentTimeMillis();
-		java.sql.Date date = new java.sql.Date(millis);
-		return date;
+	private WorkItem newWorkItem(String name, int duration, int price) {
+		WorkItem workItem = new WorkItem();
+		workItem.setName(name);
+		workItem.setDuration(duration);
+		workItem.setPrice(price);
+		return workItem;
 	}
 	
-	private Time getCurrentTime() {
-		long millis=System.currentTimeMillis();
-		java.sql.Time time = new java.sql.Time(millis);
-		return time;
+	private <T> List<T> toList(Iterable<T> iterable){
+		List<T> resultList = new ArrayList<T>();
+		for (T t : iterable) {
+			resultList.add(t);
+		}
+		return resultList;
 	}
 }

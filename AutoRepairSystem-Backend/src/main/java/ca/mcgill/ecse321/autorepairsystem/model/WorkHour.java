@@ -1,6 +1,7 @@
 package ca.mcgill.ecse321.autorepairsystem.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 
 import java.sql.Time;
@@ -8,6 +9,7 @@ import java.sql.Date;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -51,7 +53,8 @@ public Integer getId() {
 }
    private Set<WorkBreak> workBreak;
    
-   @OneToMany(cascade={CascadeType.ALL})
+   @OneToMany(cascade={CascadeType.ALL},fetch = FetchType.EAGER)
+   @JoinColumn(name ="workBreakId")
    public Set<WorkBreak> getWorkBreak() {
       return this.workBreak;
    }
