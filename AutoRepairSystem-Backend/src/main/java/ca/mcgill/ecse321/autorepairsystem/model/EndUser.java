@@ -14,6 +14,7 @@ public abstract class EndUser{
 	public void setUsername(String value) {
 	    this.username = value;
 	}
+	
 	@Id
 	public String getUsername() {
 	    return this.username;

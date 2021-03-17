@@ -12,6 +12,7 @@ import java.time.Month;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +55,8 @@ public class TestAutoRepairSystemPersistence {
 	@Autowired
 	private WorkHourRepository workHourRepository;
 	
-	@AfterEach
-	public void clearDatabase() {
+	@BeforeEach
+	public void clearDatabaseBefore() {
 		workBreakRepository.deleteAll();
 		businessHourRepository.deleteAll();
 		technicianHourRepository.deleteAll();
@@ -70,6 +71,24 @@ public class TestAutoRepairSystemPersistence {
 		workItemRepository.deleteAll();
 		//autoRepairSystemRepository.deleteAll();
 		
+		
+	}
+	
+	@AfterEach
+	public void clearDatabaseAfter() {
+		workBreakRepository.deleteAll();
+		businessHourRepository.deleteAll();
+		technicianHourRepository.deleteAll();
+		workHourRepository.deleteAll();
+		
+		appointmentRepository.deleteAll();
+		customerRepository.deleteAll();
+		technicianRepository.deleteAll();
+		administratorRepository.deleteAll();
+		
+		userRepository.deleteAll();
+		workItemRepository.deleteAll();
+		//autoRepairSystemRepository.deleteAll();
 		
 	}
 	
@@ -207,44 +226,19 @@ public class TestAutoRepairSystemPersistence {
 	public void testPersistAndLoadWorkBreak() {
 		Time startbreak =java.sql.Time.valueOf(LocalTime.of(11, 35));;
 		Time endbreak =java.sql.Time.valueOf(LocalTime.of(12, 35));;
-	
-	
-		Technician tech = new Technician ();
-		tech.setEmail(null);
-		tech.setName(null);
-		tech.setPassword(null);
-		//tech.setTechnicianHour(null);
-		tech.setUsername("Ezra");
-		technicianRepository.save(tech);
+		String workBreakId = "testWorkBreakId";
 		
-		TechnicianHour workhour = new TechnicianHour ();
-		workhour.setDate(null);
-		workhour.setEndTime(null);
-		workhour.setId(2);
-		workhour.setStartTime(null);
-		workhour.setWorkBreak(null);
-		technicianHourRepository.save(workhour);
+		WorkBreak workBreak = new WorkBreak();
+		workBreak.setStartBreak(startbreak);
+		workBreak.setEndBreak(endbreak);
+		workBreak.setWorkBreakId(workBreakId);
+		workBreakRepository.save(workBreak);
 		
+		workBreak=null;
 		
-		WorkBreak workbreak = new WorkBreak ();
-		workbreak.setStartBreak(startbreak);
-		workbreak.setEndBreak(endbreak);
-		
-		
-		workBreakRepository.save(workbreak);
-		
-		workbreak=null;
-		
-		workbreak=workBreakRepository.findWorkBreakByStartBreak(startbreak);
-		assertNotNull(workbreak);
-		assertEquals(startbreak, workbreak.getStartBreak());
-		
-		workbreak=null;
-		
-		//workbreak=workBreakRepository.findWorkBreakByWorkHour(workhour);
-		assertNotNull(workbreak);
-		//assertEquals(startbreak, workbreak.getStartBreak());
-		
+		workBreak=workBreakRepository.findWorkBreakByWorkBreakId(workBreakId);
+		assertNotNull(workBreak);
+		assertEquals(workBreakId, workBreak.getWorkBreakId());
 	}
 	
 	@Test	

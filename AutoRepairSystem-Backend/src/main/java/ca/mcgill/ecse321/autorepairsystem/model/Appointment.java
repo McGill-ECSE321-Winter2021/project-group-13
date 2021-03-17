@@ -1,18 +1,16 @@
 package ca.mcgill.ecse321.autorepairsystem.model;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 
 import java.util.Set;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import javax.persistence.Id;
 import java.sql.Time;
 import java.sql.Date;
-import javax.persistence.JoinColumn;
+
 @Entity
 public class Appointment{
    private Set<WorkItem> workItem;
@@ -54,6 +52,7 @@ public class Appointment{
 	    this.id = value;
 	}
 	@Id
+	@GeneratedValue
 	public Integer getId() {
 	    return this.id;
 	}

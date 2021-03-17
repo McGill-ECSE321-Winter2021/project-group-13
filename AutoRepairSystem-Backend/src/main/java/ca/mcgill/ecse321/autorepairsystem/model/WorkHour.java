@@ -1,7 +1,7 @@
 package ca.mcgill.ecse321.autorepairsystem.model;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 
 import java.sql.Time;
 import java.sql.Date;
@@ -40,18 +40,19 @@ public void setDate(Date value) {
 public Date getDate() {
     return this.date;
 }
-private Integer id;
+private Integer workHourId;
 
-public void setId(Integer value) {
-    this.id = value;
+public void setWorkHourId(Integer value) {
+    this.workHourId = value;
 }
 @Id
-public Integer getId() {
-    return this.id;
+@GeneratedValue
+public Integer getWorkHourId() {
+    return this.workHourId;
 }
    private Set<WorkBreak> workBreak;
    
-   @OneToMany(cascade={CascadeType.ALL},fetch = FetchType.EAGER)
+   @OneToMany(cascade={CascadeType.ALL})
    public Set<WorkBreak> getWorkBreak() {
       return this.workBreak;
    }
