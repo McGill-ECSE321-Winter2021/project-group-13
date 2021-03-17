@@ -3,6 +3,8 @@ package ca.mcgill.ecse321.autorepairsystem.dao;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.*;
 
 import java.sql.Date;
@@ -67,7 +69,6 @@ public class TestAutoRepairSystemPersistence {
 	private static final int AMOUNTOWED = 20;
 	
 	//Appointment Constants
-	private static final Integer APPOINTMENTID = 101;
 	private static final Time APPOINTMENTSTART = Time.valueOf("12:59:59");
 	private static final Time APPOINTMENTEND = Time.valueOf("23:59:59");
 	private static final Date APPOINTMENTDATE = Date.valueOf("2020-01-01");
@@ -78,13 +79,11 @@ public class TestAutoRepairSystemPersistence {
 	private static final int WORKITEMPRICE = 20;
 	
 	//WorkHour Constants
-	private static final Integer WORKHOURID = 102;
 	private static final Time WORKHOURSTART = Time.valueOf("11:59:59");
 	private static final Time WORKHOUREND = Time.valueOf("22:59:59");
 	private static final Date WORKHOURDATE = Date.valueOf("2021-01-01");
 	
 	//WorkBreak Constants
-	private static final Integer WORKBREAKID = 103;
 	private static final Time WORKBREAKSTART = Time.valueOf("13:59:59");
 	private static final Time WORKBREAKEND = Time.valueOf("14:59:59");
 	
@@ -218,22 +217,22 @@ public class TestAutoRepairSystemPersistence {
 		
 		workBreak = null;
 		
-		workBreak = workBreakRepository.findWorkBreakById(WORKBREAKID);
+		workBreak = workBreakRepository.findWorkBreakById(workBreakId);
 		assertNotNull(workBreak);
-		assertEquals(WORKBREAKID,workBreak.getId());
+		assertEquals(workBreakId,workBreak.getId());
 		
 		workBreak = null;
 		
 		workBreak = toList(businessHour.getWorkBreak()).get(0);
 		assertNotNull(workBreak);
-		assertEquals(WORKBREAKID,workBreak.getId());
+		assertEquals(workBreakId,workBreak.getId());
 
 		//Test Delete
 		businessHourRepository.delete(businessHour);
-		assertNull(businessHourRepository.findBusinessHourById(WORKHOURID));
+		assertNull(businessHourRepository.findBusinessHourById(businessHourId));
 		
 		//Test Cascading Delete
-		assertNull(workBreakRepository.findWorkBreakById(WORKBREAKID));
+		assertNull(workBreakRepository.findWorkBreakById(workBreakId));
 	}
 	
 	@Test
@@ -263,15 +262,17 @@ public class TestAutoRepairSystemPersistence {
 	@Test	
 	public void testPersistAndLoadTechnician() {
 		
-		TechnicianHour techHour = newTechnicianHour(WORKHOURID,WORKHOURSTART,WORKHOUREND,WORKHOURDATE);
+		TechnicianHour techHour = newTechnicianHour(WORKHOURSTART,WORKHOUREND,WORKHOURDATE);
 		Set<TechnicianHour> techHourSet = new HashSet<TechnicianHour>();
 		techHourSet.add(techHour);
+		technicianHourRepository.save(techHour);
+		Integer techHourId = techHour.getId();
 		
 		Technician tech = newTechnician(USERNAME,PASSWORD,NAME,EMAIL);
 		tech.setTechnicianHour(techHourSet);
 		
 		technicianRepository.save(tech);
-		technicianHourRepository.save(techHour);
+
 		
 		tech = null;
 		
@@ -284,27 +285,27 @@ public class TestAutoRepairSystemPersistence {
 		
 		tech = technicianRepository.findTechnicianByTechnicianHour(techHour);
 		assertNotNull(tech);
-		assertNotNull(tech.getTechnicianHour());
+		assertFalse(tech.getTechnicianHour().isEmpty());
 		assertEquals(USERNAME, tech.getUsername());
 		
 		techHour = null;
 
 		techHour = toList(tech.getTechnicianHour()).get(0);
 		assertNotNull(techHour);
-		assertEquals(WORKHOURID,techHour.getId());
+		assertEquals(techHourId,techHour.getId());
 		
 		techHour = null;
 		
-		techHour = technicianHourRepository.findTechnicianHourById(WORKHOURID);
+		techHour = technicianHourRepository.findTechnicianHourById(techHourId);
 		assertNotNull(techHour);
-		assertEquals(WORKHOURID,techHour.getId());
+		assertEquals(techHourId,techHour.getId());
 
 		// Test Delete
 		technicianRepository.delete(tech);
 		assertNull(technicianRepository.findTechnicianByUsername(USERNAME));
 		
 		// test Cascading Delete
-		assertNull(technicianHourRepository.findTechnicianHourById(WORKHOURID));
+		assertNull(technicianHourRepository.findTechnicianHourById(techHourId));
 		
 	} 
 	
@@ -312,58 +313,61 @@ public class TestAutoRepairSystemPersistence {
 	@Test
 	public void testPersistAndLoadTechnicianHour() {
 		
-		WorkBreak workBreak = newWorkBreak(WORKBREAKID,WORKBREAKSTART,WORKBREAKEND);
+		WorkBreak workBreak = newWorkBreak(WORKBREAKSTART,WORKBREAKEND);
 		Set<WorkBreak> workBreakSet = new HashSet<WorkBreak>();
 		workBreakSet.add(workBreak);
 		workBreakRepository.save(workBreak);
+		Integer workBreakId = workBreak.getId();
 		
-		TechnicianHour techHour = newTechnicianHour(WORKHOURID,WORKHOURSTART,WORKHOUREND,WORKHOURDATE);
+		TechnicianHour techHour = newTechnicianHour(WORKHOURSTART,WORKHOUREND,WORKHOURDATE);
 		
 		techHour.setWorkBreak(workBreakSet);
 		technicianHourRepository.save(techHour);
+		Integer techHourId = techHour.getId();
 		
 		techHour = null;
 		
-		techHour = technicianHourRepository.findTechnicianHourById(WORKHOURID);
+		techHour = technicianHourRepository.findTechnicianHourById(techHourId);
 		assertNotNull(techHour);
 		assertNotNull(techHour.getWorkBreak());
-		assertEquals(WORKHOURID, techHour.getId());
+		assertEquals(techHourId, techHour.getId());
 		
 		workBreak = null;
 		
-		workBreak = workBreakRepository.findWorkBreakById(WORKBREAKID);
+		workBreak = workBreakRepository.findWorkBreakById(workBreakId);
 		assertNotNull(workBreak);
-		assertEquals(WORKBREAKID, workBreak.getId());
+		assertEquals(workBreakId, workBreak.getId());
 		
 		workBreak = null;
 		
 		workBreak = toList(techHour.getWorkBreak()).get(0);
 		assertNotNull(workBreak);
-		assertEquals(WORKBREAKID,workBreak.getId());
+		assertEquals(workBreakId,workBreak.getId());
 		
 		//Test Delete
 		technicianHourRepository.delete(techHour);
-		assertNull(technicianHourRepository.findTechnicianHourById(WORKHOURID));
+		assertNull(technicianHourRepository.findTechnicianHourById(techHourId));
 		
 		//Test Cascading Delete
-		assertNull(workBreakRepository.findWorkBreakById(WORKBREAKID));
+		assertNull(workBreakRepository.findWorkBreakById(workBreakId));
 	}
 	
 	@Test
 	public void testPersistAndLoadWorkBreak() {
 		
-		WorkBreak workBreak = newWorkBreak(WORKBREAKID,WORKBREAKSTART,WORKBREAKEND);
+		WorkBreak workBreak = newWorkBreak(WORKBREAKSTART,WORKBREAKEND);
 		workBreakRepository.save(workBreak);
+		Integer workBreakId = workBreak.getId();
 		
 		workBreak=null;
 		
-		workBreak=workBreakRepository.findWorkBreakById(WORKBREAKID);
+		workBreak=workBreakRepository.findWorkBreakById(workBreakId);
 		assertNotNull(workBreak);
-		assertEquals(WORKBREAKID, workBreak.getId());
+		assertEquals(workBreakId, workBreak.getId());
 		
 		//Test Delete
 		workBreakRepository.delete(workBreak);
-		assertNull(workBreakRepository.findWorkBreakById(WORKBREAKID));
+		assertNull(workBreakRepository.findWorkBreakById(workBreakId));
 		
 	}
 	

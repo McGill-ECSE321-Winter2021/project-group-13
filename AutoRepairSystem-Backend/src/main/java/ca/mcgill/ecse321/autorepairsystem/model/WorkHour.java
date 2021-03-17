@@ -54,7 +54,7 @@ public Integer getId() {
 }
    private Set<WorkBreak> workBreak;
    
-   @OneToMany(cascade={CascadeType.ALL},fetch = FetchType.EAGER)
+   @OneToMany(cascade={CascadeType.REMOVE},fetch = FetchType.EAGER)
    @JoinColumn(name ="workBreakId")
    public Set<WorkBreak> getWorkBreak() {
       return this.workBreak;

@@ -15,7 +15,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 public class Technician extends EndUser{
    private Set<TechnicianHour> technicianHour;
    
-   @OneToMany(cascade={CascadeType.ALL}, fetch = FetchType.EAGER)
+   @OneToMany(cascade={CascadeType.REMOVE}, fetch = FetchType.EAGER)
    @JoinColumn(name ="technicianHourId")
    public Set<TechnicianHour> getTechnicianHour() {
       return this.technicianHour;
