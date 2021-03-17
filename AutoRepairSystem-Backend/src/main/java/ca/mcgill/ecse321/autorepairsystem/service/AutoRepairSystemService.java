@@ -876,7 +876,7 @@ public class AutoRepairSystemService {
 		}
 		
 		WorkHour workHour = workHourRepository.findWorkHourById(workHourId);
-		
+
 		if (workHour == null) {
 			throw new IllegalArgumentException("Specified Work Hour doesn't exist!");
 		}
@@ -894,6 +894,7 @@ public class AutoRepairSystemService {
 				throw new IllegalArgumentException("Work Hour overlaps with existing work hour");
 			}
 		}
+	
 		
 		WorkBreak workBreak = new WorkBreak();
 		workBreak.setStartBreak(startTime);

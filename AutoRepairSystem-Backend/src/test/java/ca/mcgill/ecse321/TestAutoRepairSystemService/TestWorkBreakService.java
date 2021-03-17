@@ -35,12 +35,19 @@ public class TestWorkBreakService {
 	
 	@Mock
 	private WorkBreakRepository workBreakDao;
+	@Mock
+	private TechnicianHourRepository technicianHourDao;
+	@Mock
+	private WorkHourRepository WorkHourDao;
 	
 	private static final Integer id=20; 
 	private static final Time time=Time.valueOf("14:59:59");
 	private static final Time time2=Time.valueOf("15:59:59");
+	private static final Integer WORKHOURID=20;
 	
 	private static final Integer id2=30; 
+	private static final Time STARTTIME2=Time.valueOf("13:59:59");
+	private static final Time ENDTIME2=Time.valueOf("14:30:59");
 	
 	@InjectMocks
 	private AutoRepairSystemService service;
@@ -127,35 +134,110 @@ public class TestWorkBreakService {
     
     @Test
     public void testCreateWorkBreak() {
+    	
+    	 lenient().when(WorkHourDao.findWorkHourById(anyInt())).thenAnswer((InvocationOnMock invocation) -> {
+             if(invocation.getArgument(0).equals(WORKHOURID)) {
+             	TechnicianHour technicianHour = new TechnicianHour();
+             	technicianHour.setId(WORKHOURID);
+             	
+             	WorkBreak workBreak = new WorkBreak();
+             	workBreak.setStartBreak(time);
+             	workBreak.setEndBreak(time2);
+             	workBreak.setId(id);
+             	
+             	Set<WorkBreak> workBreakSet = new HashSet<WorkBreak>();
+             	workBreakSet.add(workBreak);
+             	
+             	technicianHour.setWorkBreak(workBreakSet);
+             	return technicianHour;
+             }
+             	else {
+             		return null;
+             	}
+             	
+            
+         });
+         
     	WorkBreak workbreak = new WorkBreak();
+    	String error = null;
     	try {
-    		workbreak=service.createWorkBreak(id, time, time2);
+    		workbreak=service.createWorkBreak(WORKHOURID, STARTTIME2, ENDTIME2);
     	} catch(Exception e) {
+    		error = e.getMessage();
     		
     	}
-    	assertEquals(id,workbreak.getId());
+    	
+    	assertEquals(STARTTIME2, workbreak.getStartBreak());
+    	
     }
     
     @Test
     public void updateWorkBreak() {
+    	
+    	lenient().when(WorkHourDao.findWorkHourById(anyInt())).thenAnswer((InvocationOnMock invocation) -> {
+            if(invocation.getArgument(0).equals(WORKHOURID)) {
+            	TechnicianHour technicianHour = new TechnicianHour();
+            	technicianHour.setId(WORKHOURID);
+            	
+            	WorkBreak workBreak = new WorkBreak();
+            	workBreak.setStartBreak(time);
+            	workBreak.setEndBreak(time2);
+            	workBreak.setId(id);
+            	
+            	Set<WorkBreak> workBreakSet = new HashSet<WorkBreak>();
+            	workBreakSet.add(workBreak);
+            	
+            	technicianHour.setWorkBreak(workBreakSet);
+            	return technicianHour;
+            }
+            	else {
+            		return null;
+            	}
+            	
+           
+        });
+    	
     	WorkBreak workbreak = new WorkBreak();
-    	workbreak.setId(id);
-    	workbreak.setStartBreak(time2);
-    	workbreak.setEndBreak(time);
+    	workbreak.setStartBreak(time);
+    	workbreak.setEndBreak(time2);
+    
     	try {
-    		workbreak = service.updateWorkBreak(id, time2, time2);
+    		workbreak = service.updateWorkBreak(WORKHOURID, time, time2);
     	} catch(Exception e) {
     			
     	}
   
-    	assertEquals(time2, workbreak.getStartBreak());
+    	assertEquals(time, workbreak.getStartBreak());
     	assertEquals(time2, workbreak.getEndBreak());
-    	assertEquals(id, workbreak.getId());
+    	
     }
     
     @Test
     public void deleteWorkBreak() {
-    	WorkBreak workbreak =null;
+    	lenient().when(WorkHourDao.findWorkHourById(anyInt())).thenAnswer((InvocationOnMock invocation) -> {
+            if(invocation.getArgument(0).equals(WORKHOURID)) {
+            	TechnicianHour technicianHour = new TechnicianHour();
+            	technicianHour.setId(WORKHOURID);
+            	
+            	WorkBreak workBreak = new WorkBreak();
+            	workBreak.setStartBreak(time);
+            	workBreak.setEndBreak(time2);
+            	workBreak.setId(id);
+            	
+            	Set<WorkBreak> workBreakSet = new HashSet<WorkBreak>();
+            	workBreakSet.add(workBreak);
+            	
+            	technicianHour.setWorkBreak(workBreakSet);
+            	return technicianHour;
+            }
+            	else {
+            		return null;
+            	}
+            	
+           
+        });
+    	
+    	WorkBreak workbreak = new WorkBreak();
     	try {
     		workbreak = service.DeleteWorkBreak(id);
     	} catch(Exception e) {
