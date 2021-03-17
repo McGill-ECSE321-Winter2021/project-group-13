@@ -2,6 +2,7 @@ package ca.mcgill.ecse321.autorepairsystem.controller;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,14 +18,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import ca.mcgill.ecse321.autorepairsystem.dto.AdministratorDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.BusinessHourDto;
+import ca.mcgill.ecse321.autorepairsystem.dto.CustomerDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.EndUserDto;
+import ca.mcgill.ecse321.autorepairsystem.dto.TechnicianDto;
+import ca.mcgill.ecse321.autorepairsystem.dto.TechnicianHourDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkBreakDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkHourDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkItemDto;
+import ca.mcgill.ecse321.autorepairsystem.model.Administrator;
 import ca.mcgill.ecse321.autorepairsystem.model.BusinessHour;
 import ca.mcgill.ecse321.autorepairsystem.model.Customer;
 import ca.mcgill.ecse321.autorepairsystem.model.EndUser;
+import ca.mcgill.ecse321.autorepairsystem.model.Technician;
+import ca.mcgill.ecse321.autorepairsystem.model.TechnicianHour;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkBreak;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkHour;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkItem;
@@ -71,6 +79,28 @@ public class AutoRepairSystemController {
 		}
 	}
 	
+	@PutMapping(value = {"/customers/{username}", "/customers/{username}/"})
+	public ResponseEntity<?> updateCustomer(@PathVariable("username") String username, 
+			@RequestParam String password, 
+			@RequestParam String name, 
+			@RequestParam String email) {
+		try {
+			return new ResponseEntity<>(convertToDto(service.updateCustomer(username, password, name, email)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	@DeleteMapping(value = {"/customers/{username}","/customers/{username}/"})
+	public ResponseEntity<?> deleteCustomer(@PathVariable("username") String username){
+		try {
+			return new ResponseEntity<>(convertToDto(service.deleteCustomer(username)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
 	
 	//Administrator controller methods
 	
@@ -102,8 +132,47 @@ public class AutoRepairSystemController {
 		}
 	}
 	
+	@PutMapping(value = {"/administrators/{username}", "/administrators/{username}/"})
+  	public ResponseEntity<?> updateAdministrator(@PathVariable("username") String username, 
+  			@RequestParam String password, 
+  			@RequestParam String name, 
+  			@RequestParam String email) {
+  		try {
+  			return new ResponseEntity<>(convertToDto(service.updateAdministrator(username, password, name, email)), HttpStatus.OK);
+  		}
+  		catch (IllegalArgumentException e) {
+  			return ResponseEntity.badRequest().body(e.getMessage());
+  		}
+  	}
+	
+	@DeleteMapping(value = {"/administrators/{username}","/administrators/{username}/"})
+  	public ResponseEntity<?> deleteAdministrator(@PathVariable("username") String username){
+  		try {
+  			return new ResponseEntity<>(convertToDto(service.deleteAdministrator(username)), HttpStatus.OK);
+  		}
+  		catch (IllegalArgumentException e) {
+  			return ResponseEntity.badRequest().body(e.getMessage());
+  		}
+  	}
+	
 	
 	//User controller methods
+	
+	@GetMapping(value = { "/users", "/users/" })
+	public ResponseEntity<?> getAllUsers() {
+		return new ResponseEntity<>(service.getAllUsers().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
+	}
+	
+	
+	@GetMapping(value = { "/users/{username}", "/users/{username}/"})
+	public ResponseEntity<?> getUser(@PathVariable("username") String username) {
+		try {
+			return new ResponseEntity<>(convertToDto(service.getUser(username)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
 	
 	@PutMapping(value = {"/users/{username}", "/users/{username}/"})
 	public ResponseEntity<?> updateUser(@PathVariable("username") String username, 
@@ -118,7 +187,6 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	
 	@DeleteMapping(value = {"/users/{username}","/users/{username}/"})
 	public ResponseEntity<?> deleteUser(@PathVariable("username") String username){
 		try {
@@ -130,16 +198,54 @@ public class AutoRepairSystemController {
 	}
 	
 	
-	@GetMapping(value = { "/users", "/users/" })
-	public ResponseEntity<?> getAllUsers() {
-		return new ResponseEntity<>(service.getAllUsers().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
+	//Technician controller methods
+	
+	@GetMapping(value = { "/technicians", "/technicians/" })
+  	public ResponseEntity<?> getAllTechnicians() {
+  		return new ResponseEntity<>(service.getAllTechnicians().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
+  	}
+	
+	@GetMapping(value = { "/technicians/{username}", "/technicians/{username}/"})
+  	public ResponseEntity<?> getTechnician(@PathVariable("username") String username) {
+  		try {
+  			return new ResponseEntity<>(convertToDto(service.getTechnicianByUsername(username)), HttpStatus.OK);
+  		}
+  		catch (IllegalArgumentException e) {
+  			return ResponseEntity.badRequest().body(e.getMessage());
+  		}
+  	}
+	
+	@PostMapping(value = { "/technicians/{username}", "/technicians/{username}/" })
+  	public ResponseEntity<?> createTechnician(@PathVariable("username") String username, 
+  			@RequestParam String password, 
+  			@RequestParam String name, 
+  			@RequestParam String email) throws IllegalArgumentException {
+  		try {
+  			Technician technician = service.createTechnician(username, password, name, email);
+  			return new ResponseEntity<>(convertToDto(technician), HttpStatus.OK);
+  		}
+  		catch (IllegalArgumentException e) {
+  			return ResponseEntity.badRequest().body(e.getMessage());
+  		}
+  	}
+	
+	@PutMapping(value = {"/technicians/{username}", "/technicians/{username}/"})
+	public ResponseEntity<?> updateTechnician(@PathVariable("username") String username, 
+			@RequestParam String password, 
+			@RequestParam String name, 
+			@RequestParam String email) {
+		try {
+			return new ResponseEntity<>(convertToDto(service.updateTechnician(username, password, name, email)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
 	}
 	
-	
-	@GetMapping(value = { "/users/{username}", "/users/{username}/"})
-	public ResponseEntity<?> getUser(@PathVariable("username") String username) {
+	@DeleteMapping(value = {"/technicians/{username}","/technicians/{username}/"})
+	public ResponseEntity<?> deleteTechnician(@PathVariable("username") String username){
 		try {
-			return new ResponseEntity<>(convertToDto(service.getUser(username)), HttpStatus.OK);
+			return new ResponseEntity<>(convertToDto(service.deleteTechnician(username)), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
@@ -158,6 +264,7 @@ public class AutoRepairSystemController {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
+	
 	
 	//workHour controller methods
 	
@@ -391,6 +498,61 @@ public class AutoRepairSystemController {
 	}
 	
 	
+	//Technician hour controller methods
+	
+	@GetMapping(value = { "/technicianhours", "/technicianhours/"})
+	public ResponseEntity<?> getAllTechnicianHours() {
+		return new ResponseEntity<>(service.getAllTechnicianHours().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
+	}
+	
+	@GetMapping(value = { "/technicianhours/{id}", "/technicianhours/{id}/" })
+	public ResponseEntity<?> getTechnicianHourById(@PathVariable("id") 
+			@RequestParam Integer id
+			) throws IllegalArgumentException {
+		try {
+			TechnicianHour technicianHour = service.getTechnicianHour(id);
+			return new ResponseEntity<>(convertToDto(technicianHour), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	@PutMapping(value = { "/technicianhours/{id}", "/technicianhours/{id}/"})
+	public ResponseEntity<?> updateTechnicianHour(@PathVariable("id") Integer id,
+			@RequestParam Time start,
+			@RequestParam Time end,
+			@RequestParam Date date) {
+		try {
+			return new ResponseEntity<>(convertToDto(service.updateTechnicianHour(id, start, end, date)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	
+	@PostMapping(value = { "/technicianhours/id/{id}", "/technicianhours/id/{id}/"})
+	public ResponseEntity<?> updateTechnicianHourWorkBreak(@PathVariable("id") Integer id,  
+			@RequestParam Set<WorkBreak> workBreak) {
+		try {
+			return new ResponseEntity<>(convertToDto(service.updateBusinessHourWorkBreak(id, workBreak)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	
+	@DeleteMapping(value = {"/technicianhours/{id}", "/technicianhours/{id}/"})
+	public ResponseEntity<?> DeleteTechnicianHour(@PathVariable("id") Integer id){
+		try {
+			return new ResponseEntity<>(convertToDto(service.deleteTechnicianHour(id)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
 	
 	
 	//Convert to Dto methods
@@ -420,7 +582,37 @@ public class AutoRepairSystemController {
 		return userDto;
 	}
 	
+	private AdministratorDto convertToDto(Administrator a) {
+		if (a == null) {
+			throw new IllegalArgumentException("There is no such Administrator!");
+		}
+		AdministratorDto administratorDto = new AdministratorDto(a.getUsername(), a.getPassword(), a.getName(), a.getEmail());
+		return administratorDto;
+	}
 	
+	private CustomerDto convertToDto(Customer c) {
+		if (c == null) {
+			throw new IllegalArgumentException("There is no such Customer!");
+		}
+		CustomerDto customerDto = new CustomerDto(c.getUsername(), c.getPassword(), c.getName(), c.getEmail(), c.getAmountOwed());
+		return customerDto;
+	}
+	
+	private TechnicianDto convertToDto(Technician t) {
+		if (t == null) {
+			throw new IllegalArgumentException("There is no such Technician!");
+		}
+		TechnicianDto technicianDto = new TechnicianDto(t.getUsername(), t.getPassword(), t.getName(), t.getEmail(), t.getTechnicianHour().stream().map(p -> convertToDto(p)).collect(Collectors.toSet()));
+		return technicianDto;
+	}
+	
+	private TechnicianHourDto convertToDto(TechnicianHour th) {
+		if (th == null) {
+			throw new IllegalArgumentException("There is no such TechnicianHour!");
+		}
+		TechnicianHourDto technicianHourDto = new TechnicianHourDto(th.getStartTime(), th.getEndTime(), th.getDate(), th.getId(), th.getWorkBreak().stream().map(p -> convertToDto(p)).collect(Collectors.toSet()));
+		return technicianHourDto;
+	}
 	
 	private WorkBreakDto convertToDto(WorkBreak u) {
 		if (u == null) {
