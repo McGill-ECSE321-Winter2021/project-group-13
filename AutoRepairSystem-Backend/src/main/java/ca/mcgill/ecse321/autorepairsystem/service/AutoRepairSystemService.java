@@ -75,7 +75,7 @@ public class AutoRepairSystemService {
 	    
 	    return appointments;
 	  }
-      
+    
       //set appointment ID?
       @Transactional
       public Appointment createAppointment(Set<WorkItem> workItems, Customer customer, Technician technician, java.sql.Time startTime, java.sql.Time endTime, java.sql.Date date) throws IllegalArgumentException{
@@ -266,7 +266,7 @@ public class AutoRepairSystemService {
 	    
 	    return result;
 	  }
-	  
+	 
 	  //Organized by technician
 	  public Map<Technician, List<TechnicianHour>> getTechnicianHoursByDate(java.sql.Date date) {
 	    
@@ -966,7 +966,7 @@ public class AutoRepairSystemService {
 	}
 	
 	@Transactional
-	public void DeleteWorkBreak(Integer workBreakId) throws IllegalArgumentException {
+	public WorkBreak DeleteWorkBreak(Integer workBreakId) throws IllegalArgumentException {
 		
 		if (workBreakId == null) {
 			throw new IllegalArgumentException("A valid work break ID must be provided!");
@@ -979,6 +979,7 @@ public class AutoRepairSystemService {
 		}
 
 		workBreakRepository.delete(workBreak);
+		return workBreak;
 	}
 	
 	

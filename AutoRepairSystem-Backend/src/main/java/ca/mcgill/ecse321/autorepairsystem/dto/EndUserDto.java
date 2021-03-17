@@ -11,6 +11,7 @@ public class EndUserDto {
 		
 	}
 	
+	
 	public EndUserDto(String email) {
 		this(null,null,null,email);
 	}
