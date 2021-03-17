@@ -265,59 +265,6 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	
-	//workHour controller methods
-	
-	@GetMapping(value = { "/workhour/{Id}", "/workhour/{Id}/"})
-	public ResponseEntity<?> getWorkHour(@PathVariable("Id") Integer Id) {
-		try {
-			return new ResponseEntity<>(convertToDto(service.getWorkHour(Id)), HttpStatus.OK);
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value = { "/workhour/{Id}", "/workhour/{Id}/"})
-	public ResponseEntity<?> updateWorkHour(@PathVariable("Id") Integer Id, 
-			@RequestParam Date date, 
-			@RequestParam Time starttime, 
-			@RequestParam Time endtime) {
-		try {
-			return new ResponseEntity<>(convertToDto(service.updateWorkHour(Id, starttime, endtime, date)), HttpStatus.OK);
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value = { "/workhour/Date/{Id}", "/workhour/Date/{Id}/"})
-	public ResponseEntity<?> updateWorkHourBreak(@PathVariable("Id") Integer Id,  
-			@RequestParam Set<WorkBreak> workBreak) {
-		try {
-			return new ResponseEntity<>(convertToDto(service.updateWorkHourWorkBreak(Id, workBreak)), HttpStatus.OK);
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
-	
-	@DeleteMapping(value = { "/workhour/Id/{Id}", "/workhour/Id/{Id}/"})
-	public ResponseEntity<?> deleteWorkHour(@PathVariable("Id") Integer Id){
-		try {
-			return new ResponseEntity<>(convertToDto(service.deleteWorkHour(Id)), HttpStatus.OK);
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
-	
-	@GetMapping(value = { "/workhour", "/workhour/"})
-	public ResponseEntity<?> getAllWorkHours() {
-		return new ResponseEntity<>(service.getAllWorkHours().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
-	}
-	
-	
 	//workBreak controller methods
 	
 	
@@ -467,18 +414,7 @@ public class AutoRepairSystemController {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
-	
-	
-	@PostMapping(value = { "/businesshour/Id/{Id}", "/businesshour/Id/{Id}/"})
-	public ResponseEntity<?> updateBusinessHourWorkBreak(@PathVariable("Id") Integer Id,  
-			@RequestParam Set<WorkBreak> workBreak) {
-		try {
-			return new ResponseEntity<>(convertToDto(service.updateBusinessHourWorkBreak(Id, workBreak)), HttpStatus.OK);
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
+
 	
 	
 	@DeleteMapping(value = {"/businesshour/{Id}", "/businesshour/{Id}/"})
@@ -499,12 +435,7 @@ public class AutoRepairSystemController {
 	
 	
 	//Technician hour controller methods
-	
-	@GetMapping(value = { "/technicianhours", "/technicianhours/"})
-	public ResponseEntity<?> getAllTechnicianHours() {
-		return new ResponseEntity<>(service.getAllTechnicianHours().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
-	}
-	
+
 	@GetMapping(value = { "/technicianhours/{id}", "/technicianhours/{id}/" })
 	public ResponseEntity<?> getTechnicianHourById(@PathVariable("id") 
 			@RequestParam Integer id
@@ -530,19 +461,6 @@ public class AutoRepairSystemController {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
-	
-	
-	@PostMapping(value = { "/technicianhours/id/{id}", "/technicianhours/id/{id}/"})
-	public ResponseEntity<?> updateTechnicianHourWorkBreak(@PathVariable("id") Integer id,  
-			@RequestParam Set<WorkBreak> workBreak) {
-		try {
-			return new ResponseEntity<>(convertToDto(service.updateBusinessHourWorkBreak(id, workBreak)), HttpStatus.OK);
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
-	
 	
 	@DeleteMapping(value = {"/technicianhours/{id}", "/technicianhours/{id}/"})
 	public ResponseEntity<?> DeleteTechnicianHour(@PathVariable("id") Integer id){
