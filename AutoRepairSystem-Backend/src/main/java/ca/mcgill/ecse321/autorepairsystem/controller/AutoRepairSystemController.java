@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.autorepairsystem.controller;
+/*package ca.mcgill.ecse321.autorepairsystem.controller;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -21,7 +21,7 @@ import ca.mcgill.ecse321.autorepairsystem.dto.UserDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkBreakDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkHourDto;
 import ca.mcgill.ecse321.autorepairsystem.model.Customer;
-import ca.mcgill.ecse321.autorepairsystem.model.User;
+import ca.mcgill.ecse321.autorepairsystem.model.EndUser;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkBreak;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkHour;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
@@ -297,4 +297,4 @@ public class AutoRepairSystemController {
 		
 	}
 
-}
+}*/

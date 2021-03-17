@@ -15,6 +15,7 @@ public class WorkBreak{
 	    this.Id = value;
 	}
 	@Id
+	@GeneratedValue
 	public Integer getId() {
 	    return this.Id;
 	}

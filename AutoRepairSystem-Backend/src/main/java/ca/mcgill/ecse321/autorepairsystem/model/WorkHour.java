@@ -48,6 +48,7 @@ public void setId(Integer value) {
     this.Id = value;
 }
 @Id
+@GeneratedValue
 public Integer getId() {
     return this.Id;
 }

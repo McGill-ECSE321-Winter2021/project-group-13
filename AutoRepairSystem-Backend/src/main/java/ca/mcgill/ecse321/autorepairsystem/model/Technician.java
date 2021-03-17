@@ -2,6 +2,7 @@ package ca.mcgill.ecse321.autorepairsystem.model;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -15,7 +16,7 @@ public class Technician extends EndUser{
    private Set<TechnicianHour> technicianHour;
    
    @OneToMany(cascade={CascadeType.ALL}, fetch = FetchType.EAGER)
-   @Column(nullable = true)
+   @JoinColumn(name ="technicianHourId")
    public Set<TechnicianHour> getTechnicianHour() {
       return this.technicianHour;
    }

@@ -25,7 +25,7 @@ public class AutoRepairSystemService {
 	@Autowired
 	CustomerRepository customerRepository;
 	@Autowired
-	UserRepository userRepository;
+	EndUserRepository endUserRepository;
 	@Autowired
 	AdministratorRepository administratorRepository;
 	@Autowired
@@ -78,11 +78,11 @@ public class AutoRepairSystemService {
       
       //set appointment ID?
       @Transactional
-      public Appointment createAppointment(Set<ca.mcgill.ecse321.autorepairsystem.model.WorkItem> services, Customer customer, Technician technician, java.sql.Time startTime, java.sql.Time endTime, java.sql.Date date) throws IllegalArgumentException{
+      public Appointment createAppointment(Set<WorkItem> workItems, Customer customer, Technician technician, java.sql.Time startTime, java.sql.Time endTime, java.sql.Date date) throws IllegalArgumentException{
         
         //sum up service durations
         int sumMin = 0;
-        for (ca.mcgill.ecse321.autorepairsystem.model.WorkItem s : services) {
+        for (WorkItem s : workItems) {
           sumMin += s.getDuration();
         }
         
@@ -103,7 +103,7 @@ public class AutoRepairSystemService {
         appointment.setStartTime(startTime);
         appointment.setEndTime(endTime);
         appointment.setTechnician(technician);
-        appointment.setService(services);
+        appointment.setWorkItem(workItems);
         appointment.setCustomer(customer);
         appointment.setDate(date);
         
@@ -131,7 +131,7 @@ public class AutoRepairSystemService {
       @Transactional
       //Organized by technician
       //Filtered by minimum duration
-      public Map<Technician, List<TechnicianHour>> getTechnicianAvailableTechnicianHoursByDate(java.sql.Date date, int minDurationInMin) {
+      	public Map<Technician, List<TechnicianHour>> getTechnicianAvailableTechnicianHoursByDate(java.sql.Date date, int minDurationInMin) {
         
         Map<Technician, List<TechnicianHour>> technicianHoursByDate = getTechnicianHoursByDate(date);
         Map<Technician, List<Appointment>> technicianAppointmentsByDate = getTechnicianAppointmentsByDate(date);
@@ -270,7 +270,7 @@ public class AutoRepairSystemService {
 	  //Organized by technician
 	  public Map<Technician, List<TechnicianHour>> getTechnicianHoursByDate(java.sql.Date date) {
 	    
-	    List<TechnicianHour> technicianHoursByDate = technicianHourRepository.findByDate(date);
+	    List<TechnicianHour> technicianHoursByDate = technicianHourRepository.findTechnicianHourByDate(date);
 	    
 	    return technicianHoursByDate.stream().collect(Collectors.groupingBy(Technician::getTechnicianHour));
 	  }
@@ -367,17 +367,17 @@ public class AutoRepairSystemService {
 	    
 	  }
 	
-	//Log-in generic user...either customer, technician, or admin
+	//Log-in generic endUser...either customer, technician, or admin
 	@Transactional
-	public User signIn(String userID, String password) throws IllegalArgumentException {
-		User user = userRepository.findById(userID).orElse(null);
-		if(user == null) {
+	public EndUser signIn(String endUserID, String password) throws IllegalArgumentException {
+		EndUser endUser = endUserRepository.findById(endUserID).orElse(null);
+		if(endUser == null) {
 			throw new IllegalArgumentException("Username cannot be found!");
-		} else if(user.getPassword().equals(password) == false) {
+		} else if(endUser.getPassword().equals(password) == false) {
 			throw new IllegalArgumentException("Password is wrong!.");
 		}
 		
-		return user;
+		return endUser;
 	}
 		
 		
@@ -390,7 +390,7 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Customer with username " + username + " already exists");
 		}
 		
-		if (username == null || username.isEmpty()) {
+		if (username == null) {
 			throw new IllegalArgumentException("A username must be provided");
 		}
 		
@@ -415,8 +415,6 @@ public class AutoRepairSystemService {
 		customer.setPassword(password);
 		customer.setName(name);
 		customer.setEmail(email);
-		Set<Appointment> emptyAppointments = new HashSet<Appointment>();
-		customer.setAppointment(emptyAppointments);
 		customerRepository.save(customer);
 		return customer;
 	}
@@ -434,7 +432,7 @@ public class AutoRepairSystemService {
 	
 	@Transactional
 	public Customer getCustomerByAppointment(Appointment appointment) throws IllegalArgumentException {
-		Customer customer = customerRepository.findCustomerByAppointment(appointment);
+		Customer customer = appointment.getCustomer();
 		
 		if (customer == null) {
 			throw new IllegalArgumentException("No customer linked to the provided appointment");
@@ -452,8 +450,7 @@ public class AutoRepairSystemService {
 	//Admin service methods
 	
 	@Transactional
-	public Administrator makeAdministrator(String username) throws IllegalArgumentException {
-		Customer customer = customerRepository.findCustomerByUsername(username);
+	public Administrator makeAdministrator(Customer customer) throws IllegalArgumentException {
 		
 		if (customer ==  null) {
 			throw new IllegalArgumentException("Specified customer does not exist");
@@ -461,7 +458,7 @@ public class AutoRepairSystemService {
 		
 		customerRepository.delete(customer);
 		Administrator administrator = new Administrator();
-		administrator.setUsername(username);
+		administrator.setUsername(customer.getUsername());
 		administrator.setPassword(customer.getPassword());
 		administrator.setName(customer.getName());
 		administrator.setEmail(customer.getEmail());
@@ -490,24 +487,24 @@ public class AutoRepairSystemService {
 	//User service methods
 	
 	@Transactional
-	public User getUser(String userId) throws IllegalArgumentException {
-		User user = userRepository.findById(userId).orElse(null);
-		if (user == null) {
-			throw new IllegalArgumentException("Username cannot be found!");
+	public EndUser getUser(String username) throws IllegalArgumentException {
+		EndUser endUser = endUserRepository.findEndUserByUsername(username);
+		if (endUser == null) {
+			throw new IllegalArgumentException("Username " + username + " cannot be found!");
 		}
-		return user;
+		return endUser;
 	}
 
 	@Transactional
-	public User updateUser(String userId, String password, String name, String email) throws IllegalArgumentException {
+	public EndUser updateUser(String userId, String password, String name, String email) throws IllegalArgumentException {
 		
 		if (nonValidString(userId)) {
 			throw new IllegalArgumentException("Must enter a proper username!");
 		}
 		
-		User user = userRepository.findById(userId).orElse(null);
+		EndUser endUser = endUserRepository.findById(userId).orElse(null);
 		
-		if (user == null) {
+		if (endUser == null) {
 			throw new IllegalArgumentException("Username cannot be found!");
 		}
 			
@@ -515,7 +512,7 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Must enter a valid email!");
 		}
 		
-		if ((!email.equals(user.getEmail())&&(userRepository.findUserByEmail(email) != null))) {
+		if ((!email.equals(endUser.getEmail())&&(endUserRepository.findEndUserByEmail(email) != null))) {
 			throw new IllegalArgumentException("Email already exists!");
 		}
 		
@@ -528,35 +525,35 @@ public class AutoRepairSystemService {
 		}
 		
 
-		user.setUsername(userId);
-		user.setPassword(password);
-		user.setName(name);
-		user.setEmail(email);
+		endUser.setUsername(userId);
+		endUser.setPassword(password);
+		endUser.setName(name);
+		endUser.setEmail(email);
 		
-		userRepository.save(user);
-		return user;
+		endUserRepository.save(endUser);
+		return endUser;
 	}
 	
 	@Transactional
-	public User deleteUser(String username) throws IllegalArgumentException {
+	public EndUser deleteUser(String username) throws IllegalArgumentException {
 		
 		if (nonValidString(username)) {
 			throw new IllegalArgumentException("Must enter a proper username!");
 		}
 		
-		User user = userRepository.findUserByUsername(username);
+		EndUser endUser = endUserRepository.findEndUserByUsername(username);
 		
-		if (user == null) {
+		if (endUser == null) {
 			throw new IllegalArgumentException("Specified user does not exist");
 		}
 		
-		userRepository.delete(user);
-		return user;
+		endUserRepository.delete(endUser);
+		return endUser;
 	}
 	
 	@Transactional
-	public List<User> getAllUsers() {
-		return toList(userRepository.findAll());
+	public List<EndUser> getAllUsers() {
+		return toList(endUserRepository.findAll());
 	}
 	
 	
@@ -586,7 +583,7 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("An valid email must be provided");
 		}
 		
-		if (userRepository.findUserByEmail(email) != null) {
+		if (endUserRepository.findEndUserByEmail(email) != null) {
 			throw new IllegalArgumentException("The email already exits!");
 		}
 		
@@ -596,8 +593,6 @@ public class AutoRepairSystemService {
 		technician.setName(name);
 		technician.setEmail(email);
 		
-		Set<Appointment> emptyAppointments = new HashSet<Appointment>();
-		technician.setAppointment(emptyAppointments);
 		Set<TechnicianHour> emptyTechnicianHour = new HashSet<TechnicianHour>();
 		technician.setTechnicianHour(emptyTechnicianHour);
 		
@@ -623,7 +618,7 @@ public class AutoRepairSystemService {
 	
 	@Transactional
 	public Technician getTechnicianByAppointment(Appointment appointment) {
-		Technician technician = technicianRepository.findTechnicianByAppointment(appointment);
+		Technician technician = appointment.getTechnician();
 		
 		if (technician == null) {
 			throw new IllegalArgumentException("Technician cannot be found.");
@@ -692,7 +687,7 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("An valid email must be provided");
 		}
 		
-		if ((!email.equals(technician.getEmail())&&(userRepository.findUserByEmail(email) != null))) {
+		if ((!email.equals(technician.getEmail())&&(endUserRepository.findEndUserByEmail(email) != null))) {
 			throw new IllegalArgumentException("Email already exists!");
 		}
 		
@@ -701,29 +696,6 @@ public class AutoRepairSystemService {
 		technician.setPassword(password);
 		technician.setName(name);
 		technician.setEmail(email);
-		
-		technicianRepository.save(technician);
-		return technician;
-	}
-	
-	@Transactional
-	public Technician updateTechnicianAppointment(String username, Set<Appointment> appointment) throws IllegalArgumentException {
-		
-		if (username == null || username == "") {
-			throw new IllegalArgumentException("A valid username must be provided");
-		}
-		
-		Technician technician = technicianRepository.findTechnicianByUsername(username);
-		
-		if (technician == null) {
-			throw new IllegalArgumentException("Username cannot be found!");
-		}
-
-		if (appointment == null) {
-			throw new IllegalArgumentException("Valid appointments must be provided!");
-		}
-		
-		technician.setAppointment(appointment);
 		
 		technicianRepository.save(technician);
 		return technician;
@@ -766,13 +738,13 @@ public class AutoRepairSystemService {
 	//Service service methods
 	
 	@Transactional
-	public ca.mcgill.ecse321.autorepairsystem.model.WorkItem createService(String name, int duration, int price) throws IllegalArgumentException {
+	public WorkItem createWorkItem(String name, int duration, int price) throws IllegalArgumentException {
 		if (name == null || name == "" ) {
 			throw new IllegalArgumentException("A valid service name must be provide!");
 		}
 		
-		if (workItemRepository.findServiceByName(name) != null) {
-			throw new IllegalArgumentException("Service with username " + name + " already exists");
+		if (workItemRepository.findWorkItemByName(name) != null) {
+			throw new IllegalArgumentException("WorkItem with username " + name + " already exists");
 		}
 		
 		if (duration < 0) {
@@ -931,24 +903,16 @@ public class AutoRepairSystemService {
 	}
 	
 	@Transactional
-	public WorkBreak getWorkBreak(Integer workHourId, Time startTime) throws IllegalArgumentException {
+	public WorkBreak getWorkBreak(Integer workBreakId) throws IllegalArgumentException {
 		
-		if (workHourId == null) {
-			throw new IllegalArgumentException("A valid work hour ID must be provided!");
+		if (workBreakId == null) {
+			throw new IllegalArgumentException("A valid work break ID must be provided!");
 		}
 		
-		WorkHour workHour = workHourRepository.findWorkHourById(workHourId);
+		WorkBreak workBreak = workBreakRepository.findWorkBreakById(workBreakId);
 		
-		if (workHour == null) {
-			throw new IllegalArgumentException("Specified Work Hour doesn't exist!");
-		}
-
-		WorkBreak workBreak = workBreakRepository.findByWorkHourAndStartBreak(workHour, startTime);
-		
-		if(workBreak == null) {
-			throw new IllegalArgumentException("Specified Work Break doesn't exist for specified Work Hour");
-		}
-		
+		if (workBreak == null)
+			throw new IllegalArgumentException("The provided work Break Id is not associated with a work break");
 		return workBreak;
 		
 	}
@@ -968,7 +932,7 @@ public class AutoRepairSystemService {
 		
 		return toList(workHour.getWorkBreak());
 	}
-	
+	/*
 	@Transactional
 	public WorkBreak updateWorkBreak(Integer workHourId, Time startTime, Time newStartTime, Time newEndTime) {
 		
@@ -1009,35 +973,22 @@ public class AutoRepairSystemService {
 		workBreakRepository.save(workBreak);
 		return workBreak;
 		
-	}
+	}*/
 	
 	@Transactional
-	public WorkBreak DeleteWorkBreak(Integer workHourId, Time startTime) throws IllegalArgumentException {
+	public void DeleteWorkBreak(Integer workBreakId) throws IllegalArgumentException {
 		
-		if (workHourId == null) {
-			throw new IllegalArgumentException("A valid work hour ID must be provided!");
+		if (workBreakId == null) {
+			throw new IllegalArgumentException("A valid work break ID must be provided!");
 		}
 		
-		WorkHour workHour = workHourRepository.findWorkHourById(workHourId);
+		WorkBreak workBreak = workBreakRepository.findWorkBreakById(workBreakId);
 		
-		if (workHour == null) {
-			throw new IllegalArgumentException("Specified Work Hour doesn't exist!");
+		if (workBreak == null) {
+			throw new IllegalArgumentException("Specified Work Break doesn't exist!");
 		}
-		
-		Set<WorkBreak> workBreaks = workHour.getWorkBreak();
-		
-		for (WorkBreak w : workBreaks) {
-			if(w.getStartBreak().equals(startTime)) {
-				workBreaks.remove(w);
-				workBreakRepository.delete(w);
-				workHour.setWorkBreak(workBreaks);
-				workHourRepository.save(workHour);
-				return(w);
-			}
-		}
-		
-		throw new IllegalArgumentException("Specified Work Break doesn't exist for specified Work Hour");
-		
+
+		workBreakRepository.delete(workBreak);
 	}
 	
 	
@@ -1055,4 +1006,4 @@ public class AutoRepairSystemService {
 	private boolean nonValidString(String string) {
 		return (string==null)||(string.trim().isEmpty());
 	}
-}*/
+}

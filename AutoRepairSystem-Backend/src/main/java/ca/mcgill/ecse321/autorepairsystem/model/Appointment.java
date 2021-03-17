@@ -52,6 +52,7 @@ public class Appointment{
 	    this.id = value;
 	}
 	@Id
+	@GeneratedValue
 	public Integer getId() {
 	    return this.id;
 	}

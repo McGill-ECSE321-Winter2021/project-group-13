@@ -47,7 +47,7 @@ public class TestAutoRepairSystemPersistence {
 	@Autowired
 	private TechnicianRepository technicianRepository;
 	@Autowired
-	private UserRepository userRepository;
+	private EndUserRepository userRepository;
 	@Autowired
 	private WorkBreakRepository workBreakRepository;
 	@Autowired
@@ -161,31 +161,32 @@ public class TestAutoRepairSystemPersistence {
 		workItemSet.add(workItem);
 		workItemRepository.save(workItem);
 		
-		Appointment appointment = newAppointment(APPOINTMENTID,APPOINTMENTSTART,APPOINTMENTEND,APPOINTMENTDATE);
+		Appointment appointment = newAppointment(APPOINTMENTSTART,APPOINTMENTEND,APPOINTMENTDATE);
 		appointment.setCustomer(customer);
 		appointment.setTechnician(tech);
 		appointment.setWorkItem(workItemSet);
 		appointmentRepository.save(appointment);
+		Integer appointmentId = appointment.getId();
 		
 		appointment=null;
 		
 		appointment=appointmentRepository.findAppointmentByCustomer(customer);
 		assertNotNull(appointment);
-		assertEquals(APPOINTMENTID, appointment.getId());
+		assertEquals(appointmentId, appointment.getId());
 		
 		appointment=null;
 		appointment=appointmentRepository.findAppointmentByTechnician(tech);
 		assertNotNull(appointment);
-		assertEquals(APPOINTMENTID, appointment.getId());
+		assertEquals(appointmentId, appointment.getId());
 		
 		appointment=null;
-		appointment=appointmentRepository.findAppointmentById(APPOINTMENTID);
+		appointment=appointmentRepository.findAppointmentById(appointmentId);
 		assertNotNull(appointment);
-		assertEquals(APPOINTMENTID, appointment.getId());
+		assertEquals(appointmentId, appointment.getId());
 		
 		// Test Delete
 		appointmentRepository.delete(appointment);
-		assertNull(appointmentRepository.findAppointmentById(APPOINTMENTID));
+		assertNull(appointmentRepository.findAppointmentById(appointmentId));
 		
 		// Test nonCascading Delete
 		assertNotNull(technicianRepository.findTechnicianByUsername(USERNAME));
@@ -196,22 +197,24 @@ public class TestAutoRepairSystemPersistence {
 	@Test
 	public void testPersistAndLoadBusinessHour() {
 		
-		WorkBreak workBreak = newWorkBreak(WORKBREAKID,WORKBREAKSTART,WORKBREAKEND);
+		WorkBreak workBreak = newWorkBreak(WORKBREAKSTART,WORKBREAKEND);
 		Set<WorkBreak> workBreakSet = new HashSet<WorkBreak>();
 		workBreakSet.add(workBreak);
 		workBreakRepository.save(workBreak);
+		Integer workBreakId = workBreak.getId();
 		
-		BusinessHour businessHour = newBusinessHour(WORKHOURID,WORKHOURSTART,WORKHOUREND,WORKHOURDATE);
+		BusinessHour businessHour = newBusinessHour(WORKHOURSTART,WORKHOUREND,WORKHOURDATE);
 		
 		businessHour.setWorkBreak(workBreakSet);
 		businessHourRepository.save(businessHour);
+		Integer businessHourId = businessHour.getId();
 		
 		businessHour = null;
 		
-		businessHour = businessHourRepository.findBusinessHourById(WORKHOURID);
+		businessHour = businessHourRepository.findBusinessHourById(businessHourId);
 		assertNotNull(businessHour);
 		assertNotNull(businessHour.getWorkBreak());
-		assertEquals(WORKHOURID, businessHour.getId());
+		assertEquals(businessHourId, businessHour.getId());
 		
 		workBreak = null;
 		
@@ -270,16 +273,30 @@ public class TestAutoRepairSystemPersistence {
 		technicianRepository.save(tech);
 		technicianHourRepository.save(techHour);
 		
-		techHour = null;
 		tech = null;
 		
 		tech = technicianRepository.findTechnicianByUsername(USERNAME);
 		assertNotNull(tech);
 		assertNotNull(tech.getTechnicianHour());
 		assertEquals(USERNAME, tech.getUsername());
-
 		
+		tech = null;
+		
+		tech = technicianRepository.findTechnicianByTechnicianHour(techHour);
+		assertNotNull(tech);
+		assertNotNull(tech.getTechnicianHour());
+		assertEquals(USERNAME, tech.getUsername());
+		
+		techHour = null;
+
 		techHour = toList(tech.getTechnicianHour()).get(0);
+		assertNotNull(techHour);
+		assertEquals(WORKHOURID,techHour.getId());
+		
+		techHour = null;
+		
+		techHour = technicianHourRepository.findTechnicianHourById(WORKHOURID);
+		assertNotNull(techHour);
 		assertEquals(WORKHOURID,techHour.getId());
 
 		// Test Delete
@@ -380,18 +397,16 @@ public class TestAutoRepairSystemPersistence {
 		return admin;
 	}
 	
-	private Appointment newAppointment(Integer id, Time startTime, Time endTime, Date date) {
+	private Appointment newAppointment(Time startTime, Time endTime, Date date) {
 		Appointment apt = new Appointment();
-		apt.setId(id);
 		apt.setStartTime(startTime);
 		apt.setEndTime(endTime);
 		apt.setDate(date);
 		return apt;
 	}
 	
-	private BusinessHour newBusinessHour(Integer id, Time startTime, Time endTime, Date date) {
+	private BusinessHour newBusinessHour(Time startTime, Time endTime, Date date) {
 		BusinessHour businessHour = new BusinessHour();
-		businessHour.setId(id);
 		businessHour.setStartTime(startTime);
 		businessHour.setEndTime(endTime);
 		businessHour.setDate(date);
@@ -417,18 +432,16 @@ public class TestAutoRepairSystemPersistence {
 		return technician;
 	}
 	
-	private TechnicianHour newTechnicianHour(Integer id, Time startTime, Time endTime, Date date) {
+	private TechnicianHour newTechnicianHour(Time startTime, Time endTime, Date date) {
 		TechnicianHour technicianHour = new TechnicianHour();
-		technicianHour.setId(id);
 		technicianHour.setStartTime(startTime);
 		technicianHour.setEndTime(endTime);
 		technicianHour.setDate(date);
 		return technicianHour;
 	}
 	
-	private WorkBreak newWorkBreak(Integer id, Time startTime, Time endTime) {
+	private WorkBreak newWorkBreak(Time startTime, Time endTime) {
 		WorkBreak workBreak = new WorkBreak();
-		workBreak.setId(id);
 		workBreak.setStartBreak(startTime);
 		workBreak.setEndBreak(endTime);
 		return workBreak;

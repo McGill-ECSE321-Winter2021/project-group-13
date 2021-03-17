@@ -30,7 +30,7 @@ public class TestCustomerService {
 	@Mock
 	private CustomerRepository customerDao;
 	@Mock
-	private UserRepository userDao;
+	private EndUserRepository userDao;
 	
 	private static final String USERNAME1 = "testCustomer1";
 	private static final String PASSWORD1 = "testPassword1";
