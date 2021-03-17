@@ -1,9 +1,11 @@
 package ca.mcgill.ecse321.autorepairsystem.model;
 
 import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
-public class Customer extends User{
+@PrimaryKeyJoinColumn(name ="customerUsername")
+public class Customer extends EndUser{
 	
 	private int amountOwed;
 	
@@ -13,5 +15,5 @@ public class Customer extends User{
 	
 	public int getAmountOwed() {
 		return this.amountOwed;
-	}	
+	}
 }

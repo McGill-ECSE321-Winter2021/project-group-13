@@ -19,7 +19,7 @@ import ca.mcgill.ecse321.autorepairsystem.model.Customer;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkItem;
 import ca.mcgill.ecse321.autorepairsystem.model.Technician;
 import ca.mcgill.ecse321.autorepairsystem.model.TechnicianHour;
-import ca.mcgill.ecse321.autorepairsystem.model.User;
+import ca.mcgill.ecse321.autorepairsystem.model.EndUser;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkBreak;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkHour;
 

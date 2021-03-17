@@ -6,15 +6,15 @@ import javax.persistence.OneToMany;
 
 public class AppointmentManager{
 	
-	private Set<User> user;
+	private Set<EndUser> endUser;
    
    @OneToMany(cascade={CascadeType.ALL})
-   public Set<User> getUser() {
-      return this.user;
+   public Set<EndUser> getUser() {
+      return this.endUser;
    }
    
-   public void setUser(Set<User> users) {
-      this.user = users;
+   public void setUser(Set<EndUser> endUsers) {
+      this.endUser = endUsers;
    }
    
    private Set<WorkItem> service;

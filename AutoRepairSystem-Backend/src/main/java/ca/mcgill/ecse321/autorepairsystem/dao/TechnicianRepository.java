@@ -7,7 +7,6 @@ import ca.mcgill.ecse321.autorepairsystem.model.TechnicianHour;
 
 public interface TechnicianRepository extends CrudRepository<Technician, String>{
 	Technician findTechnicianByUsername(String username);
-	Technician findTechnicianByAppointment(Appointment appointment);
-	Technician findTechnicianByTechnicianHour(TechnicianHour technicianHour);
+	//Technician findTechnicianByTechnicianHour(TechnicianHour technicianHour);
 
 }

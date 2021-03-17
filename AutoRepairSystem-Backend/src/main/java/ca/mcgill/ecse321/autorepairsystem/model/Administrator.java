@@ -1,7 +1,9 @@
 package ca.mcgill.ecse321.autorepairsystem.model;
 
 import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
-public class Administrator extends User{
+@PrimaryKeyJoinColumn(name ="adminUsername")
+public class Administrator extends EndUser{
 }

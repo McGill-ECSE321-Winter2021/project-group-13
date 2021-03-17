@@ -5,13 +5,18 @@ import javax.persistence.FetchType;
 
 import java.util.Set;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.OneToMany;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 
 @Entity
-public class Technician extends User{
+@PrimaryKeyJoinColumn(name = "technicianID")
+public class Technician extends EndUser{
    private Set<TechnicianHour> technicianHour;
    
-   @OneToMany(mappedBy="technician" , cascade={CascadeType.ALL}, fetch = FetchType.EAGER)
+   @OneToMany(cascade={CascadeType.ALL}, fetch = FetchType.EAGER)
+   @Column(nullable = true)
    public Set<TechnicianHour> getTechnicianHour() {
       return this.technicianHour;
    }
