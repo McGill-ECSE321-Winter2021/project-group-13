@@ -274,7 +274,7 @@ public class AutoRepairSystemService {
 	    
 	    List<TechnicianHour> technicianHoursByDate = technicianHourRepository.findTechnicianHourByDate(date);
 	    
-	    return technicianHoursByDate.stream().collect(Collectors.groupingBy(Technician::getTechnicianHour));
+	    return technicianHoursByDate.stream().collect(Collectors.groupingBy(TechnicianHour::getTechnician));
 	  }
 	  
 	  //Organized by technician
