@@ -899,6 +899,7 @@ public class AutoRepairSystemService {
 		workBreak.setStartBreak(startTime);
 		workBreak.setEndBreak(endTime);
 		
+		
 		workBreaks.add(workBreak);
 		
 		workHour.setWorkBreak(workBreaks);
@@ -955,6 +956,8 @@ public class AutoRepairSystemService {
 		workBreakSet.remove(workBreak);
 		workBreak.setStartBreak(newStartTime);
 		workBreak.setEndBreak(newEndTime);
+		
+		
 		
 		workBreakSet.add(workBreak);
 		
