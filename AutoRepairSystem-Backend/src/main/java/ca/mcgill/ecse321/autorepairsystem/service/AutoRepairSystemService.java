@@ -450,6 +450,63 @@ public class AutoRepairSystemService {
 	}
 	
 	
+	@Transactional
+	public EndUser updateCustomer(String username, String password, String name, String email) throws IllegalArgumentException {
+		
+		if (nonValidString(username)) {
+			throw new IllegalArgumentException("Must enter a proper username!");
+		}
+		
+		Customer customer = customerRepository.findCustomerByUsername(username);
+		
+		if (customer == null) {
+			throw new IllegalArgumentException("Username cannot be found!");
+		}
+			
+		if (nonValidString(email)) {
+			throw new IllegalArgumentException("Must enter a valid email!");
+		}
+		
+		if ((!email.equals(customer.getEmail())&&(endUserRepository.findEndUserByEmail(email) != null))) {
+			throw new IllegalArgumentException("Email already exists!");
+		}
+		
+		if (nonValidString(password)) {
+			throw new IllegalArgumentException("Must enter a valid password!");
+		}
+		
+		if (nonValidString(name)) {
+			throw new IllegalArgumentException("Must enter a valid name!");
+		}
+		
+
+		customer.setUsername(username);
+		customer.setPassword(password);
+		customer.setName(name);
+		customer.setEmail(email);
+		
+		customerRepository.save(customer);
+		return customer;
+	}
+	
+	@Transactional
+	public Customer deleteCustomer(String username) throws IllegalArgumentException {
+		
+		if (nonValidString(username)) {
+			throw new IllegalArgumentException("Must enter a proper username!");
+		}
+		
+		Customer customer = customerRepository.findCustomerByUsername(username);
+		
+		if (customer == null) {
+			throw new IllegalArgumentException("Specified user does not exist");
+		}
+		
+		customerRepository.delete(customer);
+		return customer;
+	}
+	
+	
 	//Admin service methods
 	
 	@Transactional
@@ -490,6 +547,62 @@ public class AutoRepairSystemService {
 	@Transactional
 	public List<Administrator> getAllAdministrators() {
 		return toList(administratorRepository.findAll());
+	}
+	
+	@Transactional
+	public Administrator updateAdministrator(String username, String password, String name, String email) throws IllegalArgumentException {
+		
+		if (nonValidString(username)) {
+			throw new IllegalArgumentException("Must enter a proper username!");
+		}
+		
+		Administrator administrator = administratorRepository.findAdministratorByUsername(username);
+		
+		if (administrator == null) {
+			throw new IllegalArgumentException("Username cannot be found!");
+		}
+			
+		if (nonValidString(email)) {
+			throw new IllegalArgumentException("Must enter a valid email!");
+		}
+		
+		if ((!email.equals(administrator.getEmail())&&(endUserRepository.findEndUserByEmail(email) != null))) {
+			throw new IllegalArgumentException("Email already exists!");
+		}
+		
+		if (nonValidString(password)) {
+			throw new IllegalArgumentException("Must enter a valid password!");
+		}
+		
+		if (nonValidString(name)) {
+			throw new IllegalArgumentException("Must enter a valid name!");
+		}
+		
+
+		administrator.setUsername(username);
+		administrator.setPassword(password);
+		administrator.setName(name);
+		administrator.setEmail(email);
+		
+		administratorRepository.save(administrator);
+		return administrator;
+	}
+	
+	@Transactional
+	public Administrator deleteAdministrator(String username) throws IllegalArgumentException {
+		
+		if (nonValidString(username)) {
+			throw new IllegalArgumentException("Must enter a proper username!");
+		}
+		
+		Administrator administrator = administratorRepository.findAdministratorByUsername(username);
+		
+		if (administrator == null) {
+			throw new IllegalArgumentException("Specified user does not exist");
+		}
+		
+		administratorRepository.delete(administrator);
+		return administrator;
 	}
 	
 	
@@ -1163,6 +1276,30 @@ public class AutoRepairSystemService {
 	@Transactional
 	public List<BusinessHour> getAllBusinessHours(){
 		return toList(businessHourRepository.findAll());
+	}
+	
+	
+	//Payment service methods
+	
+	@Transactional
+	public Customer payment(String username, Integer amountPayed) throws IllegalArgumentException {
+		if (nonValidString(username)) {
+			throw new IllegalArgumentException("A valid username must be provided!");
+		}
+		
+		Customer customer = customerRepository.findCustomerByUsername(username);
+		
+		if (customer == null) {
+			throw new IllegalArgumentException("Specified customer does not exist!");
+		}
+		
+		//Makes sure a customer's amount due doesn't go in the negatives
+		Integer amountLeft = 0;
+		if (customer.getAmountOwed() > amountPayed) amountLeft = customer.getAmountOwed() - amountPayed;
+		
+		customer.setAmountOwed(amountLeft);
+		
+		return customer;
 	}
 	
 	//Helper methods
