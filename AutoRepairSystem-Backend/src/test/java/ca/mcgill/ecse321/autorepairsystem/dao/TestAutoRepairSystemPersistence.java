@@ -27,6 +27,7 @@ import ca.mcgill.ecse321.autorepairsystem.model.WorkItem;
 import ca.mcgill.ecse321.autorepairsystem.model.Technician;
 import ca.mcgill.ecse321.autorepairsystem.model.TechnicianHour;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkBreak;
+import ca.mcgill.ecse321.autorepairsystem.model.WorkHour;
 
 
 @ExtendWith(SpringExtension.class)
@@ -407,7 +408,17 @@ public class TestAutoRepairSystemPersistence {
 		workBreakRepository.save(workBreak);
 		Integer workBreakId = workBreak.getId();
 		
-		workBreak=null;
+		Set<WorkBreak> workBreakSet = new HashSet<WorkBreak>();
+		workBreakSet.add(workBreak);
+		
+		TechnicianHour techHour = newTechnicianHour(WORKHOURSTART,WORKHOUREND,WORKHOURDATE);
+		techHour.setWorkBreak(workBreakSet);
+		technicianHourRepository.save(techHour);
+		Integer techHourId = techHour.getId();
+		
+		workBreak = null;
+		workBreakSet = null;
+		techHour = null;
 		
 		workBreak=workBreakRepository.findWorkBreakById(workBreakId);
 		assertNotNull(workBreak);
@@ -417,6 +428,9 @@ public class TestAutoRepairSystemPersistence {
 		workBreakRepository.delete(workBreak);
 		assertNull(workBreakRepository.findWorkBreakById(workBreakId));
 		
+		techHour = technicianHourRepository.findTechnicianHourById(techHourId);
+		assertEquals(techHourId,techHour.getId());
+		assertTrue(techHour.getWorkBreak().isEmpty());
 	}
 	
 	@Test
@@ -432,6 +446,18 @@ public class TestAutoRepairSystemPersistence {
 		
 		techHour = null;
 		businessHour = null;
+		WorkHour workHourTech = null;
+		WorkHour workHourBusiness = null;
+		
+		workHourTech = (TechnicianHour) workHourRepository.findWorkHourById(techHourId);
+		
+		assertNotNull(workHourTech);
+		assertEquals(techHourId, workHourTech.getId());
+		
+		workHourBusiness = workHourRepository.findWorkHourById(businessHourId);
+		
+		assertNotNull(workHourBusiness);
+		assertEquals(businessHourId, workHourBusiness.getId());
 		
 		techHour = (TechnicianHour) workHourRepository.findWorkHourById(techHourId);
 		
@@ -439,14 +465,28 @@ public class TestAutoRepairSystemPersistence {
 		assertEquals(techHourId, techHour.getId());
 		
 		businessHour = (BusinessHour) workHourRepository.findWorkHourById(businessHourId);
-		
 		assertNotNull(businessHour);
 		assertEquals(businessHourId, businessHour.getId());
 		
+		// Test modification to workHour propagates to subclass repository
+		assertEquals(WORKHOURSTART2,businessHour.getStartTime());
+		
+		workHourBusiness.setStartTime(WORKHOURSTART);
+		workHourRepository.save(workHourBusiness);
+
+		workHourBusiness = null;
+		businessHour = null;
+		
+		businessHour = businessHourRepository.findBusinessHourById(businessHourId);
+		assertNotNull(businessHour);
+		assertEquals(WORKHOURSTART,businessHour.getStartTime());
+		
+		workHourBusiness = businessHour;
+		
 		//Test Delete
-		workHourRepository.delete(techHour);
-		assertNull(workHourRepository.findWorkHourById(techHourId));
-		assertNull(technicianHourRepository.findTechnicianHourById(techHourId));
+		workHourRepository.delete(workHourBusiness);
+		assertNull(workHourRepository.findWorkHourById(businessHourId));
+		assertNull(businessHourRepository.findBusinessHourById(businessHourId));
 		
 		workHourRepository.delete(businessHour);
 		assertNull(workHourRepository.findWorkHourById(businessHourId));

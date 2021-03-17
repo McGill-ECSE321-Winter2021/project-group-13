@@ -417,6 +417,7 @@ public class AutoRepairSystemService {
 		customer.setPassword(password);
 		customer.setName(name);
 		customer.setEmail(email);
+		customer.setAmountOwed(0);
 		customerRepository.save(customer);
 		return customer;
 	}
@@ -709,29 +710,6 @@ public class AutoRepairSystemService {
 		return technician;
 	}
 	
-	@Transactional
-	public Technician updateTechnicianTechnicianHour(String username, Set<TechnicianHour> technicianHour) throws IllegalArgumentException {
-		
-		if (username == null || username == "") {
-			throw new IllegalArgumentException("A valid username must be provided");
-		}
-		
-		Technician technician = technicianRepository.findTechnicianByUsername(username);
-		
-		if (technician == null) {
-			throw new IllegalArgumentException("Username cannot be found!");
-		}
-		
-		if (technicianHour == null) {
-			throw new IllegalArgumentException("Valid technician hours must be provided!");
-		}
-
-		technician.setTechnicianHour(technicianHour);
-		
-		technicianRepository.save(technician);
-		return technician;
-	}
-	
 	//Appointment service methods
 	
 	@Transactional
@@ -832,98 +810,6 @@ public class AutoRepairSystemService {
 			return toList(workItemRepository.findAll());
 	}
 	
-	 //WorkHour service methods
-	
-	@Transactional
-	public WorkHour getWorkHour(Integer id) throws IllegalArgumentException {
-		WorkHour workHour = workHourRepository.findWorkHourById(id);
-		
-		if (workHour == null) {
-			throw new IllegalArgumentException("Work Hour cannot be found!");
-		}
-		return workHour;
-	}
-	
-	
-	@Transactional
-	public WorkHour updateWorkHour(Integer id, Time startTime, Time endTime, Date date) throws IllegalArgumentException {
-		
-		if (id == null) {
-			throw new IllegalArgumentException("A valid work hour ID must be provided!");
-		}
-		
-		WorkHour workHour = workHourRepository.findWorkHourById(id);
-		
-		if (workHour == null) {
-			throw new IllegalArgumentException("Work Hour cannot be found");
-		}
-		
-		if (date == null) {
-			throw new IllegalArgumentException("A valid date must be provided!");
-		}
-		
-		if (startTime == null || startTime.after(endTime) == true) {
-			throw new IllegalArgumentException("A valid start time must be provided! (non-empty or before end time)");
-		}
-		
-		if (endTime == null || endTime.before(startTime) == true) {
-			throw new IllegalArgumentException("A valid end time must be provided! (non-empty or after start time)");
-		}
-		
-		workHour.setDate(date);
-		workHour.setStartTime(startTime);
-		workHour.setEndTime(endTime);
-		workHourRepository.save(workHour);
-		
-		
-		return workHour;
-	}
-	
-	@Transactional
-	public WorkHour updateWorkHourWorkBreak(Integer id, Set<WorkBreak> workBreak) throws IllegalArgumentException {
-		
-		if (id == null) {
-			throw new IllegalArgumentException("A valid work hour ID must be provided!");
-		}
-		
-		WorkHour workHour = workHourRepository.findWorkHourById(id);
-		
-		if (workHour == null) {
-			throw new IllegalArgumentException("Work Hour cannot be found");
-		}
-		
-		if (workBreak == null) {
-			throw new IllegalArgumentException("A valid work break must be provided!");
-		}
-		
-		workHour.setWorkBreak(workBreak);
-		workHourRepository.save(workHour);
-		
-		return workHour;
-	}
-	
-	@Transactional
-	public WorkHour deleteWorkHour(Integer id) throws IllegalArgumentException {
-		
-		if (id == null) {
-			throw new IllegalArgumentException("A valid work hour ID must be provided!");
-		}
-		
-		WorkHour workHour = workHourRepository.findWorkHourById(id);
-		
-		if (workHour == null) {
-			throw new IllegalArgumentException("Specified Work Hour doesn't exist!");
-		}
-		
-		workHourRepository.delete(workHour);
-		return workHour;
-	}
-	
-	@Transactional
-	public List<WorkHour> getAllWorkHours(){
-		return toList(workHourRepository.findAll());
-	}
-	
 	// WorkBreak service methods
 	@Transactional
 	public WorkBreak createWorkBreak(Integer workHourId, Time startTime, Time endTime) throws IllegalArgumentException {
@@ -935,15 +821,19 @@ public class AutoRepairSystemService {
 		if (startTime.toLocalTime().isAfter(endTime.toLocalTime())) {
 			throw new IllegalArgumentException("Start time must be before end time");
 		}
-		
 		WorkHour workHour = workHourRepository.findWorkHourById(workHourId);
 
 		if (workHour == null) {
 			throw new IllegalArgumentException("Specified Work Hour doesn't exist!");
 		}
 		
-		Set<WorkBreak> workBreaks = workHour.getWorkBreak();
+		// Make sure work break time is within workHour time
+		if((startTime.toLocalTime().isBefore(workHour.getStartTime().toLocalTime())) || (endTime.toLocalTime().isAfter(workHour.getEndTime().toLocalTime()))) {
+			throw new IllegalArgumentException("Work break must be within work hour");
+		}
 		
+		Set<WorkBreak> workBreaks = workHour.getWorkBreak();
+
 		// Make sure work break does not overlap with existing work break associated with work hour
 		for(WorkBreak w : workBreaks) {
 			
@@ -1002,6 +892,11 @@ public class AutoRepairSystemService {
 		WorkHour workHour = workHourRepository.findWorkHourByWorkBreak(workBreak);
 		Set<WorkBreak> workBreakSet = workHour.getWorkBreak();
 		
+		// Make sure new work break time is within work hour:
+		if((newStartTime.toLocalTime().isBefore(workHour.getStartTime().toLocalTime())) || (newEndTime.toLocalTime().isAfter(workHour.getEndTime().toLocalTime()))) {
+			throw new IllegalArgumentException("Work break must be within work hour");
+		}
+		
 		// Make sure work break does not overlap with existing work break (not including the work break being updated)
 		for (WorkBreak w : workBreakSet) {
 			if(w.getId().equals(workBreak.getId())) {
@@ -1011,7 +906,7 @@ public class AutoRepairSystemService {
 			} else if(!(w.getStartBreak().toLocalTime().isBefore(newEndTime.toLocalTime()))) {
 				continue;
 			} else {
-				throw new IllegalArgumentException("Updated Work Hour overlaps with existing work hour");
+				throw new IllegalArgumentException("Updated work break overlaps with existing work break");
 			}
 		}
 		
@@ -1019,15 +914,12 @@ public class AutoRepairSystemService {
 		workBreak.setStartBreak(newStartTime);
 		workBreak.setEndBreak(newEndTime);
 		
-		
-		
 		workBreakSet.add(workBreak);
 		
 		workHour.setWorkBreak(workBreakSet);
 		workHourRepository.save(workHour);
 		workBreakRepository.save(workBreak);
 		return workBreak;
-		
 	}
 	
 	@Transactional
@@ -1074,6 +966,8 @@ public class AutoRepairSystemService {
 		if (date == null) {
 			throw new IllegalArgumentException("A valid date must be provided!");
 		}
+		
+		// Add check that technician hour is within business of the same day
 		
 		Set<TechnicianHour> technicianHours = technician.getTechnicianHour();
 		
@@ -1135,6 +1029,8 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("A valid end time must be provided! (non-empty or after start time)");
 		}
 		
+		// Add check
+		
 		
 		technicianHour.setStartTime(startTime);
 		technicianHour.setEndTime(endTime);
@@ -1150,28 +1046,6 @@ public class AutoRepairSystemService {
 	
 	
 	//could be changed to update singular workBreak
-	@Transactional
-	public TechnicianHour updateTechnicianHourWorkBreak(Integer id, Set<WorkBreak> workBreak) throws IllegalArgumentException {
-		
-		if (id == null) {
-			throw new IllegalArgumentException("A valid technician hour ID must be provided!");
-		}
-		
-		TechnicianHour technicianHour = technicianHourRepository.findTechnicianHourById(id);
-		
-		if (technicianHour == null) {
-			throw new IllegalArgumentException("Technician Hour cannot be found");
-		}
-		
-		if (workBreak == null) {
-			throw new IllegalArgumentException("A valid work break must be provided!");
-		}
-		
-		technicianHour.setWorkBreak(workBreak);
-		technicianHourRepository.save(technicianHour);
-		
-		return technicianHour;
-	}
 	
 	@Transactional
 	public TechnicianHour deleteTechnicianHour(Integer id) throws IllegalArgumentException {
@@ -1189,12 +1063,6 @@ public class AutoRepairSystemService {
 		technicianHourRepository.delete(technicianHour);
 		return technicianHour;
 	}
-	
-	@Transactional
-	public List<TechnicianHour> getAllTechnicianHours(){
-		return toList(technicianHourRepository.findAll());
-	}
-	
 	
 	//BusinessHour service methods
 	
@@ -1238,7 +1106,6 @@ public class AutoRepairSystemService {
 		return businessHour;
 	}
 	
-	
 	@Transactional
 	public BusinessHour updateBusinessHour(Integer id,Time startTime, Time endTime, Date date) throws IllegalArgumentException {
 		
@@ -1271,31 +1138,6 @@ public class AutoRepairSystemService {
 		businessHour.setDate(date);
 		//technicianHour.setTechnician(technician);
 
-		businessHourRepository.save(businessHour);
-		
-		return businessHour;
-	}
-	
-	
-	//could be changed to update singular workBreak
-	@Transactional
-	public BusinessHour updateBusinessHourWorkBreak(Integer id, Set<WorkBreak> workBreak) throws IllegalArgumentException {
-		
-		if (id == null) {
-			throw new IllegalArgumentException("A valid business hour ID must be provided!");
-		}
-		
-		BusinessHour businessHour = businessHourRepository.findBusinessHourById(id);
-		
-		if (businessHour == null) {
-			throw new IllegalArgumentException("Business Hour cannot be found");
-		}
-		
-		if (workBreak == null) {
-			throw new IllegalArgumentException("A valid work break must be provided!");
-		}
-		
-		businessHour.setWorkBreak(workBreak);
 		businessHourRepository.save(businessHour);
 		
 		return businessHour;
