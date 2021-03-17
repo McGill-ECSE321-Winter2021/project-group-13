@@ -5,28 +5,30 @@ import java.util.Set;
 
 public class CustomerDto extends EndUserDto {
 	
-	private Set <AppointmentDto> appointments;
+	private int amountOwed;
 	
 	public CustomerDto() {}
 	
-	@SuppressWarnings("unchecked")
+	
 	public CustomerDto(String email) {
-		this(null, null, null, email, Collections.EMPTY_SET);
+		this(null, null, null, email, 0);
 	}
 	
-	public CustomerDto(String username, String password, String name, String email ,Set<AppointmentDto> appointments) {
+	public CustomerDto(String username, String password, String name, String email, int amountOwed) {
 		super(username, password, name, email);
-		this.appointments = appointments;
+		this.amountOwed= amountOwed;
+		
 		
 	}
 	
-	public Set <AppointmentDto> getAppointments(){
-		return appointments;
+	public void setAmountOwed(int amountOwed) {
+		this.amountOwed = amountOwed;
 	}
 	
-	public void setAppointments(Set <AppointmentDto> appointments) {
-		this.appointments = appointments;
+	public int getAmountOwed() {
+		return amountOwed;
 	}
+	
 
 	
 }

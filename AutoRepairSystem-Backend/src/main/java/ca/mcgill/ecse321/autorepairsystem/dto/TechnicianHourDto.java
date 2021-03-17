@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.Set;
 
 public class TechnicianHourDto extends WorkHourDto {
-
-	private TechnicianDto technician;
 	
 	public TechnicianHourDto() {
 		
@@ -15,21 +13,15 @@ public class TechnicianHourDto extends WorkHourDto {
 	
 	@SuppressWarnings("unchecked")
 	public TechnicianHourDto(Integer id) {
-		this(null, null, null, id, Collections.EMPTY_SET, null);
+		this(null, null, null, id, Collections.EMPTY_SET);
 	}
 	
-	public TechnicianHourDto(Time starttime, Time endtime, Date date, Integer id, Set <WorkBreakDto> workbreaks, TechnicianDto technician) {
+	public TechnicianHourDto(Time starttime, Time endtime, Date date, Integer id, Set <WorkBreakDto> workbreaks) {
 		super(starttime, endtime, date, id, workbreaks);
-		this.technician = technician;
+		
 	}
 	
-	public void setTechnician(TechnicianDto technician) {
-		this.technician = technician;
-	}
 	
-	public TechnicianDto getTechnician() {
-		return technician;
-	}
 	
 	
 }

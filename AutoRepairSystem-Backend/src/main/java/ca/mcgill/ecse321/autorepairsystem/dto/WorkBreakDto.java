@@ -6,20 +6,23 @@ public class WorkBreakDto {
 	
 	private Time startbreak;
 	private Time endbreak;
-	private WorkHourDto workhour;
+	private Integer Id;
 	
 	public WorkBreakDto() {
 		
 	}
 	
-	public WorkBreakDto(WorkHourDto workhour) {
-		this(null, null, workhour);
+	@SuppressWarnings("unchecked")
+	public WorkBreakDto(Integer Id) {
+		this(null,null,Id);
+		
 	}
 	
-	public WorkBreakDto(Time startbreak, Time endbreak, WorkHourDto workhour) {
+	public WorkBreakDto(Time startbreak, Time endbreak, Integer Id) {
 		this.startbreak = startbreak;
 		this.endbreak = endbreak;
-		this.workhour = workhour;
+		this.Id=Id;
+		
 	}
 	
 	public void setStartBreak(Time startbreak) {
@@ -38,16 +41,14 @@ public class WorkBreakDto {
 		return endbreak;
 	}
 	
-	public void setWorkHour(WorkHourDto workhour) {
-		this.workhour = workhour;
+	public void setId(Integer Id) {
+		this.Id = Id;
 	}
 	
-	
-	public WorkHourDto getWorkHour() {
-		return workhour;
+	public Integer getId() {
+		return Id;
 	}
-	
-	
+		
 	
 
 }
