@@ -1,4 +1,4 @@
-/*package ca.mcgill.ecse321.autorepairsystem.service;
+package ca.mcgill.ecse321.autorepairsystem.service;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -159,7 +159,7 @@ public class AutoRepairSystemService {
        * 
        * Not assumed:
        * -no overlap between breaks
-       *//*
+       */
 	  public List<Appointment> cleanupAppointments(List<Appointment> appointments){
 	    
 	    //sort
@@ -303,7 +303,7 @@ public class AutoRepairSystemService {
 	     * 
 	     * j++
 	     * 
-	     *//*
+	     */
 	    
 	    int i = 0;
 	    int j = 0;
@@ -791,7 +791,7 @@ public class AutoRepairSystemService {
 		service.setPrice(price);
 		
 		serviceRepository.save(service);
-		return service;*//*
+		return service;*/
 	}
 	 //WorkHour service methods
 	
