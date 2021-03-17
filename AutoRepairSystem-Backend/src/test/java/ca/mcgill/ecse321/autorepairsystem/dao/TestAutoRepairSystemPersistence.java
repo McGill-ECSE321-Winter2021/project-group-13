@@ -49,7 +49,7 @@ public class TestAutoRepairSystemPersistence {
 	@Autowired
 	private TechnicianRepository technicianRepository;
 	@Autowired
-	private EndUserRepository userRepository;
+	private EndUserRepository endUserRepository;
 	@Autowired
 	private WorkBreakRepository workBreakRepository;
 	@Autowired
@@ -83,6 +83,11 @@ public class TestAutoRepairSystemPersistence {
 	private static final Time WORKHOUREND = Time.valueOf("22:59:59");
 	private static final Date WORKHOURDATE = Date.valueOf("2021-01-01");
 	
+	//WorkHour Constants
+	private static final Time WORKHOURSTART2 = Time.valueOf("18:59:59");
+	private static final Time WORKHOUREND2 = Time.valueOf("223:59:59");
+	private static final Date WORKHOURDATE2 = Date.valueOf("2021-01-02");
+	
 	//WorkBreak Constants
 	private static final Time WORKBREAKSTART = Time.valueOf("13:59:59");
 	private static final Time WORKBREAKEND = Time.valueOf("14:59:59");
@@ -104,7 +109,7 @@ public class TestAutoRepairSystemPersistence {
 		technicianRepository.deleteAll();
 		administratorRepository.deleteAll();
 		
-		userRepository.deleteAll();
+		endUserRepository.deleteAll();
 		workItemRepository.deleteAll();
 		//autoRepairSystemRepository.deleteAll();
 		
@@ -123,7 +128,7 @@ public class TestAutoRepairSystemPersistence {
 		technicianRepository.deleteAll();
 		administratorRepository.deleteAll();
 		
-		userRepository.deleteAll();
+		endUserRepository.deleteAll();
 		workItemRepository.deleteAll();
 		//autoRepairSystemRepository.deleteAll();
 		
@@ -353,6 +358,49 @@ public class TestAutoRepairSystemPersistence {
 	}
 	
 	@Test
+	public void testPersistAndLoadEndUser() {
+
+		Customer customer = newCustomer(USERNAME,PASSWORD,NAME,EMAIL,AMOUNTOWED);
+		customerRepository.save(customer);
+		
+		Technician tech = newTechnician(USERNAME2,PASSWORD2,NAME2,EMAIL2);
+		technicianRepository.save(tech);
+		
+		customer = null;
+		tech = null;
+		
+		customer = (Customer) endUserRepository.findEndUserByUsername(USERNAME);
+		assertNotNull(customer);
+		assertEquals(USERNAME,customer.getUsername());
+		
+		tech = (Technician) endUserRepository.findEndUserByUsername(USERNAME2);
+		assertNotNull(tech);
+		assertEquals(USERNAME2, tech.getUsername());
+		
+		customer = null;
+		tech = null;
+		
+		customer = (Customer) endUserRepository.findEndUserByEmail(EMAIL);
+		assertNotNull(customer);
+		assertEquals(USERNAME,customer.getUsername());
+		
+		tech = (Technician) endUserRepository.findEndUserByEmail(EMAIL2);
+		assertNotNull(customer);
+		assertEquals(USERNAME2,tech.getUsername());
+
+		// Test Delete
+		endUserRepository.delete(tech);
+		assertNull(technicianRepository.findTechnicianByUsername(USERNAME2));
+		assertNull(endUserRepository.findEndUserByUsername(USERNAME2));
+		
+		// Test Delete
+		endUserRepository.delete(customer);
+		assertNull(customerRepository.findCustomerByUsername(USERNAME));
+		assertNull(endUserRepository.findEndUserByUsername(USERNAME));
+		
+	}
+	
+	@Test
 	public void testPersistAndLoadWorkBreak() {
 		
 		WorkBreak workBreak = newWorkBreak(WORKBREAKSTART,WORKBREAKEND);
@@ -369,6 +417,40 @@ public class TestAutoRepairSystemPersistence {
 		workBreakRepository.delete(workBreak);
 		assertNull(workBreakRepository.findWorkBreakById(workBreakId));
 		
+	}
+	
+	@Test
+	public void testPersistAndLoadWorkHour() {
+		
+		TechnicianHour techHour = newTechnicianHour(WORKHOURSTART,WORKHOUREND,WORKHOURDATE);
+		technicianHourRepository.save(techHour);
+		Integer techHourId = techHour.getId();
+		
+		BusinessHour businessHour = newBusinessHour(WORKHOURSTART2,WORKHOUREND2,WORKHOURDATE2);
+		businessHourRepository.save(businessHour);
+		Integer businessHourId = businessHour.getId();
+		
+		techHour = null;
+		businessHour = null;
+		
+		techHour = (TechnicianHour) workHourRepository.findWorkHourById(techHourId);
+		
+		assertNotNull(techHour);
+		assertEquals(techHourId, techHour.getId());
+		
+		businessHour = (BusinessHour) workHourRepository.findWorkHourById(businessHourId);
+		
+		assertNotNull(businessHour);
+		assertEquals(businessHourId, businessHour.getId());
+		
+		//Test Delete
+		workHourRepository.delete(techHour);
+		assertNull(workHourRepository.findWorkHourById(techHourId));
+		assertNull(technicianHourRepository.findTechnicianHourById(techHourId));
+		
+		workHourRepository.delete(businessHour);
+		assertNull(workHourRepository.findWorkHourById(businessHourId));
+		assertNull(businessHourRepository.findBusinessHourById(businessHourId));
 	}
 	
 	@Test
