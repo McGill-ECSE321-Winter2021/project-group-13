@@ -86,7 +86,6 @@ public class TestBusinessHourService {
             	businessHour.setDate(DATE);
             	businessHour.setEndTime(ENDTIME);
             	businessHour.setStartTime(STARTTIME);
-   
             	return businessHour;
             } else if(invocation.getArgument(0).equals(ID3)) {
             	BusinessHour businessHour= new BusinessHour();
@@ -95,6 +94,29 @@ public class TestBusinessHourService {
             	businessHour.setEndTime(ENDTIME3);
             	businessHour.setStartTime(STARTTIME3);
             	return businessHour;
+            } else {
+        		return null;
+        	}
+        });
+        
+        lenient().when(businessHourDao.findBusinessHourByDate(any(Date.class))).thenAnswer((InvocationOnMock invocation) -> {
+            Set<BusinessHour> businessHourSet = new HashSet<BusinessHour>();
+        	if(invocation.getArgument(0).equals(DATE)) {
+            	BusinessHour businessHour= new BusinessHour();
+            	businessHour.setId(ID);
+            	businessHour.setDate(DATE);
+            	businessHour.setEndTime(ENDTIME);
+            	businessHour.setStartTime(STARTTIME);
+            	businessHourSet.add(businessHour);
+            	return businessHourSet;
+            } else if(invocation.getArgument(0).equals(DATE3)) {
+            	BusinessHour businessHour= new BusinessHour();
+            	businessHour.setId(ID3);
+            	businessHour.setDate(DATE3);
+            	businessHour.setEndTime(ENDTIME3);
+            	businessHour.setStartTime(STARTTIME3);
+            	businessHourSet.add(businessHour);
+            	return businessHourSet;
             } else {
         		return null;
         	}
@@ -178,12 +200,12 @@ public class TestBusinessHourService {
     	BusinessHour businesshour =null;
     	
     	try {
-    		businesshour = service.createBusinessHour(STARTTIME, ENDTIME, DATE);
+    		businesshour = service.createBusinessHour(STARTTIME2, ENDTIME2, DATE);
     	} catch(Exception e) {
     			
     	}
-    	assertEquals(STARTTIME, businesshour.getStartTime());
-    	assertEquals(ENDTIME, businesshour.getEndTime());
+    	assertEquals(STARTTIME2, businesshour.getStartTime());
+    	assertEquals(ENDTIME2, businesshour.getEndTime());
     	assertEquals(DATE, businesshour.getDate());
     	
     }
@@ -200,9 +222,67 @@ public class TestBusinessHourService {
     			
     	}
     	assertNull(businesshour);
-    	assertEquals(error, "A valid start time must be provided! (non-empty or before end time)");
+    	assertEquals(error, "A valid start time must be provided!");
+    }
+    
+    @Test
+    public void createBusinessHourFail2() {
+    	BusinessHour businesshour =null;
+    	String error = null;
     	
+    	try {
+    		businesshour = service.createBusinessHour(STARTTIME, null, DATE);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    			
+    	}
+    	assertNull(businesshour);
+    	assertEquals(error, "A valid end time must be provided!");
+    }
+    
+    @Test
+    public void createBusinessHourFail3() {
+    	BusinessHour businesshour =null;
+    	String error = null;
     	
+    	try {
+    		businesshour = service.createBusinessHour(ENDTIME, STARTTIME, DATE);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    			
+    	}
+    	assertNull(businesshour);
+    	assertEquals(error, "Start time must be before end time");
+    }
+    
+    @Test
+    public void createBusinessHourFail4() {
+    	BusinessHour businesshour =null;
+    	String error = null;
+    	
+    	try {
+    		businesshour = service.createBusinessHour(STARTTIME, ENDTIME, null);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    			
+    	}
+    	assertNull(businesshour);
+    	assertEquals(error, "A valid date must be provided!");
+    }
+    
+    @Test
+    public void createBusinessHourFail5() {
+    	BusinessHour businesshour =null;
+    	String error = null;
+    	
+    	try {
+    		businesshour = service.createBusinessHour(STARTTIME, ENDTIME, DATE);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    			
+    	}
+    	assertNull(businesshour);
+    	assertEquals(error, "Business hour cannot overlap with an existing business hour");
     }
     
     @Test
@@ -221,13 +301,27 @@ public class TestBusinessHourService {
     	BusinessHour businesshour =  null;
     	String error = null;
     	try {
+    		businesshour = service.getBusinessHour(null);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(businesshour);
+    	assertEquals(error,"A valid business hour ID must be provided!");
+    }
+    
+    @Test
+    public void testGetBusinessHourFail2() {
+    	BusinessHour businesshour =  null;
+    	String error = null;
+    	try {
     		businesshour = service.getBusinessHour(ID2);
     	} catch(Exception e) {
     		error = e.getMessage();
     		
     	}
     	assertNull(businesshour);
-    	assertEquals(error,"business hour cannot be found!");
+    	assertEquals(error,"Business hour cannot be found!");
     }
 	
     
@@ -235,14 +329,14 @@ public class TestBusinessHourService {
     public void testUpdateBusinessHour() {
     	BusinessHour businesshour =  null;
     	try {
-    		businesshour = service.updateBusinessHour(ID, STARTTIME, ENDTIME, DATE);
+    		businesshour = service.updateBusinessHour(ID, STARTTIME, ENDTIME, DATE2);
     	} catch(Exception e) {
     		
     	}
     	assertEquals(ID,businesshour.getId());
     	assertEquals(STARTTIME, businesshour.getStartTime());
     	assertEquals(ENDTIME, businesshour.getEndTime());
-    	assertEquals(DATE, businesshour.getDate());
+    	assertEquals(DATE2, businesshour.getDate());
     }
     
     @Test
@@ -250,13 +344,97 @@ public class TestBusinessHourService {
     	BusinessHour businesshour =  null;
     	String error = null;
     	try {
-    		businesshour = service.updateBusinessHour(ID, ENDTIME, STARTTIME, DATE);
+    		businesshour = service.updateBusinessHour(null, ENDTIME, STARTTIME, DATE);
     	} catch(Exception e) {
     		error = e.getMessage();
     		
     	}
     	assertNull(businesshour);
-    	assertEquals(error,"A valid start time must be provided! (non-empty or before end time)");
+    	assertEquals(error,"A valid business hour ID must be provided!");
+    }
+    
+    @Test
+    public void testUpdateBusinessHourFail2() {
+    	BusinessHour businesshour =  null;
+    	String error = null;
+    	try {
+    		businesshour = service.updateBusinessHour(ID2, ENDTIME, STARTTIME, DATE);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(businesshour);
+    	assertEquals(error,"A business hour with this ID cannot be found!");
+    }
+    
+    @Test
+    public void testUpdateBusinessHourFail3() {
+    	BusinessHour businesshour =  null;
+    	String error = null;
+    	try {
+    		businesshour = service.updateBusinessHour(ID, ENDTIME, STARTTIME, null);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(businesshour);
+    	assertEquals(error,"A valid date must be provided!");
+    }
+    
+    @Test
+    public void testUpdateBusinessHourFail4() {
+    	BusinessHour businesshour =  null;
+    	String error = null;
+    	try {
+    		businesshour = service.updateBusinessHour(ID, null, ENDTIME, DATE);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(businesshour);
+    	assertEquals(error,"A valid start time must be provided!");
+    }
+    
+    @Test
+    public void testUpdateBusinessHourFail5() {
+    	BusinessHour businesshour =  null;
+    	String error = null;
+    	try {
+    		businesshour = service.updateBusinessHour(ID, STARTTIME, null, DATE);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(businesshour);
+    	assertEquals(error,"A valid end time must be provided!");
+    }
+    
+    @Test
+    public void testUpdateBusinessHourFail6() {
+    	BusinessHour businesshour =  null;
+    	String error = null;
+    	try {
+    		businesshour = service.updateBusinessHour(ID, STARTTIME, STARTTIME, DATE);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(businesshour);
+    	assertEquals(error,"Start time must be before end time");
+    }
+    
+    @Test
+    public void testUpdateBusinessHourFail7() {
+    	BusinessHour businesshour =  null;
+    	String error = null;
+    	try {
+    		businesshour = service.updateBusinessHour(ID, STARTTIME3, ENDTIME3, DATE3);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(businesshour);
+    	assertEquals(error,"Business hour cannot overlap with an existing business hour");
     }
     
     @Test

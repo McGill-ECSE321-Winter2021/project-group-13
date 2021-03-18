@@ -1180,12 +1180,16 @@ public class AutoRepairSystemService {
 	@Transactional
 	public BusinessHour createBusinessHour(Time startTime, Time endTime, Date date) {
 		
-		if (startTime == null || startTime.after(endTime) == true) {
-			throw new IllegalArgumentException("A valid start time must be provided! (non-empty or before end time)");
+		if (startTime == null) {
+			throw new IllegalArgumentException("A valid start time must be provided!");
 		}
 		
-		if (endTime == null || endTime.before(startTime) == true) {
-			throw new IllegalArgumentException("A valid end time must be provided! (non-empty or after start time)");
+		if (endTime == null) {
+			throw new IllegalArgumentException("A valid end time must be provided!");
+		}
+		
+		if (!startTime.before(endTime)) {
+			throw new IllegalArgumentException("Start time must be before end time");
 		}
 		
 		if (date == null) {
@@ -1201,7 +1205,7 @@ public class AutoRepairSystemService {
 			} else if(!(b.getStartTime().before(endTime))) {
 				continue;
 			} else {
-				throw new IllegalArgumentException("Business hour cannot overlap with another business horu");
+				throw new IllegalArgumentException("Business hour cannot overlap with an existing business hour");
 			}
 		}
 		
@@ -1220,10 +1224,15 @@ public class AutoRepairSystemService {
 	
 	@Transactional
 	public BusinessHour getBusinessHour(Integer id) throws IllegalArgumentException {
+		
+		if (id == null) {
+			throw new IllegalArgumentException("A valid business hour ID must be provided!");
+		}
+		
 		BusinessHour businessHour = businessHourRepository.findBusinessHourById(id);
 		
 		if (businessHour == null) {
-			throw new IllegalArgumentException("business hour cannot be found!");
+			throw new IllegalArgumentException("Business hour cannot be found!");
 		}
 		return businessHour;
 	}
@@ -1232,33 +1241,49 @@ public class AutoRepairSystemService {
 	public BusinessHour updateBusinessHour(Integer id,Time startTime, Time endTime, Date date) throws IllegalArgumentException {
 		
 		if (id == null) {
-			throw new IllegalArgumentException("A valid business hour I.D. must be provided!");
+			throw new IllegalArgumentException("A valid business hour ID must be provided!");
 		}
 		
 		BusinessHour businessHour = businessHourRepository.findBusinessHourById(id);
 		
 		if(businessHour == null) {
-			throw new IllegalArgumentException("A business hour with this I.D. cannot be found!");
+			throw new IllegalArgumentException("A business hour with this ID cannot be found!");
 		}
 		
 		if (date == null) {
 			throw new IllegalArgumentException("A valid date must be provided!");
 		}
 		
-		if (startTime == null || startTime.after(endTime) == true) {
-			throw new IllegalArgumentException("A valid start time must be provided! (non-empty or before end time)");
+		if (startTime == null) {
+			throw new IllegalArgumentException("A valid start time must be provided!");
 		}
 		
-		if (endTime == null || endTime.before(startTime) == true) {
-			throw new IllegalArgumentException("A valid end time must be provided! (non-empty or after start time)");
+		if (endTime == null) {
+			throw new IllegalArgumentException("A valid end time must be provided!");
+		}
+		
+		if (!startTime.before(endTime)) {
+			throw new IllegalArgumentException("Start time must be before end time");
+		}
+		
+		Set<BusinessHour> businessHourSet = businessHourRepository.findBusinessHourByDate(date);
+		
+		for(BusinessHour b : businessHourSet) {
+			if(b.getId().equals(id)) {
+				continue;
+			} else if(!(startTime.before(b.getEndTime()))) {
+				continue;
+			} else if(!(b.getStartTime().before(endTime))) {
+				continue;
+			} else {
+				throw new IllegalArgumentException("Business hour cannot overlap with an existing business hour");
+			}
 		}
 		
 		
 		businessHour.setStartTime(startTime);
 		businessHour.setEndTime(endTime);
-		//technicianHour.setId(id);
 		businessHour.setDate(date);
-		//technicianHour.setTechnician(technician);
 
 		businessHourRepository.save(businessHour);
 		
