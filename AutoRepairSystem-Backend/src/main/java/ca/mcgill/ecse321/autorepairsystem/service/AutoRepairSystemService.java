@@ -707,8 +707,13 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Work item cannot be found.");
 		}
 		
-		workItemRepository.delete(workItem);
+		Set<Appointment> appointments = appointmentRepository.findAppointmentByWorkItem(workItem);
 		
+		if (appointments.isEmpty() == false) {
+			throw new IllegalArgumentException("There are appointments associated with this work item; it cannot be deleted!");
+		}
+		
+		workItemRepository.delete(workItem);
 		return workItem;
 	}
 	
