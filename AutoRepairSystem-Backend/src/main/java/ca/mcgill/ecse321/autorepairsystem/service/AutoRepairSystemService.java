@@ -767,8 +767,8 @@ public class AutoRepairSystemService {
 		workBreaks.add(workBreak);
 		
 		workHour.setWorkBreak(workBreaks);
-		workHourRepository.save(workHour);
 		workBreakRepository.save(workBreak);
+		workHourRepository.save(workHour);
 		
 		return workBreak;
 	}
@@ -910,8 +910,8 @@ public class AutoRepairSystemService {
 		
 		technicianHourSet.add(technicianHour);
 		technician.setTechnicianHour(technicianHourSet);
-		technicianRepository.save(technician);
 		technicianHourRepository.save(technicianHour);
+		technicianRepository.save(technician);
 		
 		return technicianHour;
 	}

@@ -198,15 +198,14 @@ public class AutoRepairSystemController {
 		}
 	}
 	
+	
+	
 	//workBreak controller methods
 	
-	
-	@PostMapping(value = { "/workbreak/{Id}", "/workbreak/{Id}/" })
-	public ResponseEntity<?> createWorkBreak(@PathVariable("Id") Time startbreak, 
-			@RequestParam Integer workhourid, 
-			@RequestParam Time  endbreak) throws IllegalArgumentException {
+	@GetMapping(value = { "/workbreaks/{id}", "/workbreaks/{id}/" })
+	public ResponseEntity<?> getWorkBreak(@PathVariable("id") Integer id) throws IllegalArgumentException {
 		try {
-			WorkBreak workbreak = service.createWorkBreak(workhourid, startbreak, endbreak);
+			WorkBreak workbreak = service.getWorkBreak(id);
 			return new ResponseEntity<>(convertToDto(workbreak), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
@@ -214,12 +213,13 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	@GetMapping(value = { "/workbreak/{Id}", "/workbreak/{Id}/" })
-	public ResponseEntity<?> getWorkBreak(@PathVariable("Id") 
-			@RequestParam Integer workBreakId
-			) throws IllegalArgumentException {
+	
+	@PostMapping(value = { "/workbreaks/{workHourId}", "/workbreaks/{workHourId}/" })
+	public ResponseEntity<?> createWorkBreak(@PathVariable("workHourId") Integer workHourId,
+			@RequestParam Time startBreak,  
+			@RequestParam Time  endBreak) throws IllegalArgumentException {
 		try {
-			WorkBreak workbreak = service.getWorkBreak(workBreakId);
+			WorkBreak workbreak = service.createWorkBreak(workHourId, startBreak, endBreak);
 			return new ResponseEntity<>(convertToDto(workbreak), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
@@ -227,27 +227,31 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	@PutMapping(value = { "/workbreak/{Id}", "/workbreak/{Id}/"})
-	public ResponseEntity<?> updateWorkBreak(@PathVariable("Id") Integer id,
-			@RequestParam Time newstarttime,
-			@RequestParam Time newendtime) {
+	
+	@PutMapping(value = { "/workbreaks/{id}", "/workbreaks/{id}/"})
+	public ResponseEntity<?> updateWorkBreak(@PathVariable("id") Integer id,
+			@RequestParam Time newStartTime,
+			@RequestParam Time newEndTime) {
 		try {
-			return new ResponseEntity<>(convertToDto(service.updateWorkBreak(id, newstarttime, newendtime)), HttpStatus.OK);
+			return new ResponseEntity<>(convertToDto(service.updateWorkBreak(id, newStartTime, newEndTime)), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 	
-	@DeleteMapping(value = {"/workbreak/{Id}", "/workbreak/{Id}/"})
-	public ResponseEntity<?> DeleteWorkBreak(@PathVariable("Id") Integer Id){
+	
+	@DeleteMapping(value = {"/workbreaks/{id}", "/workbreaks/{id}/"})
+	public ResponseEntity<?> DeleteWorkBreak(@PathVariable("id") Integer id){
 		try {
-			return new ResponseEntity<>(convertToDto(service.DeleteWorkBreak(Id)), HttpStatus.OK);
+			return new ResponseEntity<>(convertToDto(service.DeleteWorkBreak(id)), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
+	
+	
 	
 	//work Item Controller Methods
 	
@@ -370,12 +374,23 @@ public class AutoRepairSystemController {
 	//Technician hour controller methods
 
 	@GetMapping(value = { "/technicianhours/{id}", "/technicianhours/{id}/" })
-	public ResponseEntity<?> getTechnicianHourById(@PathVariable("id") 
-			@RequestParam Integer id
-			) throws IllegalArgumentException {
+	public ResponseEntity<?> getTechnicianHourById(@PathVariable("id") Integer id) throws IllegalArgumentException {
 		try {
-			TechnicianHour technicianHour = service.getTechnicianHour(id);
-			return new ResponseEntity<>(convertToDto(technicianHour), HttpStatus.OK);
+			return new ResponseEntity<>(convertToDto(service.getTechnicianHour(id)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	
+	@PostMapping(value = { "/technicianhours/{technicianUsername}", "/technicianhours/{technicianUsername}/"})
+	public ResponseEntity<?> createTechnicianHour(@PathVariable("technicianUsername") String technicianUsername,
+			@RequestParam Time start,
+			@RequestParam Time end,
+			@RequestParam Date date) {
+		try {
+			return new ResponseEntity<>(convertToDto(service.createTechnicianHour(technicianUsername, start, end, date)), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
