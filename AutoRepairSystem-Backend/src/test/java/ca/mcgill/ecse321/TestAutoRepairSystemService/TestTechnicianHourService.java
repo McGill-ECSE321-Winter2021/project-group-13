@@ -3,20 +3,16 @@ package ca.mcgill.ecse321.TestAutoRepairSystemService;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.*;
 
 import static org.mockito.Mockito.lenient;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +27,6 @@ import org.mockito.stubbing.Answer;
 import ca.mcgill.ecse321.autorepairsystem.model.*;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
 import ca.mcgill.ecse321.autorepairsystem.dao.*;
-
-//NOTE: 20/27 test cases covered => 74%
 
 @ExtendWith(MockitoExtension.class)
 public class TestTechnicianHourService {
@@ -49,24 +43,14 @@ public class TestTechnicianHourService {
 	@InjectMocks
 	private AutoRepairSystemService service;
 	
-	//Existing technicianHours in the mocked up database
 	private static final Integer id = 123;
-	private static final Integer id2 = 232;
-	
-	//Existing technicians in the mocked up database
 	private static final String username = "Jack";
-	
-	//Existing businessHours in the mocked up database
 	private static final Date date = Date.valueOf("2021-05-01");
-	private static final Date date2 = Date.valueOf("2021-06-01");
 	
-	
-	//Valid inputs
 	Time validStartTime = Time.valueOf("18:00:00");
 	Time validEndTime = Time.valueOf("19:05:00");
 	Date validDate = Date.valueOf("2021-05-01");
 	
-	//Invalid inputs
 	Time invalidStartTime = Time.valueOf("20:00:00"); //Starts after validEndTime
 	Time invalidStartTime2 = Time.valueOf("01:00:00"); //Starts before start of business hour for that day
 	Time invalidStartTime3 = Time.valueOf("10:00:00"); //Overlaps with start of existing technicianHour of the technician
@@ -131,16 +115,6 @@ public class TestTechnicianHourService {
         tHour.setDate(Date.valueOf("2021-05-01"));
         tHour.setWorkBreak(new HashSet<WorkBreak>());
         return tHour;
-	}
-	
-	private TechnicianHour tHour2() {
-		TechnicianHour tHour2 = new TechnicianHour();
-        tHour2.setId(id2);
-        tHour2.setStartTime(Time.valueOf("09:00:00"));
-        tHour2.setEndTime(Time.valueOf("17:00:00"));
-        tHour2.setDate(Date.valueOf("2021-06-01"));
-        tHour2.setWorkBreak(new HashSet<WorkBreak>());
-        return tHour2;
 	}
 	
 	private Technician t() {
