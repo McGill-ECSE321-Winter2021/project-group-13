@@ -1058,8 +1058,9 @@ public class AutoRepairSystemService {
 
     technicianHourSet.add(technicianHour);
     technician.setTechnicianHour(technicianHourSet);
-    technicianHourRepository.save(technicianHour);
     technicianRepository.save(technician);
+    technicianHourRepository.save(technicianHour);
+
 
     return technicianHour;
   }
