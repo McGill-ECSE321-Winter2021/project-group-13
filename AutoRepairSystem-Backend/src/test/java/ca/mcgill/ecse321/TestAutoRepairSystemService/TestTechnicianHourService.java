@@ -70,7 +70,6 @@ public class TestTechnicianHourService {
 	Time invalidStartTime = Time.valueOf("20:00:00"); //Starts after validEndTime
 	Time invalidStartTime2 = Time.valueOf("01:00:00"); //Starts before start of business hour for that day
 	Time invalidStartTime3 = Time.valueOf("10:00:00"); //Overlaps with start of existing technicianHour of the technician
-	Date invalidDate = Date.valueOf("2021-06-01"); //Overlaps with other technician hour
 	Time invalidEndTime = Time.valueOf("17:00:00"); //Starts before validStartTime
 	Integer invalidId = 333; //No existing technicianHour with this id
 	
@@ -79,8 +78,6 @@ public class TestTechnicianHourService {
 	    lenient().when(technicianHourDao.findTechnicianHourById(anyInt())).thenAnswer( (InvocationOnMock invocation) -> {
 	        if(invocation.getArgument(0).equals(id)) {
 	            return tHour1();
-	        } else if (invocation.getArgument(0).equals(id2)) {
-	        	return tHour2();
 	        } else {
 	            return null;
 	        }
@@ -88,18 +85,7 @@ public class TestTechnicianHourService {
 	    
 	    lenient().when(technicianDao.findTechnicianByUsername(anyString())).thenAnswer( (InvocationOnMock invocation) -> {
 	        if(invocation.getArgument(0).equals(username)) {
-	           Technician t = new Technician();
-	           t.setUsername(username);
-	           t.setPassword("GenericPassword");
-	           t.setName("Jack");
-	           t.setEmail("jack.jack@jack.jack.com");
-	           TechnicianHour tHour = tHour1();
-	           TechnicianHour tHour2 = tHour2();
-	           Set<TechnicianHour> tHourSet = new HashSet<TechnicianHour>();
-	           tHourSet.add(tHour);
-	           tHourSet.add(tHour2);
-	           t.setTechnicianHour(tHourSet);
-	            return t;
+	            return t();
 	        } else {
 	            return null;
 	        }
@@ -116,43 +102,14 @@ public class TestTechnicianHourService {
 	            Set<BusinessHour> bSet = new HashSet<BusinessHour>();
 	            bSet.add(b);
 	            return bSet;
-	        } else if (invocation.getArgument(0).equals(date2)) {
-	        	BusinessHour b = new BusinessHour();
-	            b.setId(323);
-	            b.setStartTime(Time.valueOf("02:00:00"));
-	            b.setEndTime(Time.valueOf("22:30:00"));
-	            b.setDate(date2);
-	            b.setWorkBreak(new HashSet<WorkBreak>());
-	            Set<BusinessHour> bSet = new HashSet<BusinessHour>();
-	            bSet.add(b);
-	            return bSet;
-	        } else {
+	        }  else {
 	            return null;
 	        }
 	    });
 	    
 	    lenient().when(technicianDao.findTechnicianByTechnicianHour(any(TechnicianHour.class))).thenAnswer( (InvocationOnMock invocation) -> {
 	        if(((TechnicianHour) invocation.getArgument(0)).getId().equals(id)) {
-	        	Technician t = new Technician();
-	        	t.setUsername(username);
-	        	t.setPassword("GenericPassword");
-		        t.setName("Jack");
-		        t.setEmail("jack.jack@jack.jack.com");
-		        TechnicianHour tHour = tHour1();
-		        TechnicianHour tHour2 = tHour2();
-		        Set<TechnicianHour> tHourSet = new HashSet<TechnicianHour>();
-		        tHourSet.add(tHour);
-		        tHourSet.add(tHour2);
-		        t.setTechnicianHour(tHourSet);
-	            return t;
-	        } else {
-	            return null;
-	        }
-	    });
-	    
-	    lenient().when(appointmentDao.findAppointmentByTechnician(any(Technician.class))).thenAnswer( (InvocationOnMock invocation) -> {
-	        if(((Technician) invocation.getArgument(0)).getUsername().equals(username)) {
-	            return new HashSet<Appointment>();
+	            return t();
 	        } else {
 	            return null;
 	        }
@@ -184,6 +141,19 @@ public class TestTechnicianHourService {
         tHour2.setDate(Date.valueOf("2021-06-01"));
         tHour2.setWorkBreak(new HashSet<WorkBreak>());
         return tHour2;
+	}
+	
+	private Technician t() {
+		Technician t = new Technician();
+        t.setUsername(username);
+        t.setPassword("GenericPassword");
+        t.setName("Jack");
+        t.setEmail("jack.jack@jack.jack.com");
+        TechnicianHour tHour = tHour1();
+        Set<TechnicianHour> tHourSet = new HashSet<TechnicianHour>();
+        tHourSet.add(tHour);
+        t.setTechnicianHour(tHourSet);
+        return t;
 	}
     
 
@@ -473,11 +443,14 @@ public class TestTechnicianHourService {
 		assertNull(tHour);
 		assertEquals("Technician hour must exist within a business hour", error);
 	}
+
+	//Only missing checking for overlap for update
 	
 
 	@Test
     public void testDeleteTechnicianHour() {
 		TechnicianHour tHour = null;
+		lenient().when(appointmentDao.findAppointmentByTechnician(any(Technician.class))).thenAnswer( (InvocationOnMock invocation) -> {return new HashSet<Appointment>();});
 		try {
 			tHour = service.deleteTechnicianHour(id);
 		}
