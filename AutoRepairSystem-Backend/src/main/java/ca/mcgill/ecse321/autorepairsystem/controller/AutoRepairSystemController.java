@@ -255,7 +255,25 @@ public class AutoRepairSystemController {
 	
 	//work Item Controller Methods
 	
-	@PostMapping(value = { "/workitem/{name}", "/workbreak/{name}/" })
+	@GetMapping(value = { "/workitems", "/workitems/"})
+	public ResponseEntity<?> getAllWorkItems() {
+		return new ResponseEntity<>(service.getAllWorkItems().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
+	}
+	
+	
+	@GetMapping(value = { "/workitems/{name}", "/workitems/{name}/" })
+	public ResponseEntity<?> getWorkItem(@PathVariable("name") String name) throws IllegalArgumentException {
+		try {
+			WorkItem workitem = service.getWorkItem(name);
+			return new ResponseEntity<>(convertToDto(workitem), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	
+	@PostMapping(value = { "/workitems/{name}", "/workbreaks/{name}/" })
 	public ResponseEntity<?> createWorkItem(@PathVariable("name") String name, 
 			@RequestParam int duration, 
 			@RequestParam int  price) throws IllegalArgumentException {
@@ -268,20 +286,8 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	@GetMapping(value = { "/workitem/{name}", "/workitem/{name}/" })
-	public ResponseEntity<?> getWorkItem(@PathVariable("name") 
-			@RequestParam String name
-			) throws IllegalArgumentException {
-		try {
-			WorkItem workitem = service.getWorkItem(name);
-			return new ResponseEntity<>(convertToDto(workitem), HttpStatus.OK);
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
 	
-	@PutMapping(value = { "/workitem/{name}", "/workitem/{name}/"})
+	@PutMapping(value = { "/workitems/{name}", "/workitems/{name}/"})
 	public ResponseEntity<?> updateWorkItem(@PathVariable("name") String name,
 			@RequestParam int duration,
 			@RequestParam int price) {
@@ -293,6 +299,7 @@ public class AutoRepairSystemController {
 		}
 	}
 	
+	
 	@DeleteMapping(value = {"/workitem/{name}", "/workitem/{name}/"})
 	public ResponseEntity<?> DeleteWorkItem(@PathVariable("name") String name){
 		try {
@@ -303,16 +310,31 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	@GetMapping(value = { "/workitems", "/workitems/"})
-	public ResponseEntity<?> getAllWorkItems() {
-		return new ResponseEntity<>(service.getAllWorkItems().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
-	}
 	
 	
 	//business Hour Controller methods
 	
-	@PostMapping(value = { "/businesshour/{date}", "/businesshour/{date}/" })
-	public ResponseEntity<?> createBusinessHour(@PathVariable("name") Date date, 
+	@GetMapping(value = { "/businesshours", "/businesshours/"})
+	public ResponseEntity<?> getAllBusinessHours() {
+		return new ResponseEntity<>(service.getAllBusinessHours().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
+	}
+	
+	
+	@GetMapping(value = { "/businesshours/{id}", "/businesshours/{id}/" })
+	public ResponseEntity<?> getBusinessHour(@PathVariable("id") Integer id
+			) throws IllegalArgumentException {
+		try {
+			BusinessHour businessHour = service.getBusinessHour(id);
+			return new ResponseEntity<>(convertToDto(businessHour), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+	
+	
+	@PostMapping(value = { "/businesshours/{date}", "/businesshours/{date}/" })
+	public ResponseEntity<?> createBusinessHour(@PathVariable("date") Date date, 
 			@RequestParam Time start, 
 			@RequestParam Time  end) throws IllegalArgumentException {
 		try {
@@ -325,27 +347,13 @@ public class AutoRepairSystemController {
 	}
 	
 	
-	@GetMapping(value = { "/businesshour/{Id}", "/businesshour/{Id}/" })
-	public ResponseEntity<?> getBusinessHour(@PathVariable("Id") 
-			@RequestParam Integer Id
-			) throws IllegalArgumentException {
-		try {
-			BusinessHour businessHour = service.getBusinessHour(Id);
-			return new ResponseEntity<>(convertToDto(businessHour), HttpStatus.OK);
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
-	
-	
-	@PutMapping(value = { "/businesshour/{Id}", "/businesshour/{Id}/"})
-	public ResponseEntity<?> updateBusinessHour(@PathVariable("Id") Integer Id,
+	@PutMapping(value = { "/businesshours/{id}", "/businesshours/{id}/"})
+	public ResponseEntity<?> updateBusinessHour(@PathVariable("id") Integer id,
 			@RequestParam Time start,
 			@RequestParam Time end,
 			@RequestParam Date date) {
 		try {
-			return new ResponseEntity<>(convertToDto(service.updateBusinessHour(Id, start, end, date)), HttpStatus.OK);
+			return new ResponseEntity<>(convertToDto(service.updateBusinessHour(id, start, end, date)), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
@@ -354,20 +362,14 @@ public class AutoRepairSystemController {
 
 	
 	
-	@DeleteMapping(value = {"/businesshour/{Id}", "/businesshour/{Id}/"})
-	public ResponseEntity<?> DeleteBusinessHour(@PathVariable("Id") Integer Id){
+	@DeleteMapping(value = {"/businesshours/{id}", "/businesshours/{id}/"})
+	public ResponseEntity<?> DeleteBusinessHour(@PathVariable("id") Integer id){
 		try {
-			return new ResponseEntity<>(convertToDto(service.deleteBusinessHour(Id)), HttpStatus.OK);
+			return new ResponseEntity<>(convertToDto(service.deleteBusinessHour(id)), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
-	}
-	
-	
-	@GetMapping(value = { "/businesshour", "/businesshour/"})
-	public ResponseEntity<?> getAllBusinessHours() {
-		return new ResponseEntity<>(service.getAllBusinessHours().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
 	}
 	
 	
@@ -501,17 +503,5 @@ public class AutoRepairSystemController {
 		WorkBreakDto WorkBreakDto = new WorkBreakDto(u.getStartBreak(), u.getEndBreak(), u.getId());
 		return WorkBreakDto;
 		
-	}
-	
-	//Convert to domain object methods
-	
-	private Technician convertToDomainObject(TechnicianDto tDto) {
-		List<Technician> allTechnicians = service.getAllTechnicians();
-		for (Technician technician : allTechnicians) {
-			if (technician.getUsername().equals(tDto.getUsername())) {
-				return technician;
-			}
-		}
-		return null;
 	}
 }
