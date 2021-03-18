@@ -1011,12 +1011,16 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Specified technician doesn't exist!");
 		}
 		
-		if (startTime == null || startTime.after(endTime) == true) {
-			throw new IllegalArgumentException("A valid start time must be provided! (non-empty or before end time)");
+		if (endTime == null) {
+			throw new IllegalArgumentException("A valid end time must be provided!");
 		}
 		
-		if (endTime == null || endTime.before(startTime) == true) {
-			throw new IllegalArgumentException("A valid end time must be provided! (non-empty or after start time)");
+		if (startTime == null) {
+			throw new IllegalArgumentException("A valid start time must be provided!");
+		}
+		
+		if (endTime.before(startTime) == true) {
+			throw new IllegalArgumentException("End time cannot be before start time");
 		}
 		
 		if (date == null) {
