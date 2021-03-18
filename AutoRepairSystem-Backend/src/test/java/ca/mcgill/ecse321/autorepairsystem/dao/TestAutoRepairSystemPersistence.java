@@ -174,17 +174,24 @@ public class TestAutoRepairSystemPersistence {
 		Integer appointmentId = appointment.getId();
 		
 		appointment=null;
+		Set<Appointment> appointmentSet = null;
 		
-		appointment=appointmentRepository.findAppointmentByCustomer(customer);
+		appointmentSet = appointmentRepository.findAppointmentByCustomer(customer);
+		appointment = toList(appointmentSet).get(0);
 		assertNotNull(appointment);
 		assertEquals(appointmentId, appointment.getId());
 		
 		appointment=null;
-		appointment=appointmentRepository.findAppointmentByTechnician(tech);
+		appointmentSet = null;
+		
+		appointmentSet =appointmentRepository.findAppointmentByTechnician(tech);
+		appointment = toList(appointmentSet).get(0);
 		assertNotNull(appointment);
 		assertEquals(appointmentId, appointment.getId());
 		
 		appointment=null;
+		appointmentSet = null;
+		
 		appointment=appointmentRepository.findAppointmentById(appointmentId);
 		assertNotNull(appointment);
 		assertEquals(appointmentId, appointment.getId());
@@ -217,6 +224,14 @@ public class TestAutoRepairSystemPersistence {
 		businessHour = null;
 		
 		businessHour = businessHourRepository.findBusinessHourById(businessHourId);
+		assertNotNull(businessHour);
+		assertNotNull(businessHour.getWorkBreak());
+		assertEquals(businessHourId, businessHour.getId());
+		
+		businessHour = null;
+		
+		Set<BusinessHour> businessHourSet = businessHourRepository.findBusinessHourByDate(WORKHOURDATE);
+		businessHour = toList(businessHourSet).get(0);
 		assertNotNull(businessHour);
 		assertNotNull(businessHour.getWorkBreak());
 		assertEquals(businessHourId, businessHour.getId());

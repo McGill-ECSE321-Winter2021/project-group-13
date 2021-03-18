@@ -11,22 +11,9 @@ import ca.mcgill.ecse321.autorepairsystem.model.Technician;
 public interface AppointmentRepository extends CrudRepository<Appointment, String>{
 	
     //Can't remove these two because used in tests
-	Appointment findAppointmentByCustomer (Customer customer);
-	Appointment findAppointmentByTechnician (Technician technician);
+	Set<Appointment> findAppointmentByCustomer (Customer customer);
+	Set<Appointment> findAppointmentByTechnician (Technician technician);
+	Set<Appointment> findAppointmentByDate(Date date);
 	
 	Appointment findAppointmentById (Integer id);
-
-	List<Appointment> findByCustomer(Customer username);
-	
-	//I modified this
-	List<Appointment> findByTechnician(Technician technician);
-	
-	boolean existsByCustomerAndWorkItem(Customer username, WorkItem workItemName);
-	
-	List<Appointment> findByCustomerAndWorkItem(Customer username, WorkItem workItemName);
-	
-	Appointment findByCustomerAndStartTime(Customer username, Appointment startTime);
-	
-	//I added this
-	List<Appointment> findByDate(java.sql.Date date);
 }

@@ -54,7 +54,7 @@ public class AutoRepairSystemService {
 	    
 	    //need to check if customer in database?
 	    
-	    List<Appointment> appointments = appointmentRepository.findByCustomer(customer);
+	    List<Appointment> appointments = toList(appointmentRepository.findAppointmentByCustomer(customer));
 	    
 	    return appointments;
 	  }
@@ -62,7 +62,7 @@ public class AutoRepairSystemService {
 	  @Transactional
 	  public List<Appointment> getAppointmentsByDate(java.sql.Date date) {
 	    
-	    List<Appointment> appointments = appointmentRepository.findByDate(date);
+	    List<Appointment> appointments = toList(appointmentRepository.findAppointmentByDate(date));
 	    
 	    return appointments;
 	  }
@@ -73,7 +73,7 @@ public class AutoRepairSystemService {
 	    //need to check if technician in database?
 	    //ex: getCustomerByAppointment doesn't check appointment exists
 	    
-	    List<Appointment> appointments = appointmentRepository.findByTechnician(technician);
+	    List<Appointment> appointments = toList(appointmentRepository.findAppointmentByTechnician(technician));
 	    
 	    return appointments;
 	  }
@@ -272,7 +272,7 @@ public class AutoRepairSystemService {
 	  //Organized by technician
 	  public Map<Technician, List<TechnicianHour>> getTechnicianHoursByDate(java.sql.Date date) {
 	    
-	    List<TechnicianHour> technicianHoursByDate = technicianHourRepository.findTechnicianHourByDate(date);
+	    List<TechnicianHour> technicianHoursByDate = toList(technicianHourRepository.findTechnicianHourByDate(date));
 	    
 	    return technicianHoursByDate.stream().collect(Collectors.groupingBy(TechnicianHour::getTechnician));
 	  }
@@ -280,7 +280,7 @@ public class AutoRepairSystemService {
 	  //Organized by technician
 	  public Map<Technician, List<Appointment>> getTechnicianAppointmentsByDate(java.sql.Date date) {
 	    
-	    List<Appointment> technicianAppointmentsByDate = appointmentRepository.findByDate(date);
+	    List<Appointment> technicianAppointmentsByDate = toList(appointmentRepository.findAppointmentByDate(date));
 	    
 	    return technicianAppointmentsByDate.stream().collect(Collectors.groupingBy(Appointment::getTechnician));
 	  }
@@ -828,7 +828,7 @@ public class AutoRepairSystemService {
 	@Transactional
 	public Set<Appointment> getAppointmentsAttendedByCustomer(Customer customer) {
 		Set<Appointment> appointmentsAttendedByCustomer = new HashSet<Appointment>();
-		for (Appointment a : appointmentRepository.findByCustomer(customer)) {
+		for (Appointment a : appointmentRepository.findAppointmentByCustomer(customer)) {
 			appointmentsAttendedByCustomer.add(a);
 		}
 		return appointmentsAttendedByCustomer;
@@ -931,7 +931,7 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("A valid work hour ID must be provided!");
 		}
 		
-		if (startTime.toLocalTime().isAfter(endTime.toLocalTime())) {
+		if (startTime.after(endTime)) {
 			throw new IllegalArgumentException("Start time must be before end time");
 		}
 		WorkHour workHour = workHourRepository.findWorkHourById(workHourId);
@@ -941,7 +941,7 @@ public class AutoRepairSystemService {
 		}
 		
 		// Make sure work break time is within workHour time
-		if((startTime.toLocalTime().isBefore(workHour.getStartTime().toLocalTime())) || (endTime.toLocalTime().isAfter(workHour.getEndTime().toLocalTime()))) {
+		if((startTime.before(workHour.getStartTime())) || (endTime.after(workHour.getEndTime()))) {
 			throw new IllegalArgumentException("Work break must be within work hour");
 		}
 		
@@ -950,9 +950,9 @@ public class AutoRepairSystemService {
 		// Make sure work break does not overlap with existing work break associated with work hour
 		for(WorkBreak w : workBreaks) {
 			
-			if(!(startTime.toLocalTime().isBefore(w.getEndBreak().toLocalTime()))) {
+			if(!(startTime.before(w.getEndBreak()))) {
 				continue;
-			} else if(!(w.getStartBreak().toLocalTime().isBefore(endTime.toLocalTime()))) {
+			} else if(!(w.getStartBreak().before(endTime))) {
 				continue;
 			} else {
 				throw new IllegalArgumentException("Work Hour overlaps with existing work hour");
@@ -1006,7 +1006,7 @@ public class AutoRepairSystemService {
 		Set<WorkBreak> workBreakSet = workHour.getWorkBreak();
 		
 		// Make sure new work break time is within work hour:
-		if((newStartTime.toLocalTime().isBefore(workHour.getStartTime().toLocalTime())) || (newEndTime.toLocalTime().isAfter(workHour.getEndTime().toLocalTime()))) {
+		if((newStartTime.before(workHour.getStartTime())) || (newEndTime.after(workHour.getEndTime()))) {
 			throw new IllegalArgumentException("Work break must be within work hour");
 		}
 		
@@ -1014,9 +1014,9 @@ public class AutoRepairSystemService {
 		for (WorkBreak w : workBreakSet) {
 			if(w.getId().equals(workBreak.getId())) {
 				continue;
-			} else if(!(newStartTime.toLocalTime().isBefore(w.getEndBreak().toLocalTime()))) {
+			} else if(!(newStartTime.before(w.getEndBreak()))) {
 				continue;
-			} else if(!(w.getStartBreak().toLocalTime().isBefore(newEndTime.toLocalTime()))) {
+			} else if(!(w.getStartBreak().before(newEndTime))) {
 				continue;
 			} else {
 				throw new IllegalArgumentException("Updated work break overlaps with existing work break");
@@ -1056,8 +1056,6 @@ public class AutoRepairSystemService {
 	@Transactional
 	public TechnicianHour createTechnicianHour(String technicianUsername ,Time startTime, Time endTime, Date date) {
 		
-		//startTime,endTime,date, (technician + potentially workBreak)
-		
 		if (technicianUsername == null || (technicianUsername.trim().isEmpty())) {
 			throw new IllegalArgumentException("A valid technician username must be provided!");
 		}
@@ -1080,9 +1078,28 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("A valid date must be provided!");
 		}
 		
-		// Add check that technician hour is within business of the same day
+		// check that technician hour is within business hour of the same day
+		Set<BusinessHour> businessHourSet = businessHourRepository.findBusinessHourByDate(date);
+		for(BusinessHour b : businessHourSet) {
+			if(startTime.before(b.getStartTime()) || (endTime.after(b.getEndTime()))) {
+				throw new IllegalArgumentException("Technician hour must exist within a business hour");
+			}
+		}
 		
-		Set<TechnicianHour> technicianHours = technician.getTechnicianHour();
+		// check that technician hour does not overlap with existing technician hour of same technician
+		Set<TechnicianHour> technicianHourSet = technician.getTechnicianHour();
+		
+		for(TechnicianHour t : technicianHourSet) {
+			if(t.getDate().equals(date)) {
+				if(!(startTime.before(t.getEndTime()))) {
+					continue;
+				} else if(!(t.getStartTime().before(endTime))) {
+					continue;
+				} else {
+					throw new IllegalArgumentException("Technician hour cannot overlap with another technicianHour of the same technician");
+				}
+			}
+		}
 		
 		TechnicianHour technicianHour = new TechnicianHour();
 		technicianHour.setStartTime(startTime);
@@ -1092,8 +1109,8 @@ public class AutoRepairSystemService {
 		Set<WorkBreak> emptyWorkBreak = new HashSet<WorkBreak>();
 		technicianHour.setWorkBreak(emptyWorkBreak);
 		
-		technicianHours.add(technicianHour);
-		technician.setTechnicianHour(technicianHours);
+		technicianHourSet.add(technicianHour);
+		technician.setTechnicianHour(technicianHourSet);
 		technicianRepository.save(technician);
 		technicianHourRepository.save(technicianHour);
 		
@@ -1112,13 +1129,13 @@ public class AutoRepairSystemService {
 	
 	
 	@Transactional
-	public TechnicianHour updateTechnicianHour(Integer id,Time startTime, Time endTime, Date date) throws IllegalArgumentException {
+	public TechnicianHour updateTechnicianHour(Integer technicianHourId,Time startTime, Time endTime, Date date) throws IllegalArgumentException {
 		
-		if (id == null) {
+		if (technicianHourId == null) {
 			throw new IllegalArgumentException("A valid technican hour I.D. must be provided!");
 		}
 		
-		TechnicianHour technicianHour = technicianHourRepository.findTechnicianHourById(id);
+		TechnicianHour technicianHour = technicianHourRepository.findTechnicianHourById(technicianHourId);
 		
 		if(technicianHour == null) {
 			throw new IllegalArgumentException("A technician hour with this I.D. cannot be found!");
@@ -1142,14 +1159,34 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("A valid end time must be provided! (non-empty or after start time)");
 		}
 		
-		// Add check
+		// check that technician hour is within business hour of the same day
+		Set<BusinessHour> businessHourSet = businessHourRepository.findBusinessHourByDate(date);
+		for(BusinessHour b : businessHourSet) {
+			if(startTime.before(b.getStartTime()) || (endTime.after(b.getEndTime()))) {
+				throw new IllegalArgumentException("Technician hour must exist within a business hour");
+			}
+		}
 		
+		// check that technician hour does not overlap with existing technician hour of same technician
+		Set<TechnicianHour> technicianHourSet = technician.getTechnicianHour();
+		
+		for(TechnicianHour t : technicianHourSet) {
+			if(t.getDate().equals(technicianHour.getDate())) {
+				if(t.getId().equals(technicianHourId)) {
+					continue;
+				} else if(!(startTime.before(t.getEndTime()))) {
+					continue;
+				} else if(!(t.getStartTime().before(endTime))) {
+					continue;
+				} else {
+					throw new IllegalArgumentException("Technician hour cannot overlap with another technicianHour of the same technician");
+				}
+			}
+		}
 		
 		technicianHour.setStartTime(startTime);
 		technicianHour.setEndTime(endTime);
-		//technicianHour.setId(id);
 		technicianHour.setDate(date);
-		//technicianHour.setTechnician(technician);
 
 		technicianRepository.save(technician);
 		technicianHourRepository.save(technicianHour);
@@ -1173,6 +1210,18 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Specified technician Hour doesn't exist!");
 		}
 		
+		// Delete all appointments associated with this technician hour
+		Technician technician = technicianRepository.findTechnicianByTechnicianHour(technicianHour);
+		
+		Set<Appointment> appointmentSet = appointmentRepository.findAppointmentByTechnician(technician);
+		
+		for(Appointment a : appointmentSet) {
+			if(a.getDate().equals(technicianHour.getDate())) {
+				if((!(a.getStartTime().before(technicianHour.getStartTime()))) && (!(a.getEndTime().after(technicianHour.getEndTime())))) {
+					appointmentRepository.delete(a);
+				}
+			}
+		}
 		technicianHourRepository.delete(technicianHour);
 		return technicianHour;
 	}
@@ -1181,8 +1230,6 @@ public class AutoRepairSystemService {
 	
 	@Transactional
 	public BusinessHour createBusinessHour(Time startTime, Time endTime, Date date) {
-		
-		//startTime,endTime,date, (potentially workBreak)
 		
 		if (startTime == null || startTime.after(endTime) == true) {
 			throw new IllegalArgumentException("A valid start time must be provided! (non-empty or before end time)");
@@ -1194,6 +1241,19 @@ public class AutoRepairSystemService {
 		
 		if (date == null) {
 			throw new IllegalArgumentException("A valid date must be provided!");
+		}
+		
+		//Check that businessHour does not overlap with another businessHour
+		Set<BusinessHour> businessHourSet = businessHourRepository.findBusinessHourByDate(date);
+		
+		for(BusinessHour b : businessHourSet) {
+			if(!(startTime.before(b.getEndTime()))) {
+				continue;
+			} else if(!(b.getStartTime().before(endTime))) {
+				continue;
+			} else {
+				throw new IllegalArgumentException("Business hour cannot overlap with another business horu");
+			}
 		}
 		
 		BusinessHour businessHour = new BusinessHour();
@@ -1267,6 +1327,23 @@ public class AutoRepairSystemService {
 		
 		if (businessHour == null) {
 			throw new IllegalArgumentException("Specified business hour doesn't exist!");
+		}
+		
+		// Delete all appointments and technician hours which exist within the business hour
+		Set<TechnicianHour> technicianHourSet = technicianHourRepository.findTechnicianHourByDate(businessHour.getDate());
+		
+		for(TechnicianHour t : technicianHourSet) {
+			if((!(t.getStartTime().before(businessHour.getStartTime()))) && (!(t.getEndTime().after(businessHour.getEndTime())))) {
+				technicianHourRepository.delete(t);
+			}
+		}
+		
+		Set<Appointment> appointmentSet = appointmentRepository.findAppointmentByDate(businessHour.getDate());
+		
+		for(Appointment a : appointmentSet) {
+			if((!(a.getStartTime().before(businessHour.getStartTime()))) && (!(a.getEndTime().after(businessHour.getEndTime())))) {
+				appointmentRepository.delete(a);
+			}
 		}
 		
 		businessHourRepository.delete(businessHour);
