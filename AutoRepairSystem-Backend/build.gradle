@@ -25,7 +25,7 @@ dependencies {
 	implementation 'junit:junit:4.12'
 	testCompile 'junit:junit:4.12'
     compile 'junit:junit:4.12'
-	testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+	testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 	
 }
 

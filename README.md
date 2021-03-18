@@ -40,7 +40,7 @@ Edgar Desnos    ||
 Charles Wetaski ||
 Ezra Gomolin    ||                   
 Hassan Kanj     ||
-Henri Rofiq     ||
+Henri Rofiq     |Service Methods and Report Documentation|20 hours
 
 [Sprint 3:](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-3)
 

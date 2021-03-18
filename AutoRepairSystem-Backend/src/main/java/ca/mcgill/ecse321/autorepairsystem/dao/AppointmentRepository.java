@@ -7,13 +7,14 @@ import java.sql.Date;
 import ca.mcgill.ecse321.autorepairsystem.model.Appointment;
 import ca.mcgill.ecse321.autorepairsystem.model.Customer;
 import ca.mcgill.ecse321.autorepairsystem.model.Technician;
+import ca.mcgill.ecse321.autorepairsystem.model.WorkItem;
 
 public interface AppointmentRepository extends CrudRepository<Appointment, String>{
 	
-    //Can't remove these two because used in tests
 	Set<Appointment> findAppointmentByCustomer (Customer customer);
 	Set<Appointment> findAppointmentByTechnician (Technician technician);
 	Set<Appointment> findAppointmentByDate(Date date);
+	Set<Appointment> findAppointmentByWorkItem(WorkItem workItem);
 	
 	Appointment findAppointmentById (Integer id);
 }
