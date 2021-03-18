@@ -376,7 +376,7 @@ public class AutoRepairSystemService {
 		if(endUser == null) {
 			throw new IllegalArgumentException("Username cannot be found!");
 		} else if(endUser.getPassword().equals(password) == false) {
-			throw new IllegalArgumentException("Password is wrong!.");
+			throw new IllegalArgumentException("Incorrect password!");
 		}
 		
 		return endUser;
@@ -384,6 +384,24 @@ public class AutoRepairSystemService {
 		
 		
 	//Customer service methods
+	
+	@Transactional
+	public List<Customer> getAllCustomers() {
+		return toList(customerRepository.findAll());
+	}
+	
+	
+	@Transactional
+	public Customer getCustomerByUsername(String username) throws IllegalArgumentException {
+		Customer customer = customerRepository.findCustomerByUsername(username);
+		
+		if (customer == null) {
+			throw new IllegalArgumentException("No customer exists with username " + username);
+		}
+		
+		return customer;
+	}
+	
 	
 	@Transactional
 	public Customer createCustomer(String username, String password, String name, String email) throws IllegalArgumentException {
@@ -422,92 +440,25 @@ public class AutoRepairSystemService {
 		return customer;
 	}
 	
+	
+	
+	//Administrator service methods
+	
 	@Transactional
-	public Customer getCustomerByUsername(String username) throws IllegalArgumentException {
-		Customer customer = customerRepository.findCustomerByUsername(username);
-		
-		if (customer == null) {
-			throw new IllegalArgumentException("No customer exists with username " + username);
-		}
-		
-		return customer;
+	public List<Administrator> getAllAdministrators() {
+		return toList(administratorRepository.findAll());
 	}
 	
 	@Transactional
-	public Customer getCustomerByAppointment(Appointment appointment) throws IllegalArgumentException {
-		Customer customer = appointment.getCustomer();
+	public Administrator getAdministrator(String username) throws IllegalArgumentException {
+		Administrator administrator = administratorRepository.findAdministratorByUsername(username);
 		
-		if (customer == null) {
-			throw new IllegalArgumentException("No customer linked to the provided appointment");
+		if (administrator == null) {
+			throw new IllegalArgumentException("Administrator cannot be found");
 		}
 		
-		return customer;
+		return administrator;
 	}
-	
-	@Transactional
-	public List<Customer> getAllCustomers() {
-		return toList(customerRepository.findAll());
-	}
-	
-	
-	@Transactional
-	public EndUser updateCustomer(String username, String password, String name, String email) throws IllegalArgumentException {
-		
-		if (nonValidString(username)) {
-			throw new IllegalArgumentException("Must enter a proper username!");
-		}
-		
-		Customer customer = customerRepository.findCustomerByUsername(username);
-		
-		if (customer == null) {
-			throw new IllegalArgumentException("Username cannot be found!");
-		}
-			
-		if (nonValidString(email)) {
-			throw new IllegalArgumentException("Must enter a valid email!");
-		}
-		
-		if ((!email.equals(customer.getEmail())&&(endUserRepository.findEndUserByEmail(email) != null))) {
-			throw new IllegalArgumentException("Email already exists!");
-		}
-		
-		if (nonValidString(password)) {
-			throw new IllegalArgumentException("Must enter a valid password!");
-		}
-		
-		if (nonValidString(name)) {
-			throw new IllegalArgumentException("Must enter a valid name!");
-		}
-		
-
-		customer.setUsername(username);
-		customer.setPassword(password);
-		customer.setName(name);
-		customer.setEmail(email);
-		
-		customerRepository.save(customer);
-		return customer;
-	}
-	
-	@Transactional
-	public Customer deleteCustomer(String username) throws IllegalArgumentException {
-		
-		if (nonValidString(username)) {
-			throw new IllegalArgumentException("Must enter a proper username!");
-		}
-		
-		Customer customer = customerRepository.findCustomerByUsername(username);
-		
-		if (customer == null) {
-			throw new IllegalArgumentException("Specified user does not exist");
-		}
-		
-		customerRepository.delete(customer);
-		return customer;
-	}
-	
-	
-	//Admin service methods
 	
 	@Transactional
 	public Administrator makeAdministrator(String username) throws IllegalArgumentException {
@@ -531,85 +482,17 @@ public class AutoRepairSystemService {
 		administratorRepository.save(administrator);
 		return administrator;
 	}
-
-	
-	@Transactional
-	public Administrator getAdministrator(String username) throws IllegalArgumentException {
-		Administrator administrator = administratorRepository.findAdministratorByUsername(username);
-		
-		if (administrator == null) {
-			throw new IllegalArgumentException("Administrator cannot be found");
-		}
-		
-		return administrator;
-	}
-	
-	@Transactional
-	public List<Administrator> getAllAdministrators() {
-		return toList(administratorRepository.findAll());
-	}
-	
-	@Transactional
-	public Administrator updateAdministrator(String username, String password, String name, String email) throws IllegalArgumentException {
-		
-		if (nonValidString(username)) {
-			throw new IllegalArgumentException("Must enter a proper username!");
-		}
-		
-		Administrator administrator = administratorRepository.findAdministratorByUsername(username);
-		
-		if (administrator == null) {
-			throw new IllegalArgumentException("Username cannot be found!");
-		}
-			
-		if (nonValidString(email)) {
-			throw new IllegalArgumentException("Must enter a valid email!");
-		}
-		
-		if ((!email.equals(administrator.getEmail())&&(endUserRepository.findEndUserByEmail(email) != null))) {
-			throw new IllegalArgumentException("Email already exists!");
-		}
-		
-		if (nonValidString(password)) {
-			throw new IllegalArgumentException("Must enter a valid password!");
-		}
-		
-		if (nonValidString(name)) {
-			throw new IllegalArgumentException("Must enter a valid name!");
-		}
-		
-
-		administrator.setUsername(username);
-		administrator.setPassword(password);
-		administrator.setName(name);
-		administrator.setEmail(email);
-		
-		administratorRepository.save(administrator);
-		return administrator;
-	}
-	
-	@Transactional
-	public Administrator deleteAdministrator(String username) throws IllegalArgumentException {
-		
-		if (nonValidString(username)) {
-			throw new IllegalArgumentException("Must enter a proper username!");
-		}
-		
-		Administrator administrator = administratorRepository.findAdministratorByUsername(username);
-		
-		if (administrator == null) {
-			throw new IllegalArgumentException("Specified user does not exist");
-		}
-		
-		administratorRepository.delete(administrator);
-		return administrator;
-	}
 	
 	
 	//endUser service methods
 	
 	@Transactional
-	public EndUser getUser(String username) throws IllegalArgumentException {
+	public List<EndUser> getAllEndUsers() {
+		return toList(endUserRepository.findAll());
+	}
+	
+	@Transactional
+	public EndUser getEndUser(String username) throws IllegalArgumentException {
 		EndUser endUser = endUserRepository.findEndUserByUsername(username);
 		if (endUser == null) {
 			throw new IllegalArgumentException("Username " + username + " cannot be found!");
@@ -618,7 +501,7 @@ public class AutoRepairSystemService {
 	}
 
 	@Transactional
-	public EndUser updateUser(String userId, String password, String name, String email) throws IllegalArgumentException {
+	public EndUser updateEndUser(String userId, String password, String name, String email) throws IllegalArgumentException {
 		
 		if (nonValidString(userId)) {
 			throw new IllegalArgumentException("Must enter a proper username!");
@@ -646,8 +529,6 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Must enter a valid name!");
 		}
 		
-
-		endUser.setUsername(userId);
 		endUser.setPassword(password);
 		endUser.setName(name);
 		endUser.setEmail(email);
@@ -657,7 +538,7 @@ public class AutoRepairSystemService {
 	}
 	
 	@Transactional
-	public EndUser deleteUser(String username) throws IllegalArgumentException {
+	public EndUser deleteEndUser(String username) throws IllegalArgumentException {
 		
 		if (nonValidString(username)) {
 			throw new IllegalArgumentException("Must enter a proper username!");
@@ -669,106 +550,35 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Specified user does not exist");
 		}
 		
+		//Delete all the user's associated appointments
+		Set<Appointment> appointments = new HashSet<Appointment>();
+		if (endUser instanceof Customer) {
+			appointments = appointmentRepository.findAppointmentByCustomer((Customer) endUser);
+		}
+		else if (endUser instanceof Technician) {
+			appointments = appointmentRepository.findAppointmentByTechnician((Technician) endUser);
+		}
+		for (Appointment appointment : appointments) {
+			appointmentRepository.delete(appointment);
+		}
+		
 		endUserRepository.delete(endUser);
 		return endUser;
-	}
-	
-	@Transactional
-	public List<EndUser> getAllUsers() {
-		return toList(endUserRepository.findAll());
 	}
 	
 	
 	//Technician service methods
 	
 	@Transactional
-	public Technician createTechnician(String username, String password, String name, String email) throws IllegalArgumentException {
-		
-		if (username == null || username == "") {
-			throw new IllegalArgumentException("A valid username must be provided");
-		}
-		
-		if (technicianRepository.findTechnicianByUsername(username) != null) {
-			throw new IllegalArgumentException("Technician with username " + username + " already exists");
-		}
-		
-		
-		if (password == null || password == "") {
-			throw new IllegalArgumentException("A valid password must be provided");
-		}
-		
-		if (name == null || name == "") {
-			throw new IllegalArgumentException("A valid name must be provided");
-		}
-		
-		if (email == null || email == "") {
-			throw new IllegalArgumentException("An valid email must be provided");
-		}
-		
-		if (endUserRepository.findEndUserByEmail(email) != null) {
-			throw new IllegalArgumentException("The email already exits!");
-		}
-		
-		Technician technician = new Technician();
-		technician.setUsername(username);
-		technician.setPassword(password);
-		technician.setName(name);
-		technician.setEmail(email);
-		
-		Set<TechnicianHour> emptyTechnicianHour = new HashSet<TechnicianHour>();
-		technician.setTechnicianHour(emptyTechnicianHour);
-		
-		technicianRepository.save(technician);
-		return technician;
-	}
-	
-	@Transactional
-	public Technician getTechnicianByUsername(String username) throws IllegalArgumentException{
-		
-		if (username == null || username == "") {
-			throw new IllegalArgumentException("A valid username must be provided");
-		}
-		
-		Technician technician = technicianRepository.findTechnicianByUsername(username);
-		
-		if (technician == null) {
-			throw new IllegalArgumentException("Technician cannot be found.");
-		}
-		
-		return technician;
-	}
-	
-	@Transactional
-	public Technician getTechnicianByAppointment(Appointment appointment) {
-		Technician technician = appointment.getTechnician();
-		
-		if (technician == null) {
-			throw new IllegalArgumentException("Technician cannot be found.");
-		}
-		
-		return technician;
-	}
-	
-	@Transactional
-	public Technician getTechnicianByTechnicianHour(TechnicianHour technicianHour) {
-		Technician technician = technicianRepository.findTechnicianByTechnicianHour(technicianHour);
-		
-		if (technician == null) {
-			throw new IllegalArgumentException("Technician cannot be found.");
-		}
-		
-		return technician;
-	}
-	
-	@Transactional
 	public List<Technician> getAllTechnicians(){
 		return toList(technicianRepository.findAll());
 	}
 	
+	
 	@Transactional
-	public Technician deleteTechnician(String username) throws IllegalArgumentException{
+	public Technician getTechnicianByUsername(String username) throws IllegalArgumentException{
 		
-		if (username == null || username == "") {
+		if (nonValidString(username)) {
 			throw new IllegalArgumentException("A valid username must be provided");
 		}
 		
@@ -778,50 +588,34 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Technician cannot be found.");
 		}
 		
-		technicianRepository.delete(technician);
-		
 		return technician;
 	}
 	
 	
 	@Transactional
-	public Technician updateTechnician(String username, String password, String name, String email) throws IllegalArgumentException {
+	public Technician makeTechnician(String username) throws IllegalArgumentException {
 		
-		if (username == null || username == "") {
-			throw new IllegalArgumentException("A valid username must be provided");
+		if(nonValidString(username)) {
+			throw new IllegalArgumentException("Must enter a valid username!");
+		}
+			
+		Customer customer = customerRepository.findCustomerByUsername(username);
+		
+		if (customer ==  null) {
+			throw new IllegalArgumentException("Specified customer does not exist");
 		}
 		
-		Technician technician = technicianRepository.findTechnicianByUsername(username);
-		
-		if (technician == null) {
-			throw new IllegalArgumentException("Username cannot be found!");
-		}
-		
-		if (password == null || password == "") {
-			throw new IllegalArgumentException("A valid password must be provided");
-		}
-		
-		if (name == null || name == "") {
-			throw new IllegalArgumentException("A valid name must be provided");
-		}
-		
-		if (email == null || email == "") {
-			throw new IllegalArgumentException("An valid email must be provided");
-		}
-		
-		if ((!email.equals(technician.getEmail())&&(endUserRepository.findEndUserByEmail(email) != null))) {
-			throw new IllegalArgumentException("Email already exists!");
-		}
-		
-		
-		technician.setUsername(username);
-		technician.setPassword(password);
-		technician.setName(name);
-		technician.setEmail(email);
-		
+		customerRepository.delete(customer);
+		Technician technician = new Technician();
+		technician.setUsername(customer.getUsername());
+		technician.setPassword(customer.getPassword());
+		technician.setName(customer.getName());
+		technician.setEmail(customer.getEmail());
+		technician.setTechnicianHour(new HashSet<TechnicianHour>());
 		technicianRepository.save(technician);
 		return technician;
 	}
+	
 	
 	//Appointment service methods
 	

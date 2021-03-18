@@ -2,8 +2,7 @@ package ca.mcgill.ecse321.autorepairsystem.controller;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.mcgill.ecse321.autorepairsystem.dto.AdministratorDto;
+import ca.mcgill.ecse321.autorepairsystem.dto.AppointmentDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.BusinessHourDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.CustomerDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.EndUserDto;
@@ -28,6 +28,7 @@ import ca.mcgill.ecse321.autorepairsystem.dto.WorkBreakDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkHourDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkItemDto;
 import ca.mcgill.ecse321.autorepairsystem.model.Administrator;
+import ca.mcgill.ecse321.autorepairsystem.model.Appointment;
 import ca.mcgill.ecse321.autorepairsystem.model.BusinessHour;
 import ca.mcgill.ecse321.autorepairsystem.model.Customer;
 import ca.mcgill.ecse321.autorepairsystem.model.EndUser;
@@ -79,31 +80,9 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	@PutMapping(value = {"/customers/{username}", "/customers/{username}/"})
-	public ResponseEntity<?> updateCustomer(@PathVariable("username") String username, 
-			@RequestParam String password, 
-			@RequestParam String name, 
-			@RequestParam String email) {
-		try {
-			return new ResponseEntity<>(convertToDto(service.updateCustomer(username, password, name, email)), HttpStatus.OK);
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
 	
-	@DeleteMapping(value = {"/customers/{username}","/customers/{username}/"})
-	public ResponseEntity<?> deleteCustomer(@PathVariable("username") String username){
-		try {
-			return new ResponseEntity<>(convertToDto(service.deleteCustomer(username)), HttpStatus.OK);
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
 	
 	//Administrator controller methods
-	
 	
 	@GetMapping(value = { "/administrators", "/administrators/" })
 	public ResponseEntity<?> getAllAdministrators() {
@@ -111,7 +90,7 @@ public class AutoRepairSystemController {
 	}
 	
 	
-	@GetMapping(value = { "/administrators/{username}", "/administrators/{username}/"})
+	@GetMapping(value = { "/administrators/{username}", "administrators/{username}/"})
 	public ResponseEntity<?> getAdministrator(@PathVariable("username") String username) {
 		try {
 			return new ResponseEntity<>(convertToDto(service.getAdministrator(username)), HttpStatus.OK);
@@ -122,7 +101,7 @@ public class AutoRepairSystemController {
 	}
 	
 	
-	@PostMapping(value = {"/makeAdministrator/{username}", "/makeAdministrator/{username}/"})
+	@PostMapping(value = {"/make/{username}/administrator", "/make/{username}/administrator/"})
 	public ResponseEntity<?> makeAdministrator(@PathVariable("username") String username) {
 		try {
 			return new ResponseEntity<>(convertToDto(service.makeAdministrator(username)), HttpStatus.OK);
@@ -132,65 +111,55 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	@PutMapping(value = {"/administrators/{username}", "/administrators/{username}/"})
-  	public ResponseEntity<?> updateAdministrator(@PathVariable("username") String username, 
-  			@RequestParam String password, 
-  			@RequestParam String name, 
-  			@RequestParam String email) {
-  		try {
-  			return new ResponseEntity<>(convertToDto(service.updateAdministrator(username, password, name, email)), HttpStatus.OK);
-  		}
-  		catch (IllegalArgumentException e) {
-  			return ResponseEntity.badRequest().body(e.getMessage());
-  		}
-  	}
 	
-	@DeleteMapping(value = {"/administrators/{username}","/administrators/{username}/"})
-  	public ResponseEntity<?> deleteAdministrator(@PathVariable("username") String username){
-  		try {
-  			return new ResponseEntity<>(convertToDto(service.deleteAdministrator(username)), HttpStatus.OK);
-  		}
-  		catch (IllegalArgumentException e) {
-  			return ResponseEntity.badRequest().body(e.getMessage());
-  		}
-  	}
+	@PostMapping(value = {"/make/{username}/technician", "/make/{username}/technician/"})
+	public ResponseEntity<?> makeTechnician(@PathVariable("username") String username) {
+		try {
+			return new ResponseEntity<>(convertToDto(service.makeTechnician(username)), HttpStatus.OK);
+		}
+		catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
 	
 	
 	//User controller methods
 	
-	@GetMapping(value = { "/users", "/users/" })
-	public ResponseEntity<?> getAllUsers() {
-		return new ResponseEntity<>(service.getAllUsers().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
+	@GetMapping(value = { "/endusers", "/endusers/" })
+	public ResponseEntity<?> getAllEndUsers() {
+		return new ResponseEntity<>(service.getAllEndUsers().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
 	}
 	
 	
-	@GetMapping(value = { "/users/{username}", "/users/{username}/"})
-	public ResponseEntity<?> getUser(@PathVariable("username") String username) {
+	@GetMapping(value = { "/endusers/{username}", "/endusers/{username}/"})
+	public ResponseEntity<?> getEndUser(@PathVariable("username") String username) {
 		try {
-			return new ResponseEntity<>(convertToDto(service.getUser(username)), HttpStatus.OK);
+			return new ResponseEntity<>(convertToDto(service.getEndUser(username)), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 	
-	@PutMapping(value = {"/users/{username}", "/users/{username}/"})
-	public ResponseEntity<?> updateUser(@PathVariable("username") String username, 
+	
+	@PutMapping(value = {"/endusers/{username}", "/endusers/{username}/"})
+	public ResponseEntity<?> updateEndUser(@PathVariable("username") String username, 
 			@RequestParam String password, 
 			@RequestParam String name, 
 			@RequestParam String email) {
 		try {
-			return new ResponseEntity<>(convertToDto(service.updateUser(username, password, name, email)), HttpStatus.OK);
+			return new ResponseEntity<>(convertToDto(service.updateEndUser(username, password, name, email)), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 	
-	@DeleteMapping(value = {"/users/{username}","/users/{username}/"})
-	public ResponseEntity<?> deleteUser(@PathVariable("username") String username){
+	
+	@DeleteMapping(value = {"/endusers/{username}","/endusers/{username}/"})
+	public ResponseEntity<?> deleteEndUser(@PathVariable("username") String username){
 		try {
-			return new ResponseEntity<>(convertToDto(service.deleteUser(username)), HttpStatus.OK);
+			return new ResponseEntity<>(convertToDto(service.deleteEndUser(username)), HttpStatus.OK);
 		}
 		catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
@@ -205,6 +174,7 @@ public class AutoRepairSystemController {
   		return new ResponseEntity<>(service.getAllTechnicians().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
   	}
 	
+	
 	@GetMapping(value = { "/technicians/{username}", "/technicians/{username}/"})
   	public ResponseEntity<?> getTechnician(@PathVariable("username") String username) {
   		try {
@@ -214,43 +184,6 @@ public class AutoRepairSystemController {
   			return ResponseEntity.badRequest().body(e.getMessage());
   		}
   	}
-	
-	@PostMapping(value = { "/technicians/{username}", "/technicians/{username}/" })
-  	public ResponseEntity<?> createTechnician(@PathVariable("username") String username, 
-  			@RequestParam String password, 
-  			@RequestParam String name, 
-  			@RequestParam String email) throws IllegalArgumentException {
-  		try {
-  			Technician technician = service.createTechnician(username, password, name, email);
-  			return new ResponseEntity<>(convertToDto(technician), HttpStatus.OK);
-  		}
-  		catch (IllegalArgumentException e) {
-  			return ResponseEntity.badRequest().body(e.getMessage());
-  		}
-  	}
-	
-	@PutMapping(value = {"/technicians/{username}", "/technicians/{username}/"})
-	public ResponseEntity<?> updateTechnician(@PathVariable("username") String username, 
-			@RequestParam String password, 
-			@RequestParam String name, 
-			@RequestParam String email) {
-		try {
-			return new ResponseEntity<>(convertToDto(service.updateTechnician(username, password, name, email)), HttpStatus.OK);
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
-	
-	@DeleteMapping(value = {"/technicians/{username}","/technicians/{username}/"})
-	public ResponseEntity<?> deleteTechnician(@PathVariable("username") String username){
-		try {
-			return new ResponseEntity<>(convertToDto(service.deleteTechnician(username)), HttpStatus.OK);
-		}
-		catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
 	
 	
 	//Sign in controller methods
@@ -366,7 +299,7 @@ public class AutoRepairSystemController {
 		}
 	}
 	
-	@GetMapping(value = { "/workhour", "/workhour/"})
+	@GetMapping(value = { "/workitems", "/workitems/"})
 	public ResponseEntity<?> getAllWorkItems() {
 		return new ResponseEntity<>(service.getAllWorkItems().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
 	}
@@ -428,7 +361,7 @@ public class AutoRepairSystemController {
 	}
 	
 	
-	@GetMapping(value = { "/workhour", "/workhour/"})
+	@GetMapping(value = { "/businesshour", "/businesshour/"})
 	public ResponseEntity<?> getAllBusinessHours() {
 		return new ResponseEntity<>(service.getAllBusinessHours().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
 	}
@@ -555,12 +488,15 @@ public class AutoRepairSystemController {
 		
 	}
 	
-	private WorkHourDto convertToDto(WorkHour u) {
-		if (u == null) {
-			throw new IllegalArgumentException("There is no such WorkHour!");
+	//Convert to domain object methods
+	
+	private Technician convertToDomainObject(TechnicianDto tDto) {
+		List<Technician> allTechnicians = service.getAllTechnicians();
+		for (Technician technician : allTechnicians) {
+			if (technician.getUsername().equals(tDto.getUsername())) {
+				return technician;
+			}
 		}
-		WorkHourDto WorkHourDto = new WorkHourDto(u.getStartTime(), u.getEndTime(), u.getDate(), u.getId(), u.getWorkBreak().stream().map(p -> convertToDto(p)).collect(Collectors.toSet()));
-		return WorkHourDto;
-		
+		return null;
 	}
 }
