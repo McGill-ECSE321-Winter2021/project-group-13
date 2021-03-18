@@ -8,7 +8,6 @@ import java.util.Set;
 import ca.mcgill.ecse321.autorepairsystem.model.TechnicianHour;
 
 public interface TechnicianHourRepository extends CrudRepository<TechnicianHour, String>{
-
 	TechnicianHour findTechnicianHourById (Integer id);
 	Set<TechnicianHour> findTechnicianHourByDate(Date date);
 }
