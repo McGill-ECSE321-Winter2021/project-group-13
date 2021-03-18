@@ -2,7 +2,9 @@ package ca.mcgill.ecse321.autorepairsystem.controller;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -500,8 +502,21 @@ public class AutoRepairSystemController {
 		if (u == null) {
 			throw new IllegalArgumentException("There is no such WorkBreak!");
 		}
-		WorkBreakDto WorkBreakDto = new WorkBreakDto(u.getStartBreak(), u.getEndBreak(), u.getId());
-		return WorkBreakDto;
+		WorkBreakDto workBreakDto = new WorkBreakDto(u.getStartBreak(), u.getEndBreak(), u.getId());
+		return workBreakDto;
 		
 	}
+	
+	private AppointmentDto convertToDto(Appointment a) {
+	  if (a == null) {
+	    throw new IllegalArgumentException("There is no such Appointment!");
+	  }
+	  
+	  Set<WorkItemDto> s = a.getWorkItem().stream().map(p -> convertToDto(p)).collect(Collectors.toSet());
+	  
+	  AppointmentDto appointmentDto = new AppointmentDto(s, convertToDto(a.getTechnician()), convertToDto(a.getCustomer()), a.getId(), a.getStartTime(), a.getEndTime(), a.getDate());
+	  return appointmentDto;
+	}
+	
+	
 }
