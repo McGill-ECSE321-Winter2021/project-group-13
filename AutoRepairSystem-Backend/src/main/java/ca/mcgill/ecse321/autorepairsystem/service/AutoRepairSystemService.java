@@ -1093,19 +1093,23 @@ public class AutoRepairSystemService {
 
     if (technician == null) {
       throw new IllegalArgumentException(
-          "Specified technician hour doesn't exist for any technician!; please create a new one");
+          "Specified technician hour doesn't exist for any technician!");
     }
 
     if (date == null) {
       throw new IllegalArgumentException("A valid date must be provided!");
     }
 
-    if (startTime == null || startTime.after(endTime) == true) {
-      throw new IllegalArgumentException("A valid start time must be provided! (non-empty or before end time)");
+    if (startTime == null) {
+      throw new IllegalArgumentException("A valid start time must be provided!");
     }
-
-    if (endTime == null || endTime.before(startTime) == true) {
-      throw new IllegalArgumentException("A valid end time must be provided! (non-empty or after start time)");
+    
+    if (endTime == null) {
+        throw new IllegalArgumentException("A valid end time must be provided!");
+    }
+    
+    if (endTime.before(startTime) == true) {
+        throw new IllegalArgumentException("End time cannot be before start time!");
     }
 
     // check that technician hour is within business hour of the same day
