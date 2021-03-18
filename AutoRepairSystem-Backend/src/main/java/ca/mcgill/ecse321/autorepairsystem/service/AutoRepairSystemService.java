@@ -1345,7 +1345,6 @@ public class AutoRepairSystemService {
 				appointmentRepository.delete(a);
 			}
 		}
-		
 		businessHourRepository.delete(businessHour);
 		return businessHour;
 	}

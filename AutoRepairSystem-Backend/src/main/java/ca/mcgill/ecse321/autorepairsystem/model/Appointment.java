@@ -71,7 +71,7 @@ public class Appointment{
 	private Time endTime;
 	
 	public void setEndTime(Time endTime) {
-		this.startTime = endTime;
+		this.endTime = endTime;
 	}
 	
 	public Time getEndTime() {
