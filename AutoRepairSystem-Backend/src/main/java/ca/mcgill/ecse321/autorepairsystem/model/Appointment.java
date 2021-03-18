@@ -1,6 +1,5 @@
 package ca.mcgill.ecse321.autorepairsystem.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
