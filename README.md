@@ -38,7 +38,7 @@ Name            | Team Roles         | Individual Efforts
 --------------- |------------------- |-------------------
 Edgar Desnos    |Service Methods, Controller Methods, Testing|25 hours|
 Charles Wetaski |Update Model, Expand Persistence Testing, Service Methods, Service Testing|25 hours
-Ezra Gomolin    |Dto's, Controller Methods, Testing, Restful endpoints|20 hours                   
+Ezra Gomolin    |Dto's, Controller Methods, Testing, Restful endpoints|24 hours                   
 Hassan Kanj     |Appointment Business Logic and Associated Controller Methods|30 Hours
 Henri Rofiq     |Service Methods and Report Documentation|20 hours
 
