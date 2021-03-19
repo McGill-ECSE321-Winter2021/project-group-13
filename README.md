@@ -36,10 +36,10 @@ Henri Rofiq     |Persistence and Management|15 hours
 
 Name            | Team Roles         | Individual Efforts
 --------------- |------------------- |-------------------
-Edgar Desnos    || 
-Charles Wetaski ||
+Edgar Desnos    |Service Methods, Controller Methods, Testing|25 hours|
+Charles Wetaski |Update Model, Expand Persistence Testing, Service Methods, Service Testing|25 hours
 Ezra Gomolin    |Dto's, Controller Methods, Testing, Restful endpoints|20 hours                   
-Hassan Kanj     ||
+Hassan Kanj     |Appointment Business Logic and Associated Controller Methods|30 Hours
 Henri Rofiq     |Service Methods and Report Documentation|20 hours
 
 [Sprint 3:](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-3)
