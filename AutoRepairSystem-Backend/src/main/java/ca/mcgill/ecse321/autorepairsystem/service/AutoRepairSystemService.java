@@ -654,7 +654,7 @@ public class AutoRepairSystemService {
       throw new IllegalArgumentException("Must enter a proper username!");
     }
 
-    EndUser endUser = endUserRepository.findById(userId).orElse(null);
+    EndUser endUser = endUserRepository.findEndUserByUsername(userId);
 
     if (endUser == null) {
       throw new IllegalArgumentException("Username cannot be found!");
