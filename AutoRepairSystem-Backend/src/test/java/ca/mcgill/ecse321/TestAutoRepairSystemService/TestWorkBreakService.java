@@ -57,11 +57,11 @@ public class TestWorkBreakService {
     public void setMockOutput() {
         lenient().when(workBreakDao.findWorkBreakById(anyInt())).thenAnswer((InvocationOnMock invocation) -> {
             if(invocation.getArgument(0).equals(ID)) {
-            	WorkBreak workbreak = new WorkBreak();
-            	workbreak.setStartBreak(STARTTIME);
-            	workbreak.setEndBreak(ENDTIME);
-            	workbreak.setId(ID);
-            	return workbreak;
+            	WorkBreak workBreak = new WorkBreak();
+            	workBreak.setStartBreak(STARTTIME);
+            	workBreak.setEndBreak(ENDTIME);
+            	workBreak.setId(ID);
+            	return workBreak;
             }
             	else {
             		return null;
@@ -136,103 +136,128 @@ public class TestWorkBreakService {
     }
     
     @Test
-    public void testGetWorkBreakById() {
-    	WorkBreak workbreak = null;
+    public void testGetWorkBreak() {
+    	WorkBreak workBreak = null;
     	try {
-    		workbreak = service.getWorkBreak(ID);
+    		workBreak = service.getWorkBreak(ID);
     	} catch(Exception e) {
     		
     	}
-    	assertEquals(ID,workbreak.getId());
+    	assertEquals(ID,workBreak.getId());
     }
     
     @Test
-    public void testGetWorkBreakByIdFail() {
-    	WorkBreak workbreak = null;
+    public void testGetWorkBreakFail() {
+    	WorkBreak workBreak = null;
     	String error = null;
     	try {
-    		workbreak = service.getWorkBreak(ID2);
+    		workBreak = service.getWorkBreak(ID2);
     	} catch(Exception e) {
     		error = e.getMessage();
     		
     	}
-    	assertNull(workbreak);
+    	assertNull(workBreak);
     	assertEquals(error,"The provided work Break Id is not associated with a work break");
     }
     
     
     @Test
-    public void updateWorkBreakDoesntExist() {
-    	WorkBreak workbreak = null;
+    public void updateWorkBreakFail2() {
+    	WorkBreak workBreak = null;
     	String error = null;
     	try {
-    		workbreak = service.updateWorkBreak(ID2, STARTTIME2, ENDTIME2);
+    		workBreak = service.updateWorkBreak(ID2, STARTTIME2, ENDTIME2);
     	} catch(Exception e) {
     		error = e.getMessage();
     		
     	}
-    	assertNull(workbreak);
+    	assertNull(workBreak);
     	assertEquals(error,"Specified work break doesn't exist!");
     }
     
     @Test
-    public void deleteWorkBreakDoesntExist() {
-    	WorkBreak workbreak =null;
-    	String error = null;
-    	try {
-    		workbreak = service.DeleteWorkBreak(ID2);
-    	} catch(Exception e) {
-    		error = e.getMessage();
-    			
-    	}
-    	assertNull(workbreak);
-    	assertEquals(error, "Specified Work Break doesn't exist!");
-    	
-    }
-    
-    
-    @Test
     public void testCreateWorkBreak() {
          
-    	WorkBreak workbreak = new WorkBreak();
+    	WorkBreak workBreak = new WorkBreak();
+    	try {
+    		workBreak=service.createWorkBreak(WORKHOURID, STARTTIME2, ENDTIME2);
+    	} catch(Exception e) {
+    		
+    	}
+    	assertEquals(STARTTIME2, workBreak.getStartBreak());
+    }
+    
+    @Test
+    public void testCreateWorkBreakFail() {
+         
+    	WorkBreak workBreak = null;
     	String error = null;
     	try {
-    		workbreak=service.createWorkBreak(WORKHOURID, STARTTIME2, ENDTIME2);
+    		workBreak=service.createWorkBreak(null, STARTTIME2, ENDTIME2);
     	} catch(Exception e) {
     		error = e.getMessage();
     		
     	}
-    	System.out.println(error);
-    	assertEquals(STARTTIME2, workbreak.getStartBreak());
-    	
+    	assertNull(workBreak);
+    	assertEquals(error,"A valid work hour ID must be provided!");
     }
     
     @Test
-    public void updateWorkBreak() {
-
-    	WorkBreak workbreak = new WorkBreak();
+    public void testCreateWorkBreakFail2() {
+         
+    	WorkBreak workBreak = null;
+    	String error = null;
     	try {
-    		workbreak = service.updateWorkBreak(ID, STARTTIME2, ENDTIME2);
+    		workBreak=service.createWorkBreak(WORKHOURID, STARTTIME2, ENDTIME2);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(workBreak);
+    	assertEquals(error,"A valid work hour ID must be provided!");
+    }
+    
+    @Test
+    public void testUpdateWorkBreak() {
+
+    	WorkBreak workBreak = new WorkBreak();
+    	try {
+    		workBreak = service.updateWorkBreak(ID, STARTTIME2, ENDTIME2);
     	} catch(Exception e) {
     			System.out.println(e.getMessage());
     	}
   
-    	assertEquals(STARTTIME2, workbreak.getStartBreak());
-    	assertEquals(ENDTIME2, workbreak.getEndBreak());
+    	assertEquals(STARTTIME2, workBreak.getStartBreak());
+    	assertEquals(ENDTIME2, workBreak.getEndBreak());
     	
     }
     
     @Test
-    public void deleteWorkBreak() {
+    public void testDeleteWorkBreak() {
     	
-    	WorkBreak workbreak = new WorkBreak();
+    	WorkBreak workBreak = new WorkBreak();
     	try {
-    		workbreak = service.DeleteWorkBreak(ID);
+    		workBreak = service.DeleteWorkBreak(ID);
     	} catch(Exception e) {
     			
     	}
     	assertTrue(WORKBREAKDELETE);
+    }
+    
+    @Test
+    public void testDeleteWorkBreakFail() {
+    	WorkBreak workBreak =null;
+    	String error = null;
+    	try {
+    		workBreak = service.DeleteWorkBreak(ID2);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    			
+    	}
+    	assertNull(workBreak);
+    	assertEquals(error, "Specified Work Break doesn't exist!");
     	
     }
+    
 
 }

@@ -856,8 +856,7 @@ public class AutoRepairSystemService {
     Set<Appointment> appointments = appointmentRepository.findAppointmentByWorkItem(workItem);
 
     if (appointments.isEmpty() == false) {
-      throw new IllegalArgumentException(
-          "There are appointments associated with this work item; it cannot be deleted!");
+      throw new IllegalArgumentException("There are appointments associated with this work item; it cannot be deleted!");
     }
 
     workItemRepository.delete(workItem);
@@ -876,7 +875,15 @@ public class AutoRepairSystemService {
     if (workHourId == null) {
       throw new IllegalArgumentException("A valid work hour ID must be provided!");
     }
-
+    
+    if (startTime == null) {
+    	 throw new IllegalArgumentException("A valid start time must be provided!");
+    }
+    
+    if (endTime == null) {
+   	 throw new IllegalArgumentException("A valid end time must be provided!");
+    }
+    
     if (startTime.after(endTime)) {
       throw new IllegalArgumentException("Start time must be before end time");
     }

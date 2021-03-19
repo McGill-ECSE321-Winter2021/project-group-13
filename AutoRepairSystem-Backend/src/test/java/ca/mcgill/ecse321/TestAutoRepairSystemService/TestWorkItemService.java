@@ -46,9 +46,16 @@ public class TestWorkItemService {
 	private static final int DURATION2 = 11;
 	private static final int PRICE2 = 22;
 	
+	private static final String NAME3 = "TestWorkItem3";
+	private static final int DURATION3 = 13;
+	private static final int PRICE3 = 23;
+	
 	private static final Integer ID = 99;
 	private static final Time APTSTARTTIME =Time.valueOf("1:00:00");
 	private static final Time APTENDTIME =Time.valueOf("10:00:00");
+	private static final Date APTDATE = Date.valueOf("2020-01-01");
+	
+
 	
 	private static final int INVALIDDURATION = -1;
 	private static final int INVALIDPRICE = -1;
@@ -66,11 +73,53 @@ public class TestWorkItemService {
             	workItem.setDuration(DURATION);
             	workItem.setPrice(PRICE);
             	return workItem;
+            } else if(invocation.getArgument(0).equals(NAME3)) {
+            	WorkItem workItem = new WorkItem();
+            	workItem.setName(NAME3);
+            	workItem.setDuration(DURATION3);
+            	workItem.setPrice(PRICE3);
+            	return workItem;
             }
             	else {
             		return null;
             	}
         });
+        
+        lenient().when(appointmentDao.findAppointmentByWorkItem(any(WorkItem.class))).thenAnswer((InvocationOnMock invocation) -> {
+            if(((WorkItem) invocation.getArgument(0)).getName().equals(NAME3)) {
+            	Appointment appointment = new Appointment();
+            	appointment.setId(ID);
+            	appointment.setStartTime(APTSTARTTIME);
+            	appointment.setEndTime(APTENDTIME);
+            	appointment.setDate(APTDATE);
+
+            	Set<Appointment> appointmentSet = new HashSet<Appointment>();
+            	appointmentSet.add(appointment);
+            	
+            	return appointmentSet;
+            }
+            	else {
+            		return new HashSet<Appointment>();
+            	}
+        });
+        
+        lenient().doAnswer(invocation -> {
+            if(((WorkItem) invocation.getArgument(0)).getName().equals(NAME)) {
+            	WORKITEMDELETE = true;
+            }
+            return null;
+        }).when(workItemDao).delete(any(WorkItem.class));
+        
+        Answer<?> returnParameterAsAnswer = (InvocationOnMock invocation) -> {
+        	return invocation.getArgument(0);
+        };
+        
+        lenient().when(workItemDao.save(any(WorkItem.class))).thenAnswer(returnParameterAsAnswer);
+	}
+	
+	@BeforeEach
+	public void resetDelete() {
+		WORKITEMDELETE = false;
 	}
 	
 	@Test
@@ -231,10 +280,12 @@ public class TestWorkItemService {
 	public void deleteWorkItem() {
 		WorkItem workItem = null;
 		try {
-			workItem = service.deleteWorkItem(NAME)
+			workItem = service.deleteWorkItem(NAME);
 		} catch(Exception e) {
+			e.getMessage();
+			
 		}
-		AssertTrue(WORKITEMDELETE);
+		assertTrue(WORKITEMDELETE);
 	}
 	
 	@Test
@@ -242,12 +293,38 @@ public class TestWorkItemService {
 		WorkItem workItem = null;
 		String error = null;
 		try {
-			workItem = service.updateWorkItem(NAME,DURATION,INVALIDPRICE);
+			workItem = service.deleteWorkItem(null);
 		} catch(Exception e) {
 			error = e.getMessage();
 		}
 		assertNull(workItem);
-		assertEquals(error,"Price cannot be less than zero!");
+		assertEquals(error,"A valid name must be provided");
+	}
+	
+	@Test
+	public void deleteWorkItemFail2() {
+		WorkItem workItem = null;
+		String error = null;
+		try {
+			workItem = service.deleteWorkItem(NAME2);
+		} catch(Exception e) {
+			error = e.getMessage();
+		}
+		assertNull(workItem);
+		assertEquals(error,"Work item cannot be found.");
+	}
+	
+	@Test
+	public void deleteWorkItemFail3() {
+		WorkItem workItem = null;
+		String error = null;
+		try {
+			workItem = service.deleteWorkItem(NAME3);
+		} catch(Exception e) {
+			error = e.getMessage();
+		}
+		assertNull(workItem);
+		assertEquals(error,"There are appointments associated with this work item; it cannot be deleted!");
 	}
 	
 	
