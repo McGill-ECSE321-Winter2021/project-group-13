@@ -122,7 +122,7 @@ public class TestAdministratorService {
 			error = e.getMessage();
 		}
 		assertNull(admin);
-		assertEquals("Specified customer does not exist",error);
+		assertEquals("Cannot have null username",error);
 	}
 	
 	@Test
