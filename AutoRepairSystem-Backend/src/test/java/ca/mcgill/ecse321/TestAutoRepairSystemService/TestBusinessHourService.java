@@ -127,7 +127,6 @@ public class TestBusinessHourService {
         lenient().when(businessHourDao.save(any(BusinessHour.class))).thenAnswer(returnParameterAsAnswer);
         
         // Set Mock Outputs for deleting business hour
-        BUSINESSHOURDELETE = false;
     	lenient().doAnswer(invocation -> {
             if(((BusinessHour) invocation.getArgument(0)).getId().equals(ID)) {
             	BUSINESSHOURDELETE = true;
@@ -180,8 +179,6 @@ public class TestBusinessHourService {
     			return appointmentSet;
         	}
         });
-    	
-        
     }
     
     @BeforeEach
