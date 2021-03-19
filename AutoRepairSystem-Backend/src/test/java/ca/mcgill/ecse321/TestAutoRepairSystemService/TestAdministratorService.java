@@ -123,6 +123,7 @@ public class TestAdministratorService {
 		}
 		assertNull(admin);
 		assertEquals("Cannot have null username",error);
+<<<<<<< HEAD
 	}
 	
 	@Test
@@ -135,6 +136,8 @@ public class TestAdministratorService {
 			error = e.getMessage();
 		}
 		assertEquals("Specified customer does not exist",error);
+=======
+>>>>>>> refs/remotes/origin/master
 	}
 	
 	@Test
