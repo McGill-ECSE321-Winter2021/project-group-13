@@ -2,6 +2,7 @@ package ca.mcgill.ecse321.autorepairsystem.controller;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -60,8 +63,9 @@ public class AutoRepairSystemController {
     }
   }
 
-  @GetMapping(value = {"/appointments/bycustomer", "/appointments/bycustomer/"})
-  public ResponseEntity<?> getAppointmentsByCustomer(@RequestParam(name = "customer") CustomerDto cDto) {
+  //has to be post to pass in JSON object
+  @PostMapping(value = {"/appointments/bycustomer", "/appointments/bycustomer/"})
+  public ResponseEntity<?> getAppointmentsByCustomer(@RequestBody CustomerDto cDto) {
     try {
       Customer customer = service.getCustomerByUsername(cDto.getUsername());
       return new ResponseEntity<>(
@@ -72,8 +76,8 @@ public class AutoRepairSystemController {
     }
   }
 
-  @GetMapping(value = {"/appointments/bytechnician", "/appointments/bytechnician/"})
-  public ResponseEntity<?> getAppointmentsByTechnician(@RequestParam(name = "technician") TechnicianDto tDto) {
+  @PostMapping(value = {"/appointments/bytechnician", "/appointments/bytechnician/"})
+  public ResponseEntity<?> getAppointmentsByTechnician(@RequestBody TechnicianDto tDto) {
     try {
       Technician technician = service.getTechnicianByUsername(tDto.getUsername());
       return new ResponseEntity<>(service.getAppointmentsByTechnician(technician).stream().map(p -> convertToDto(p))
@@ -94,10 +98,15 @@ public class AutoRepairSystemController {
     }
   }
 
-  @PutMapping(value = {"/make/appointment", "make/appointment/"})
-  public ResponseEntity<?> createAppointment(@RequestParam TechnicianDto technicianDto,
-      @RequestParam TechnicianDto customerDto, @RequestParam Set<WorkItemDto> servicesDto, @RequestParam Time startTime,
-      @RequestParam Date date) {
+  //can't RequestParam objects, and can only RequestBody one object -> package all arguments as an appointment
+  @PutMapping(value = {"/create/appointment", "create/appointment/"})
+  public ResponseEntity<?> createAppointment(@RequestBody AppointmentDto appointment) {
+    
+    TechnicianDto technicianDto = appointment.getTechnician();
+    CustomerDto customerDto = appointment.getCustomer();
+    Set<WorkItemDto> servicesDto = appointment.getServices();
+    Time startTime = appointment.getStartTime();
+    Date date = appointment.getDate();
 
     try {
       Set<WorkItem> services = new HashSet<WorkItem>();
@@ -117,9 +126,13 @@ public class AutoRepairSystemController {
 
 
 
-  @PutMapping(value = {"/update/appointment/{id}", "/update/appointment/{id}/"})
-  public ResponseEntity<?> updateAppointment(@PathVariable("id") Integer id, @RequestParam TechnicianDto technicianDto,
-      @RequestParam Set<WorkItemDto> servicesDto, @RequestParam Time startTime, @RequestParam Date date) {
+  @PostMapping(value = {"/update/appointment/{id}", "/update/appointment/{id}/"})
+  public ResponseEntity<?> updateAppointment(@PathVariable("id") Integer id, @RequestBody AppointmentDto appointment) {
+
+    TechnicianDto technicianDto = appointment.getTechnician();
+    Set<WorkItemDto> servicesDto = appointment.getServices();
+    Time startTime = appointment.getStartTime();
+    Date date = appointment.getDate();
 
     try {
       Set<WorkItem> services = new HashSet<WorkItem>();
@@ -563,8 +576,18 @@ public class AutoRepairSystemController {
     if (t == null) {
       throw new IllegalArgumentException("There is no such Technician!");
     }
+    
+    Set<TechnicianHourDto> technicianHourDtos;
+    
+    if (t.getTechnicianHour() == null) {
+      technicianHourDtos = null;
+    }
+    else {
+      technicianHourDtos = t.getTechnicianHour().stream().map(p -> convertToDto(p)).collect(Collectors.toSet());
+    }
+    
     TechnicianDto technicianDto = new TechnicianDto(t.getUsername(), t.getPassword(), t.getName(), t.getEmail(),
-        t.getTechnicianHour().stream().map(p -> convertToDto(p)).collect(Collectors.toSet()));
+        technicianHourDtos);
     return technicianDto;
   }
 
@@ -572,8 +595,18 @@ public class AutoRepairSystemController {
     if (th == null) {
       throw new IllegalArgumentException("There is no such TechnicianHour!");
     }
+    
+    Set<WorkBreakDto> workBreakDtos;
+    
+    if (th.getWorkBreak() == null) {
+      workBreakDtos = null;
+    }
+    else {
+      workBreakDtos = th.getWorkBreak().stream().map(p -> convertToDto(p)).collect(Collectors.toSet());
+    }
+    
     TechnicianHourDto technicianHourDto = new TechnicianHourDto(th.getStartTime(), th.getEndTime(), th.getDate(),
-        th.getId(), th.getWorkBreak().stream().map(p -> convertToDto(p)).collect(Collectors.toSet()));
+        th.getId(), workBreakDtos);
     return technicianHourDto;
   }
 

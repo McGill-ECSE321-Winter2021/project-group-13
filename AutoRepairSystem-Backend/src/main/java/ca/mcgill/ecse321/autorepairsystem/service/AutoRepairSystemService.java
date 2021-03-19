@@ -266,7 +266,7 @@ public class AutoRepairSystemService {
 
   private List<Appointment> cleanupAppointments(List<Appointment> appointments) {
 
-    if (appointments.size() <= 1) {
+    if (appointments == null || appointments.size() <= 1) {
       return appointments;
     }
 
@@ -304,7 +304,7 @@ public class AutoRepairSystemService {
 
   private List<WorkBreak> cleanupWorkBreaks(List<WorkBreak> workBreaks) {
 
-    if (workBreaks.size() <= 1) {
+    if (workBreaks == null || workBreaks.size() <= 1) {
       return workBreaks;
     }
 
@@ -427,6 +427,10 @@ public class AutoRepairSystemService {
 
   private List<TechnicianHour> subtractAppointmentsFromTechnicianHours(List<TechnicianHour> technicianHoursForDay,
       List<Appointment> appointments) {
+    
+    if (appointments == null) {
+      return technicianHoursForDay;
+    }
 
     List<TechnicianHour> technicianHours = new ArrayList<TechnicianHour>(technicianHoursForDay);
 
