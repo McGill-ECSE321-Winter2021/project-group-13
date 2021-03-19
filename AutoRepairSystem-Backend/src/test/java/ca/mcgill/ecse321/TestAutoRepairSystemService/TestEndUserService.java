@@ -37,6 +37,11 @@ public class TestEndUserService {
     private static final String PASSWORD2 = "testPassword2";
 	private static final String NAME2 = "testName2";
 	private static final String EMAIL2 = "testEmail2";
+	
+	private static final String USERNAME3 = "testCustomer3";
+    private static final String PASSWORD3 = "testPassword3";
+	private static final String NAME3 = "testName3";
+	private static final String EMAIL3 = "testEmail3";
     
    
     
@@ -60,6 +65,29 @@ public class TestEndUserService {
             }
         });
         
+        lenient().when(userDao.findEndUserByEmail(anyString())).thenAnswer((InvocationOnMock invocation) -> {
+            if(invocation.getArgument(0).equals(EMAIL1)) {
+      
+            		EndUser enduser = new Customer();
+                	enduser.setUsername(USERNAME1);
+                	enduser.setPassword(PASSWORD1);
+                	enduser.setName(NAME1);
+                	enduser.setEmail(EMAIL1);
+                    return enduser;
+            	
+            } else if(invocation.getArgument(0).equals(EMAIL3)) {
+	            	EndUser enduser = new Customer();
+	            	enduser.setUsername(USERNAME3);
+	            	enduser.setPassword(PASSWORD3);
+	            	enduser.setName(NAME3);
+	            	enduser.setEmail(EMAIL3);
+	                return enduser;
+            }
+            else {
+                return null;
+            }
+        });
+        
         Answer<?> returnParameterAsAnswer = (InvocationOnMock invocation) -> {
         	return invocation.getArgument(0);
         };
@@ -67,7 +95,7 @@ public class TestEndUserService {
     }
     
     @Test
-    public void updateEndUser() {
+    public void testUpdateEndUser() {
     	EndUser enduser = null;
     	
     	try {
@@ -81,16 +109,30 @@ public class TestEndUserService {
     	assertEquals(PASSWORD2, enduser.getPassword());
     	assertEquals(NAME2, enduser.getName());
     	assertEquals(EMAIL2, enduser.getEmail());
-    	
+
     	
     }
     
     @Test
-    public void updateEndUserDoesntExist() {
+    public void testUpdateEndUserFail() {
     	EndUser enduser = null;
     	String error = null;
     	try {
-    		enduser = service.updateEndUser(USERNAME2, PASSWORD1, NAME1, EMAIL1);
+    		enduser = service.updateEndUser(null, PASSWORD2, NAME2, EMAIL2);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(enduser);
+    	assertEquals(error,"Must enter a proper username!");
+    }
+    
+    @Test
+    public void testUpdateEndUserFail2() {
+    	EndUser enduser = null;
+    	String error = null;
+    	try {
+    		enduser = service.updateEndUser(USERNAME2, PASSWORD2, NAME2, EMAIL2);
     	} catch(Exception e) {
     		error = e.getMessage();
     		
@@ -98,22 +140,64 @@ public class TestEndUserService {
     	assertNull(enduser);
     	assertEquals(error,"Username cannot be found!");
     }
-	
+    
+    @Test
+    public void testUpdateEndUserFail3() {
+    	EndUser enduser = null;
+    	String error = null;
+    	try {
+    		enduser = service.updateEndUser(USERNAME1, PASSWORD2, NAME2, null);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(enduser);
+    	assertEquals(error,"Must enter a valid email!");
+    }
+    
+    @Test
+    public void testUpdateEndUserFail4() {
+    	EndUser enduser = null;
+    	String error = null;
+    	try {
+    		enduser = service.updateEndUser(USERNAME1, PASSWORD2, NAME2, EMAIL3);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(enduser);
+    	assertEquals(error,"Email already exists!");
+    }
+    
+    @Test
+    public void testUpdateEndUserFail5() {
+    	EndUser enduser = null;
+    	String error = null;
+    	try {
+    		enduser = service.updateEndUser(USERNAME1, null, NAME2, EMAIL1);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(enduser);
+    	assertEquals(error,"Must enter a valid password!");
+    }
+    
+    @Test
+    public void testUpdateEndUserFail6() {
+    	EndUser enduser = null;
+    	String error = null;
+    	try {
+    		enduser = service.updateEndUser(USERNAME1, USERNAME2, null, EMAIL1);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    	}
+    	assertNull(enduser);
+    	assertEquals(error,"Must enter a valid name!");
+    }
+
 	@Test
-	public void testGetEndUserDoesntExist() {
-		String error = null;
-		EndUser admin = null;
-		try {
-			admin = service.getEndUser(USERNAME2);
-		} catch (Exception e) {
-			error = e.getMessage();
-		}
-		assertNull(admin);
-		assertEquals("Username " + USERNAME2 + " cannot be found!",error);
-	}
-	
-	@Test
-	public void testGetEndUserExists() {
+	public void testGetEndUser() {
 		EndUser admin = null;
 		try {
 			admin = service.getEndUser(USERNAME1);
@@ -123,6 +207,19 @@ public class TestEndUserService {
 		
 		assertEquals(USERNAME1,admin.getUsername());
 		assertEquals(PASSWORD1, admin.getPassword());
+	}
+	
+	@Test
+	public void testGetEndUserFail() {
+		String error = null;
+		EndUser admin = null;
+		try {
+			admin = service.getEndUser(USERNAME2);
+		} catch (Exception e) {
+			error = e.getMessage();
+		}
+		assertNull(admin);
+		assertEquals("Username " + USERNAME2 + " cannot be found!",error);
 	}
 	
 	@Test

@@ -351,9 +351,9 @@ public class AutoRepairSystemController {
 
 
   @DeleteMapping(value = {"/workbreaks/{id}", "/workbreaks/{id}/"})
-  public ResponseEntity<?> DeleteWorkBreak(@PathVariable("id") Integer id) {
+  public ResponseEntity<?> deleteWorkBreak(@PathVariable("id") Integer id) {
     try {
-      return new ResponseEntity<>(convertToDto(service.DeleteWorkBreak(id)), HttpStatus.OK);
+      return new ResponseEntity<>(convertToDto(service.deleteWorkBreak(id)), HttpStatus.OK);
     } catch (IllegalArgumentException e) {
       return ResponseEntity.badRequest().body(e.getMessage());
     }

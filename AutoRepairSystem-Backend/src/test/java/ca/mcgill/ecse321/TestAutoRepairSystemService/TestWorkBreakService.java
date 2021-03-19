@@ -39,8 +39,10 @@ public class TestWorkBreakService {
 	private AutoRepairSystemService service;
 	
 	private static final Integer WORKHOURID=20;
-	private static final Time WORKHOURSTARTTIME =Time.valueOf("1:00:00");
+	private static final Time WORKHOURSTARTTIME =Time.valueOf("1:30:00");
 	private static final Time WORKHOURENDTIME =Time.valueOf("10:00:00");
+	
+	private static final Integer WORKHOURID2 = 25;
 
 	
 	private static final Integer ID=30; 
@@ -50,6 +52,12 @@ public class TestWorkBreakService {
 	private static final Integer ID2=40; 
 	private static final Time STARTTIME2=Time.valueOf("4:00:00");
 	private static final Time ENDTIME2=Time.valueOf("5:00:00");
+	
+	private static final Time STARTTIMEFAIL = Time.valueOf("1:00:00");
+	private static final Time ENDTIMEFAIL = Time.valueOf("11:00:00");
+	
+	private static final Time STARTTIMEFAIL2 = Time.valueOf("2:00:00");
+	private static final Time ENDTIMEFAIL2 = Time.valueOf("2:30:00");
 	
 	private static Boolean WORKBREAKDELETE = false;
 		
@@ -151,6 +159,20 @@ public class TestWorkBreakService {
     	WorkBreak workBreak = null;
     	String error = null;
     	try {
+    		workBreak = service.getWorkBreak(null);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(workBreak);
+    	assertEquals(error,"A valid work break ID must be provided!");
+    }
+    
+    @Test
+    public void testGetWorkBreakFail2() {
+    	WorkBreak workBreak = null;
+    	String error = null;
+    	try {
     		workBreak = service.getWorkBreak(ID2);
     	} catch(Exception e) {
     		error = e.getMessage();
@@ -208,14 +230,106 @@ public class TestWorkBreakService {
     	WorkBreak workBreak = null;
     	String error = null;
     	try {
-    		workBreak=service.createWorkBreak(WORKHOURID, STARTTIME2, ENDTIME2);
+    		workBreak=service.createWorkBreak(WORKHOURID, null, ENDTIME2);
     	} catch(Exception e) {
     		error = e.getMessage();
     		
     	}
     	assertNull(workBreak);
-    	assertEquals(error,"A valid work hour ID must be provided!");
+    	assertEquals(error,"A valid start time must be provided!");
     }
+    
+    @Test
+    public void testCreateWorkBreakFail3() {
+         
+    	WorkBreak workBreak = null;
+    	String error = null;
+    	try {
+    		workBreak=service.createWorkBreak(WORKHOURID, STARTTIME2, null);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(workBreak);
+    	assertEquals(error,"A valid end time must be provided!");
+    }
+    
+    @Test
+    public void testCreateWorkBreakFail4() {
+         
+    	WorkBreak workBreak = null;
+    	String error = null;
+    	try {
+    		workBreak=service.createWorkBreak(WORKHOURID, ENDTIME2, STARTTIME2);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(workBreak);
+    	assertEquals(error,"Start time cannot be after end time");
+    }
+    
+    @Test
+    public void testCreateWorkBreakFail5() {
+         
+    	WorkBreak workBreak = null;
+    	String error = null;
+    	try {
+    		workBreak=service.createWorkBreak(WORKHOURID2, STARTTIME2, ENDTIME2);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(workBreak);
+    	assertEquals(error,"Specified Work Hour doesn't exist!");
+    }
+    
+    @Test
+    public void testCreateWorkBreakFail6() {
+         
+    	WorkBreak workBreak = null;
+    	String error = null;
+    	try {
+    		workBreak=service.createWorkBreak(WORKHOURID, STARTTIMEFAIL, ENDTIME2);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(workBreak);
+    	assertEquals(error,"Work break must be within work hour");
+    }
+    
+    @Test
+    public void testCreateWorkBreakFail7() {
+         
+    	WorkBreak workBreak = null;
+    	String error = null;
+    	try {
+    		workBreak=service.createWorkBreak(WORKHOURID, STARTTIME2, ENDTIMEFAIL);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(workBreak);
+    	assertEquals(error,"Work break must be within work hour");
+    }
+    
+    @Test
+    public void testCreateWorkBreakFail8() {
+         
+    	WorkBreak workBreak = null;
+    	String error = null;
+    	try {
+    		workBreak=service.createWorkBreak(WORKHOURID, STARTTIMEFAIL2, ENDTIMEFAIL2);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    		
+    	}
+    	assertNull(workBreak);
+    	assertEquals(error,"Work break overlaps with existing work hour");
+    }
+    
+    
     
     @Test
     public void testUpdateWorkBreak() {
@@ -237,7 +351,7 @@ public class TestWorkBreakService {
     	
     	WorkBreak workBreak = new WorkBreak();
     	try {
-    		workBreak = service.DeleteWorkBreak(ID);
+    		workBreak = service.deleteWorkBreak(ID);
     	} catch(Exception e) {
     			
     	}
@@ -249,7 +363,22 @@ public class TestWorkBreakService {
     	WorkBreak workBreak =null;
     	String error = null;
     	try {
-    		workBreak = service.DeleteWorkBreak(ID2);
+    		workBreak = service.deleteWorkBreak(null);
+    	} catch(Exception e) {
+    		error = e.getMessage();
+    			
+    	}
+    	assertNull(workBreak);
+    	assertEquals(error, "A valid work break ID must be provided!");
+    	
+    }
+    
+    @Test
+    public void testDeleteWorkBreakFail2() {
+    	WorkBreak workBreak =null;
+    	String error = null;
+    	try {
+    		workBreak = service.deleteWorkBreak(ID2);
     	} catch(Exception e) {
     		error = e.getMessage();
     			

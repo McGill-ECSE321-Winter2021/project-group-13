@@ -884,8 +884,8 @@ public class AutoRepairSystemService {
    	 throw new IllegalArgumentException("A valid end time must be provided!");
     }
     
-    if (startTime.after(endTime)) {
-      throw new IllegalArgumentException("Start time must be before end time");
+    if (!(startTime.before(endTime))) {
+      throw new IllegalArgumentException("Start time cannot be after end time");
     }
     WorkHour workHour = workHourRepository.findWorkHourById(workHourId);
 
@@ -908,7 +908,7 @@ public class AutoRepairSystemService {
       } else if (!(w.getStartBreak().before(endTime))) {
         continue;
       } else {
-        throw new IllegalArgumentException("Work Hour overlaps with existing work hour");
+        throw new IllegalArgumentException("Work break overlaps with existing work hour");
       }
     }
 
@@ -989,7 +989,7 @@ public class AutoRepairSystemService {
   }
 
   @Transactional
-  public WorkBreak DeleteWorkBreak(Integer workBreakId) throws IllegalArgumentException {
+  public WorkBreak deleteWorkBreak(Integer workBreakId) throws IllegalArgumentException {
 
     if (workBreakId == null) {
       throw new IllegalArgumentException("A valid work break ID must be provided!");

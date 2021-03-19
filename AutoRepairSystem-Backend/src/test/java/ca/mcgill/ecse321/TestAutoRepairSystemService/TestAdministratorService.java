@@ -36,7 +36,7 @@ public class TestAdministratorService {
 	
 	private static final String USERNAME1 = "testAdmin";
     
-    private static final String USERNAME2 = "testAdmin";
+    private static final String USERNAME2 = "testAdmin2";
     
     
     private static Boolean CUSTOMERDELETE = false;
@@ -113,7 +113,7 @@ public class TestAdministratorService {
 	}
 	
 	@Test
-	public void testMakeAdministratorNull() {
+	public void testMakeAdministratorFail() {
 		String error = null;
 		Administrator admin = null;
 		try {
@@ -122,6 +122,18 @@ public class TestAdministratorService {
 			error = e.getMessage();
 		}
 		assertNull(admin);
+		assertEquals("Cannot have null username",error);
+	}
+	
+	@Test
+	public void testMakeAdministratorFail2() {
+		String error = null;
+		Administrator admin = null;
+		try {
+			admin = service.makeAdministrator(USERNAME2);
+		} catch(Exception e) {
+			error = e.getMessage();
+		}
 		assertEquals("Specified customer does not exist",error);
 	}
 	
@@ -136,7 +148,7 @@ public class TestAdministratorService {
 	}
 	
 	@Test
-	public void testGetAdministratorNull() {
+	public void testGetAdministratorFail() {
 		String error = null;
 		Administrator admin = null;
 		try {
