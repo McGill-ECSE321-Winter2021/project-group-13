@@ -38,7 +38,7 @@ Name            | Team Roles         | Individual Efforts
 --------------- |------------------- |-------------------
 Edgar Desnos    || 
 Charles Wetaski ||
-Ezra Gomolin    ||                   
+Ezra Gomolin    |Dto's, Controller Methods, Testing, Restful endpoints|20 hours                   
 Hassan Kanj     ||
 Henri Rofiq     |Service Methods and Report Documentation|20 hours
 
