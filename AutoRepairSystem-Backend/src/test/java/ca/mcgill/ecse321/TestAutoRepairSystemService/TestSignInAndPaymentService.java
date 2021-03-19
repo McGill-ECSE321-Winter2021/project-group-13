@@ -3,15 +3,9 @@ package ca.mcgill.ecse321.TestAutoRepairSystemService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,9 +16,13 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import ca.mcgill.ecse321.autorepairsystem.model.*;
+import ca.mcgill.ecse321.autorepairsystem.dao.CustomerRepository;
+import ca.mcgill.ecse321.autorepairsystem.dao.EndUserRepository;
+import ca.mcgill.ecse321.autorepairsystem.model.Customer;
+import ca.mcgill.ecse321.autorepairsystem.model.EndUser;
+import ca.mcgill.ecse321.autorepairsystem.model.Technician;
+import ca.mcgill.ecse321.autorepairsystem.model.TechnicianHour;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
-import ca.mcgill.ecse321.autorepairsystem.dao.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TestSignInAndPaymentService {
@@ -68,6 +66,13 @@ public class TestSignInAndPaymentService {
                 return null;
             }
         });
+        
+        Answer<?> returnParameterAsAnswer = (InvocationOnMock invocation) -> {
+        	return invocation.getArgument(0);
+        };
+        
+        lenient().when(customerDao.save(any(Customer.class))).thenAnswer(returnParameterAsAnswer);
+        lenient().when(endUserDao.save(any(EndUser.class))).thenAnswer(returnParameterAsAnswer);
 	}
 	
 	@Test
