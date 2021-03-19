@@ -517,7 +517,7 @@ public class AutoRepairSystemService {
   // Log-in generic endUser...either customer, technician, or admin
   @Transactional
   public EndUser signIn(String endUserID, String password) throws IllegalArgumentException {
-    EndUser endUser = endUserRepository.findById(endUserID).orElse(null);
+	EndUser endUser = endUserRepository.findEndUserByUsername(endUserID);
     if (endUser == null) {
       throw new IllegalArgumentException("Username cannot be found!");
     } else if (endUser.getPassword().equals(password) == false) {
