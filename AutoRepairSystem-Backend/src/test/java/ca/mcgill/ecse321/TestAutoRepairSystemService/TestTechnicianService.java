@@ -24,11 +24,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 import ca.mcgill.ecse321.autorepairsystem.dao.CustomerRepository;
-import ca.mcgill.ecse321.autorepairsystem.dao.EndUserRepository;
 import ca.mcgill.ecse321.autorepairsystem.dao.TechnicianRepository;
-import ca.mcgill.ecse321.autorepairsystem.model.Administrator;
 import ca.mcgill.ecse321.autorepairsystem.model.Customer;
-import ca.mcgill.ecse321.autorepairsystem.model.EndUser;
 import ca.mcgill.ecse321.autorepairsystem.model.Technician;
 import ca.mcgill.ecse321.autorepairsystem.model.TechnicianHour;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;

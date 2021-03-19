@@ -19,14 +19,16 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import ca.mcgill.ecse321.autorepairsystem.model.*;
+import ca.mcgill.ecse321.autorepairsystem.model.EndUser;
+import ca.mcgill.ecse321.autorepairsystem.model.Customer;
+import ca.mcgill.ecse321.autorepairsystem.model.Administrator;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
-import ca.mcgill.ecse321.autorepairsystem.dao.*;
+import ca.mcgill.ecse321.autorepairsystem.dao.EndUserRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class TestEndUserService {
 	@Mock
-	private EndUserRepository userDao;
+	private EndUserRepository endUserDao;
 	
 	private static final String USERNAME1 = "testCustomer1";
 	private static final String PASSWORD1 = "testPassword1";
@@ -50,7 +52,7 @@ public class TestEndUserService {
 	
     @BeforeEach
     public void setMockOutput() {
-        lenient().when(userDao.findEndUserByUsername(anyString())).thenAnswer((InvocationOnMock invocation) -> {
+        lenient().when(endUserDao.findEndUserByUsername(anyString())).thenAnswer((InvocationOnMock invocation) -> {
             if(invocation.getArgument(0).equals(USERNAME1)) {
       
             		EndUser enduser = new Customer();
@@ -65,7 +67,7 @@ public class TestEndUserService {
             }
         });
         
-        lenient().when(userDao.findEndUserByEmail(anyString())).thenAnswer((InvocationOnMock invocation) -> {
+        lenient().when(endUserDao.findEndUserByEmail(anyString())).thenAnswer((InvocationOnMock invocation) -> {
             if(invocation.getArgument(0).equals(EMAIL1)) {
       
             		EndUser enduser = new Customer();
@@ -91,7 +93,7 @@ public class TestEndUserService {
         Answer<?> returnParameterAsAnswer = (InvocationOnMock invocation) -> {
         	return invocation.getArgument(0);
         };
-        lenient().when(userDao.save(any(Customer.class))).thenAnswer(returnParameterAsAnswer);
+        lenient().when(endUserDao.save(any(Customer.class))).thenAnswer(returnParameterAsAnswer);
     }
     
     @Test
@@ -233,7 +235,7 @@ public class TestEndUserService {
         ((HashSet<EndUser>) EndUserSet).add(EndUser);
         ((HashSet<EndUser>) EndUserSet).add(EndUser2);
         
-        lenient().when(userDao.findAll()).thenReturn(EndUserSet);
+        lenient().when(endUserDao.findAll()).thenReturn(EndUserSet);
 
 		List<ca.mcgill.ecse321.autorepairsystem.model.EndUser> allEndUsers = null;
 		try {

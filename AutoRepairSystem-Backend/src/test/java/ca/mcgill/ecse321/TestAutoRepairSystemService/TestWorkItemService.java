@@ -3,6 +3,7 @@ package ca.mcgill.ecse321.TestAutoRepairSystemService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -22,7 +23,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import ca.mcgill.ecse321.autorepairsystem.model.*;
+import ca.mcgill.ecse321.autorepairsystem.model.WorkItem;
+import ca.mcgill.ecse321.autorepairsystem.model.Appointment;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
 import ca.mcgill.ecse321.autorepairsystem.dao.WorkItemRepository;
 import ca.mcgill.ecse321.autorepairsystem.dao.AppointmentRepository;
@@ -278,9 +280,8 @@ public class TestWorkItemService {
 	
 	@Test
 	public void deleteWorkItem() {
-		WorkItem workItem = null;
 		try {
-			workItem = service.deleteWorkItem(NAME);
+			service.deleteWorkItem(NAME);
 		} catch(Exception e) {
 			e.getMessage();
 			
@@ -290,40 +291,39 @@ public class TestWorkItemService {
 	
 	@Test
 	public void deleteWorkItemFail() {
-		WorkItem workItem = null;
 		String error = null;
 		try {
-			workItem = service.deleteWorkItem(null);
+			service.deleteWorkItem(null);
 		} catch(Exception e) {
 			error = e.getMessage();
 		}
-		assertNull(workItem);
+		assertFalse(WORKITEMDELETE);
 		assertEquals(error,"A valid name must be provided");
 	}
 	
 	@Test
 	public void deleteWorkItemFail2() {
-		WorkItem workItem = null;
+
 		String error = null;
 		try {
-			workItem = service.deleteWorkItem(NAME2);
+			service.deleteWorkItem(NAME2);
 		} catch(Exception e) {
 			error = e.getMessage();
 		}
-		assertNull(workItem);
+		assertFalse(WORKITEMDELETE);
 		assertEquals(error,"Work item cannot be found.");
 	}
 	
 	@Test
 	public void deleteWorkItemFail3() {
-		WorkItem workItem = null;
+
 		String error = null;
 		try {
-			workItem = service.deleteWorkItem(NAME3);
+			service.deleteWorkItem(NAME3);
 		} catch(Exception e) {
 			error = e.getMessage();
 		}
-		assertNull(workItem);
+		assertFalse(WORKITEMDELETE);
 		assertEquals(error,"There are appointments associated with this work item; it cannot be deleted!");
 	}
 	

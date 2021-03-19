@@ -21,9 +21,13 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import ca.mcgill.ecse321.autorepairsystem.model.*;
+import ca.mcgill.ecse321.autorepairsystem.model.WorkBreak;
+import ca.mcgill.ecse321.autorepairsystem.model.TechnicianHour;
+import ca.mcgill.ecse321.autorepairsystem.model.WorkHour;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
-import ca.mcgill.ecse321.autorepairsystem.dao.*;
+import ca.mcgill.ecse321.autorepairsystem.dao.WorkBreakRepository;
+import ca.mcgill.ecse321.autorepairsystem.dao.TechnicianHourRepository;
+import ca.mcgill.ecse321.autorepairsystem.dao.WorkHourRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class TestWorkBreakService {
@@ -41,7 +45,6 @@ public class TestWorkBreakService {
 	private static final Integer WORKHOURID=20;
 	private static final Time WORKHOURSTARTTIME =Time.valueOf("1:30:00");
 	private static final Time WORKHOURENDTIME =Time.valueOf("10:00:00");
-	
 	private static final Integer WORKHOURID2 = 25;
 
 	
@@ -349,9 +352,8 @@ public class TestWorkBreakService {
     @Test
     public void testDeleteWorkBreak() {
     	
-    	WorkBreak workBreak = new WorkBreak();
     	try {
-    		workBreak = service.deleteWorkBreak(ID);
+    		service.deleteWorkBreak(ID);
     	} catch(Exception e) {
     			
     	}

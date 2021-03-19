@@ -22,9 +22,17 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.mcgill.ecse321.autorepairsystem.model.*;
+import ca.mcgill.ecse321.autorepairsystem.model.Appointment;
+import ca.mcgill.ecse321.autorepairsystem.model.Customer;
+import ca.mcgill.ecse321.autorepairsystem.model.WorkItem;
+import ca.mcgill.ecse321.autorepairsystem.model.Technician;
+import ca.mcgill.ecse321.autorepairsystem.model.TechnicianHour;
+import ca.mcgill.ecse321.autorepairsystem.model.WorkBreak;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
-import ca.mcgill.ecse321.autorepairsystem.dao.*;
+import ca.mcgill.ecse321.autorepairsystem.dao.AppointmentRepository;
+import ca.mcgill.ecse321.autorepairsystem.dao.CustomerRepository;
+import ca.mcgill.ecse321.autorepairsystem.dao.TechnicianRepository;
+import ca.mcgill.ecse321.autorepairsystem.dao.TechnicianHourRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class TestAppointmentService {

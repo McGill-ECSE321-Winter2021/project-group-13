@@ -20,17 +20,15 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import ca.mcgill.ecse321.autorepairsystem.model.*;
+import ca.mcgill.ecse321.autorepairsystem.model.Customer;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
-import ca.mcgill.ecse321.autorepairsystem.dao.*;
+import ca.mcgill.ecse321.autorepairsystem.dao.CustomerRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class TestCustomerService {
 
 	@Mock
 	private CustomerRepository customerDao;
-	@Mock
-	private EndUserRepository userDao;
 	
 	private static final String USERNAME1 = "testCustomer1";
 	private static final String PASSWORD1 = "testPassword1";

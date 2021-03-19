@@ -21,9 +21,12 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import ca.mcgill.ecse321.autorepairsystem.model.*;
+import ca.mcgill.ecse321.autorepairsystem.model.Customer;
+import ca.mcgill.ecse321.autorepairsystem.model.Administrator;
+
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
-import ca.mcgill.ecse321.autorepairsystem.dao.*;
+import ca.mcgill.ecse321.autorepairsystem.dao.CustomerRepository;
+import ca.mcgill.ecse321.autorepairsystem.dao.AdministratorRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class TestAdministratorService {
@@ -128,9 +131,9 @@ public class TestAdministratorService {
 	@Test
 	public void testMakeAdministratorFail2() {
 		String error = null;
-		Administrator admin = null;
+
 		try {
-			admin = service.makeAdministrator(USERNAME2);
+			service.makeAdministrator(USERNAME2);
 		} catch(Exception e) {
 			error = e.getMessage();
 		}

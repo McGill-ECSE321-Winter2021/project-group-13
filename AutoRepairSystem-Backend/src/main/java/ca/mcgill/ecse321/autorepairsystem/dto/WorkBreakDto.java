@@ -12,7 +12,6 @@ public class WorkBreakDto {
 		
 	}
 	
-	@SuppressWarnings("unchecked")
 	public WorkBreakDto(Integer Id) {
 		this(null,null,Id);
 		
