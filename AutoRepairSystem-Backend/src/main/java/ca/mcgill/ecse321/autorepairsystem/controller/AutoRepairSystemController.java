@@ -31,7 +31,6 @@ import ca.mcgill.ecse321.autorepairsystem.dto.EndUserDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.TechnicianDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.TechnicianHourDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkBreakDto;
-import ca.mcgill.ecse321.autorepairsystem.dto.WorkHourDto;
 import ca.mcgill.ecse321.autorepairsystem.dto.WorkItemDto;
 import ca.mcgill.ecse321.autorepairsystem.model.Administrator;
 import ca.mcgill.ecse321.autorepairsystem.model.Appointment;
@@ -41,7 +40,6 @@ import ca.mcgill.ecse321.autorepairsystem.model.EndUser;
 import ca.mcgill.ecse321.autorepairsystem.model.Technician;
 import ca.mcgill.ecse321.autorepairsystem.model.TechnicianHour;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkBreak;
-import ca.mcgill.ecse321.autorepairsystem.model.WorkHour;
 import ca.mcgill.ecse321.autorepairsystem.model.WorkItem;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
 

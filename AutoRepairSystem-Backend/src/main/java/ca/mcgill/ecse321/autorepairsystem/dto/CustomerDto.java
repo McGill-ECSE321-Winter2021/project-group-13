@@ -1,8 +1,5 @@
 package ca.mcgill.ecse321.autorepairsystem.dto;
 
-import java.util.Collections;
-import java.util.Set;
-
 public class CustomerDto extends EndUserDto {
 	
 	private int amountOwed;

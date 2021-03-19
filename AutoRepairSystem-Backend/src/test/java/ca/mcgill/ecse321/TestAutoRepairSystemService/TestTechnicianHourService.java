@@ -3,20 +3,16 @@ package ca.mcgill.ecse321.TestAutoRepairSystemService;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.*;
 
 import static org.mockito.Mockito.lenient;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -32,8 +28,6 @@ import ca.mcgill.ecse321.autorepairsystem.model.*;
 import ca.mcgill.ecse321.autorepairsystem.service.AutoRepairSystemService;
 import ca.mcgill.ecse321.autorepairsystem.dao.*;
 
-//NOTE: 20/27 test cases covered => 74%
-
 @ExtendWith(MockitoExtension.class)
 public class TestTechnicianHourService {
 	
@@ -43,26 +37,20 @@ public class TestTechnicianHourService {
 	private TechnicianRepository technicianDao;
 	@Mock
 	private BusinessHourRepository businessHourDao;
+	@Mock
+	private AppointmentRepository appointmentDao;
 	
 	@InjectMocks
 	private AutoRepairSystemService service;
 	
-	//Existing technicianHours in the mocked up database
 	private static final Integer id = 123;
-	
-	//Existing technicians in the mocked up database
 	private static final String username = "Jack";
-	
-	//Existing businessHours in the mocked up database
 	private static final Date date = Date.valueOf("2021-05-01");
 	
-	
-	//Valid inputs
 	Time validStartTime = Time.valueOf("18:00:00");
 	Time validEndTime = Time.valueOf("19:05:00");
 	Date validDate = Date.valueOf("2021-05-01");
 	
-	//Invalid inputs
 	Time invalidStartTime = Time.valueOf("20:00:00"); //Starts after validEndTime
 	Time invalidStartTime2 = Time.valueOf("01:00:00"); //Starts before start of business hour for that day
 	Time invalidStartTime3 = Time.valueOf("10:00:00"); //Overlaps with start of existing technicianHour of the technician
@@ -73,13 +61,7 @@ public class TestTechnicianHourService {
 	public void setMockOutput() {
 	    lenient().when(technicianHourDao.findTechnicianHourById(anyInt())).thenAnswer( (InvocationOnMock invocation) -> {
 	        if(invocation.getArgument(0).equals(id)) {
-	            TechnicianHour tHour = new TechnicianHour();
-	            tHour.setId(id);
-	            tHour.setStartTime(Time.valueOf("09:00:00"));
-	            tHour.setEndTime(Time.valueOf("17:00:00"));
-	            tHour.setDate(Date.valueOf("2021-05-01"));
-	            tHour.setWorkBreak(new HashSet<WorkBreak>());
-	            return tHour;
+	            return tHour1();
 	        } else {
 	            return null;
 	        }
@@ -87,21 +69,7 @@ public class TestTechnicianHourService {
 	    
 	    lenient().when(technicianDao.findTechnicianByUsername(anyString())).thenAnswer( (InvocationOnMock invocation) -> {
 	        if(invocation.getArgument(0).equals(username)) {
-	            Technician t = new Technician();
-	           t.setUsername(username);
-	           t.setPassword("GenericPassword");
-	           t.setName("Jack");
-	           t.setEmail("jack.jack@jack.jack.com");
-	           TechnicianHour tHour = new TechnicianHour();
-	           tHour.setId(id);
-	           tHour.setStartTime(Time.valueOf("09:00:00"));
-	           tHour.setEndTime(Time.valueOf("17:00:00"));
-	           tHour.setDate(Date.valueOf("2021-05-01"));
-	           tHour.setWorkBreak(new HashSet<WorkBreak>());
-	           Set<TechnicianHour> tHourSet = new HashSet<TechnicianHour>();
-	           tHourSet.add(tHour);
-	           t.setTechnicianHour(tHourSet);
-	            return t;
+	            return t();
 	        } else {
 	            return null;
 	        }
@@ -118,6 +86,14 @@ public class TestTechnicianHourService {
 	            Set<BusinessHour> bSet = new HashSet<BusinessHour>();
 	            bSet.add(b);
 	            return bSet;
+	        }  else {
+	            return null;
+	        }
+	    });
+	    
+	    lenient().when(technicianDao.findTechnicianByTechnicianHour(any(TechnicianHour.class))).thenAnswer( (InvocationOnMock invocation) -> {
+	        if(((TechnicianHour) invocation.getArgument(0)).getId().equals(id)) {
+	            return t();
 	        } else {
 	            return null;
 	        }
@@ -129,6 +105,29 @@ public class TestTechnicianHourService {
         
         lenient().when(technicianHourDao.save(any(TechnicianHour.class))).thenAnswer(returnParameterAsAnswer);
         lenient().when(technicianDao.save(any(Technician.class))).thenAnswer(returnParameterAsAnswer);
+	}
+	
+	private TechnicianHour tHour1() {
+		TechnicianHour tHour = new TechnicianHour();
+        tHour.setId(id);
+        tHour.setStartTime(Time.valueOf("09:00:00"));
+        tHour.setEndTime(Time.valueOf("17:00:00"));
+        tHour.setDate(Date.valueOf("2021-05-01"));
+        tHour.setWorkBreak(new HashSet<WorkBreak>());
+        return tHour;
+	}
+	
+	private Technician t() {
+		Technician t = new Technician();
+        t.setUsername(username);
+        t.setPassword("GenericPassword");
+        t.setName("Jack");
+        t.setEmail("jack.jack@jack.jack.com");
+        TechnicianHour tHour = tHour1();
+        Set<TechnicianHour> tHourSet = new HashSet<TechnicianHour>();
+        tHourSet.add(tHour);
+        t.setTechnicianHour(tHourSet);
+        return t;
 	}
     
 
@@ -273,12 +272,11 @@ public class TestTechnicianHourService {
 	@Test
     public void testGetTechnician() {
 		TechnicianHour tHour = null;
-		String error = null;
 		try {
 			tHour = service.getTechnicianHour(id);
 		}
 		catch (Exception e) {
-			error = e.getMessage();
+			fail();
 		}
 		assertNotNull(tHour);
 		assertEquals(id, tHour.getId());
@@ -296,5 +294,174 @@ public class TestTechnicianHourService {
 		}
 		assertNull(tHour);
 		assertEquals("Technician Hour cannot be found!", error);
+	}
+	
+
+	@Test
+    public void testUpdateTechnicianHour() {
+		TechnicianHour tHour = null;
+		try {
+			tHour = service.updateTechnicianHour(id, validStartTime, validEndTime, validDate);
+		}
+		catch (Exception e) {
+			fail();
+		}
+		assertNotNull(tHour);
+		assertEquals(id, tHour.getId());
+		assertEquals(validStartTime, tHour.getStartTime());
+		assertEquals(validEndTime, tHour.getEndTime());
+		assertEquals(validDate, tHour.getDate());
+	}
+	
+
+	@Test
+    public void testUpdateTechnicianHourNullId() {
+		TechnicianHour tHour = null;
+		String error = null;
+		try {
+			tHour = service.updateTechnicianHour(null, validStartTime, validEndTime, validDate);
+		}
+		catch (Exception e) {
+			error = e.getMessage();
+		}
+		assertNull(tHour);
+		assertEquals("A valid technican hour I.D. must be provided!", error);
+	}
+	
+
+	@Test
+    public void testUpdateTechnicianHourNoTechnicianHour() {
+		TechnicianHour tHour = null;
+		String error = null;
+		try {
+			tHour = service.updateTechnicianHour(invalidId, validStartTime, validEndTime, validDate);
+		}
+		catch (Exception e) {
+			error = e.getMessage();
+		}
+		assertNull(tHour);
+		assertEquals("A technician hour with this I.D. cannot be found!", error);
+	}
+	
+	
+	@Test
+    public void testUpdateTechnicianHourNullStartTime() {
+		TechnicianHour tHour = null;
+		String error = null;
+		try {
+			tHour = service.updateTechnicianHour(id, null, validEndTime, validDate);
+		}
+		catch (Exception e) {
+			error = e.getMessage();
+		}
+		assertNull(tHour);
+		assertEquals("A valid start time must be provided!", error);
+	}
+	
+
+	@Test
+    public void testUpdateTechnicianHourNullEndTime() {
+		TechnicianHour tHour = null;
+		String error = null;
+		try {
+			tHour = service.updateTechnicianHour(id, validStartTime, null, validDate);
+		}
+		catch (Exception e) {
+			error = e.getMessage();
+		}
+		assertNull(tHour);
+		assertEquals("A valid end time must be provided!", error);
+	}
+	
+	
+	@Test
+    public void testUpdateTechnicianHourEndTimeBeforeStartTime() {
+		TechnicianHour tHour = null;
+		String error = null;
+		try {
+			tHour = service.updateTechnicianHour(id, invalidStartTime, validEndTime, validDate);
+		}
+		catch (Exception e) {
+			error = e.getMessage();
+		}
+		assertNull(tHour);
+		assertEquals("End time cannot be before start time!", error);
+	}
+	
+
+	@Test
+    public void testUpdateTechnicianHourNullDate() {
+		TechnicianHour tHour = null;
+		String error = null;
+		try {
+			tHour = service.updateTechnicianHour(id, validStartTime, validEndTime, null);
+		}
+		catch (Exception e) {
+			error = e.getMessage();
+		}
+		assertNull(tHour);
+		assertEquals("A valid date must be provided!", error);
+	}
+	
+
+	@Test
+    public void testUpdateTechnicianHourNotWithinBusinessHour() {
+		TechnicianHour tHour = null;
+		String error = null;
+		try {
+			tHour = service.updateTechnicianHour(id, invalidStartTime2, validEndTime, validDate);
+		}
+		catch (Exception e) {
+			error = e.getMessage();
+		}
+		assertNull(tHour);
+		assertEquals("Technician hour must exist within a business hour", error);
+	}
+
+	//Only missing checking for overlap for update
+	
+
+	@Test
+    public void testDeleteTechnicianHour() {
+		TechnicianHour tHour = null;
+		lenient().when(appointmentDao.findAppointmentByTechnician(any(Technician.class))).thenAnswer( (InvocationOnMock invocation) -> {return new HashSet<Appointment>();});
+		try {
+			tHour = service.deleteTechnicianHour(id);
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+			fail();
+		}
+		assertEquals(id, tHour.getId());
+	}
+	
+
+	@Test
+    public void testDeleteTechnicianHourNullId() {
+		TechnicianHour tHour = null;
+		String error = null;
+		try {
+			tHour = service.deleteTechnicianHour(null);
+		}
+		catch (Exception e) {
+			error = e.getMessage();
+		}
+		assertNull(tHour);
+		assertEquals("A valid technician hour ID must be provided!", error);
+	}
+	
+	
+	@Test
+    public void testDeleteTechnicianHourNoTechnicianHour() {
+		TechnicianHour tHour = null;
+		String error = null;
+		try {
+			tHour = service.deleteTechnicianHour(invalidId);
+		}
+		catch (Exception e) {
+			error = e.getMessage();
+		}
+		assertNull(tHour);
+		assertEquals("Specified technician Hour doesn't exist!", error);
 	}
 }

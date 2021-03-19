@@ -2,18 +2,13 @@ package ca.mcgill.ecse321.TestAutoRepairSystemService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.*;
 
 import static org.mockito.Mockito.lenient;
 
 import java.sql.Time;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -127,6 +122,7 @@ public class TestWorkBreakService {
     		error = e.getMessage();
     			
     	}
+    	assertNull(workbreak);
     	assertEquals(error, "Specified Work Break doesn't exist!");
     	
     }
