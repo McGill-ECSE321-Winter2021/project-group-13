@@ -27,7 +27,7 @@
       <tr>
         <td>
           <br>
-        <button @click="signIn(Username, Password)" > LogIn</button>
+        <button v-bind:disabled="!Username || !Password" @click="signIn(Username, Password)" > LogIn</button>
         </td>
       </tr>
 </table>
@@ -62,7 +62,7 @@
       <tr>
         <td>
           <br>
-        <button @click="createAccount(username2, Password2)" >Create Account</button>
+        <button v-bind:disabled="!username2 || !password2 || !name || !email" @click="createAccount(username2, password2, name, email)" >Create Account</button>
         </td>
       </tr>
     </table>
@@ -127,35 +127,30 @@ export default {
   },
 
   methods: {
-    signIn: function (username, password) {
-
-      AXIOS.get('/signin', {
-        params: {
-          username: this.Username,
-          password: this.password
-        
-        }
-      })
+    
+    signIn: function (Username, Password) {
+      AXIOS.get('/signin', '?username=' + Username  + '?password=' +  Password)
           .then((response) => {
             this.Username= '',
             this.Password= '',
             this.errorMessage= '',
-            this.user = response.data
             this.$router.push({ name: "CustomerHome" });
           })
+          
           .catch((e) => {
             var error = "Error Has Occured";
             console.log(e);
             this.errorMessage = error;
           });
-      }
-     
-    },
-    createAccount: function (username, password, name, email) {
+
+          
+      },
+  
+    createAccount: function (username2, password2, name, email) {
       AXIOS({
           method: "post",
           url: "/customers".concat(this.username2),
-          data: {
+          params: {
             name: this.name,
             email: this.email,
             password: this.password2,
@@ -174,6 +169,7 @@ export default {
             console.log(e);
             this.error = errorMsg;
           });
+
       
     },
     setCustomer: function () {
@@ -185,7 +181,8 @@ export default {
     setAdministrator: function () {
       this.userType = "administrator";
     }
-  
+
+  },
 }
 
 </script>
