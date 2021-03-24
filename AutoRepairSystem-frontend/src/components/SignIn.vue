@@ -6,11 +6,11 @@
       <br>
       <br>
       <h3> Sign In </h3>
-<select id="select"  v-model="userType">
+<select type="text" id="select"  v-model="userType">
   <option value="" disabled selected>Select User Type</option>
-  <option @click="setCustomer">Customer</option>
-  <option @click="setTechnician" >Technician</option>
-  <option @click="setAdministrator">Administrator</option>
+  <option @onchange="setCustomer()">Customer</option>
+  <option @onchange="setTechnician()" >Technician</option>
+  <option @onchange="setAdministrator()">Administrator</option>
 </select>
       <br>
       <br>
@@ -27,8 +27,9 @@
       <tr>
         <td>
           <br>
-        <button id="button" v-bind:disabled="!Username || !Password" @click="signIn(Username, Password)" > LogIn</button>
-        </td>
+        <button id="button" v-bind:disabled="!Username || !Password || !userType" @click="isValidType(userType, Username, Password)"> Log In </button>
+        
+        </td> 
       </tr>
 </table>
 <p>
@@ -68,7 +69,7 @@
     </table>
     <p>
       <br>
-      <span v-if="error2" style="color:red">Error: {{error2}}</span>
+      <span v-if="error" style="color:red">Error: {{error}}</span>
     </p>
     </div>
 </template>
@@ -146,11 +147,13 @@ export default {
       password2: '',
       name: '',
       email: '',
-      error2: ''
+      error: '',
+    
     }
   },
 
   methods: {
+
     
     signIn: function (Username, Password) {
       AXIOS.get(`/signin/?username=` + Username + `&password=` + Password, {}, {})
@@ -158,17 +161,31 @@ export default {
             this.Username= '',
             this.Password= '',
             this.errorMessage= '',
-            this.$router.push({ name: "CustomerHome" });
+            this.$router.push({name: this.userType.concat("Home")});
           })
           
           .catch((e) => {
-            var error = e.getmessage;
-            console.log(e);
+            var error= e.response.data;
             this.errorMessage = error;
           });
-
-          
+           
       },
+
+       isValidType: function (userType, Username, Password) {
+          var usertype="";
+          if(userType == "Customer") usertype="endusers";
+          if(userType == "Technician") usertype="technicians";
+          if(userType == "Administrator") usertype="administrators";
+      AXIOS.get('/'.concat(usertype).concat("/").concat(Username), {}, {})
+          .then((response) => {
+            console.log(this.signIn(Username, Password))
+            
+          })
+          .catch((e) => {
+            var errorMsg = e.response.data;
+            this.errorMessage = errorMsg;
+          });
+    },
   
     createAccount: function (username2, password2, name, email) {
       AXIOS.post(`/customers/`.concat(username2) + `?password=` + password2 + `&name=` + name + `&email=` + email, {}, {})
@@ -181,24 +198,29 @@ export default {
             this.$router.push({ name: "CustomerHome" });
           })
           .catch((e) => {
-            var errorMsg = e.message;
-            console.log(e);
-            this.error = errorMsg;
+            var errormsg = e.response.data;
+            this.errorMessage = errormsg;
           });
+    },
+
+        
 
       
     },
     setCustomer: function () {
-      this.userType = "customer";
+      
+      this.userType = "Customer";
     },
     setTechnician: function () {
-      this.userType = "technician";
+    
+      this.userType = "Technician";
     },
     setAdministrator: function () {
-      this.userType = "administrator";
+      
+      this.userType = "Administrator";
     }
 
-  },
+  
 }
 
 </script>
