@@ -6,8 +6,8 @@
       <br>
       <br>
       <h3> Sign In </h3>
-  <label for="UserType">Select User Type:</label>
-<select name="UserType" id="usertypedropdown">
+<select id="select"  v-model="userType">
+  <option value="" disabled selected>Select User Type</option>
   <option @click="setCustomer">Customer</option>
   <option @click="setTechnician" >Technician</option>
   <option @click="setAdministrator">Administrator</option>
@@ -16,18 +16,18 @@
       <br>
       <tr>
           <td>
-              <input type="text" v-model="Username" placeholder="username">
+              <input id="pass2" type="text" v-model="Username" placeholder="username">
           </td>
       </tr>
        <tr>
         <td>
-         <input type="password" v-model="Password" placeholder="password">
+         <input id="pass2" type="password" v-model="Password" placeholder="password">
         </td>
       </tr>
       <tr>
         <td>
           <br>
-        <button v-bind:disabled="!Username || !Password" @click="signIn(Username, Password)" > LogIn</button>
+        <button id="button" v-bind:disabled="!Username || !Password" @click="signIn(Username, Password)" > LogIn</button>
         </td>
       </tr>
 </table>
@@ -41,28 +41,28 @@
       <br>
       <tr>
           <td>
-              <input type="text" v-model="name" placeholder="name">
+              <input id="pass2" type="text" v-model="name" placeholder="name">
           </td>
       </tr>
       <tr>
         <td>
-         <input type="text" v-model="email" placeholder="email">
+         <input id="pass2" type="text" v-model="email" placeholder="email">
         </td>
       </tr>
       <tr>
         <td>
-         <input type="text" v-model="username2" placeholder="username">
+         <input id="pass2" type="text" v-model="username2" placeholder="username">
         </td>
       </tr>
       <tr>
         <td>
-         <input type="password" v-model="password2" placeholder="password">
+         <input id="pass2" type="password" v-model="password2" placeholder="password">
         </td>
       </tr>
       <tr>
         <td>
           <br>
-        <button v-bind:disabled="!username2 || !password2 || !name || !email" @click="createAccount(username2, password2, name, email)" >Create Account</button>
+        <button id="button" v-bind:disabled="!username2 || !password2 || !name || !email" @click="createAccount(username2, password2, name, email)" >Create Account</button>
         </td>
       </tr>
     </table>
@@ -93,6 +93,29 @@ margin-left: 600px;
 
   }
 
+  #pass2{
+  padding:5px;
+  border-radius:10px;
+  width:100%
+  }
+
+
+#button:enabled{
+  border-color: #3498db;
+  color: #fff;
+  box-shadow: 0 0 40px 40px #3498db inset, 0 0 0 0 #3498db;
+  -webkit-transition: all 150ms ease-in-out;
+  transition: all 150ms ease-in-out;
+}
+#button:enabled:hover {
+  box-shadow: 0 0 10px 0 #3498db inset, 0 0 10px 4px #3498db;
+}
+
+#select{
+ border-radius:15px;
+ background-color:darkgrey;
+}
+
 
 
 </style>
@@ -104,6 +127,7 @@ var config = require("../../config");
 var frontendUrl = "https://" + config.build.host + ":" + config.build.port;
 var backendUrl =
   "https://" + config.build.backendHost + ":" + config.build.backendPort;
+
 
   var AXIOS = axios.create({
   baseURL: backendUrl,
@@ -129,7 +153,7 @@ export default {
   methods: {
     
     signIn: function (Username, Password) {
-      AXIOS.get('/signin', '?username=' + Username  + '?password=' +  Password)
+      AXIOS.get(`/signin/?username=` + Username + `&password=` + Password, {}, {})
           .then((response) => {
             this.Username= '',
             this.Password= '',
@@ -138,7 +162,7 @@ export default {
           })
           
           .catch((e) => {
-            var error = "Error Has Occured";
+            var error = e.getmessage;
             console.log(e);
             this.errorMessage = error;
           });
@@ -147,15 +171,7 @@ export default {
       },
   
     createAccount: function (username2, password2, name, email) {
-      AXIOS({
-          method: "post",
-          url: "/customers".concat(this.username2),
-          params: {
-            name: this.name,
-            email: this.email,
-            password: this.password2,
-          },
-        })
+      AXIOS.post(`/customers/`.concat(username2) + `?password=` + password2 + `&name=` + name + `&email=` + email, {}, {})
           .then((response) => {
             this.email = "";
             this.password2 = "";
