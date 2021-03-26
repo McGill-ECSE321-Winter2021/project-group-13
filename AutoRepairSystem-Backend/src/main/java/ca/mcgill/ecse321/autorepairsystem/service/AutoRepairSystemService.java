@@ -1,5 +1,6 @@
 package ca.mcgill.ecse321.autorepairsystem.service;
 
+
 import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -523,7 +524,6 @@ public class AutoRepairSystemService {
     } else if (endUser.getPassword().equals(password) == false) {
       throw new IllegalArgumentException("Incorrect password!");
     }
-
     return endUser;
   }
 
