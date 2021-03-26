@@ -1,81 +1,159 @@
 <template>
-  <div id="evenregistration">
-    <h2>People</h2>
-    <table>
-        <tr v-for="person in persons" >
-            <td>{{ person.name }}</td>
-            <td>
-              <ul>
-                <li v-for="event in person.events">
-                  {{event.name}}
-                </li>
-              </ul>
-            </td>
-        </tr>
-      <tr>
-          <td>
-              <input type="text" v-model="newPerson" placeholder="Person Name">
-          </td>
-          <td>
-              <button v-bind:disabled="!newPerson" @click="createPerson(newPerson)" >Create</button>
-          </td>
-      </tr>
-    </table>
-    <p>
-      <span v-if="errorPerson" style="color:red">Error: {{errorPerson}}</span>
-    </p>
-  </div>
+<div>
+  <div id="payment">
+    <h2>Payment</h2>
+     <div id="amountowed">
+       <button id="button2" @click="getamountowed()">View Amount Owed</button>
+       <span v-if=" temp=='3' && amountowed==0" style="color:blue">No Outstanding Balance, Please Return Home!</span> <br>
+   <h2 v-if="amountowed && amountowed!=0"> Amount Owed: ${{amountowed}} </h2>
+   <br>
+   <span v-if="amountowed!=0 && amountpaying && amountpaying<=amountowed && amountpaying>0" style="color:red">New Amount Owed If You Pay ${{amountpaying}}:<br> ${{amountowed}} - ${{amountpaying}} = ${{amountowed - amountpaying}}</span>
+   </div>
+   <div id="homebutton">
+     <button id="button" @click="returnhome()">Back To Home</button>
+     </div>
+    <div id="textbar">
+     <span v-if="!amountowed && amountpayed==amountowed && temp!=3" style="color:red"> Note: User Must View Amount Owed Before They Are Able To Pay. </span>
+      <br>
+      <br>
+      <span v-if="amountpaying > amountowed" style="color:red">You Cannot Pay More Than You Owe!</span> <br>
+ <label for="appt-time">Enter amount to pay: $ </label><span id="amounttopay"><input type="number" step="1" min="1"  v-model="amountpaying" placeholder="Amount To Pay" id="amnt" name="amnt"></span>
+ <br>
+ <br>
+ <button id="button" v-bind:disabled="!amountpaying || !amountowed || amountowed==0 || amountpaying>amountowed || amountpaying<=0 " @click="paynow(amountpaying)">Pay Now</button> <br>
+ <br>
+ <span v-if="amountpayed" style="color:blue">Thank You For Your Payment Of  ${{amountpayed}}</span> <br>
+ </div>
+ </div>
+</div>
 </template>
 <style>
-#eventregistration {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    color: #2c3e50;
-    background: #f2ece8;
-  }
+
+#button:enabled{
+  border-color: #3498db;
+  color: #fff;
+  box-shadow: 0 0 40px 40px #3498db inset, 0 0 0 0 #3498db;
+  -webkit-transition: all 150ms ease-in-out;
+  transition: all 150ms ease-in-out;
+}
+
+
+
+#button2.disabled{
+  border-color: #3498aa;
+  color: #aaa;
+}
+
+
+#payment {
+  background-color: #CDD7DE;
+  width: 100%;
+  height: 100vh;
+  float: right;
+  
+}
+
+#textbar{
+  margin-top: 100px;
+}
+
+#button2{
+  border-color: #3498db;
+  color: #fff;
+  box-shadow: 0 0 40px 40px #3498db inset, 0 0 0 0 #3498db;
+  -webkit-transition: all 150ms ease-in-out;
+  transition: all 150ms ease-in-out;
+}
+
+#amountowed{
+
+margin-right: 1000px;
+
+}
+
+#homebutton{
+  margin-top: -30px;
+align: right;
+margin-left: 1000px;
+}
+
+
+
+
+
+
 </style>
 
 <script>
-function PersonDto (name) {
-  this.name = name
-  this.events = []
-}
 
-function EventDto (name, date, start, end) {
-  this.name = name
-  this.eventDate = date
-  this.startTime = start
-  this.endTime = end
-}
+
+import axios from "axios";
+var config = require("../../config");
+var frontendUrl = "https://" + config.build.host + ":" + config.build.port;
+var backendUrl =
+  "https://" + config.build.backendHost + ":" + config.build.backendPort;
+
+
+  var AXIOS = axios.create({
+  baseURL: backendUrl,
+  headers: { "Access-Control-Allow-Origin": frontendUrl },
+});
 
 export default {
-  created: function () {
-    // Test data
-    const p1 = new PersonDto('John')
-    const p2 = new PersonDto('Jill')
-    // Sample initial content
-    this.persons = [p1, p2]
-  },
-
-  name: 'eventregistration',
+  name: "SignIn",
   data () {
     return {
-      persons: [],
-      newPerson: '',
-      errorPerson: '',
-      response: []
+      amountpaying: 0,
+      amountpayed:0,
+      amountowed:0,
+      temp:'',
     }
   },
 
   methods: {
-    createPerson: function (personName) {
-      // Create a new person and add it to the list of people
-      var p = new PersonDto(personName)
-      this.persons.push(p)
-      // Reset the name field for new people
-      this.newPerson = ''
+
+    returnhome: function () {
+      
+      this.$router.push({name: "CustomerHome"});
+    },
+
+    getamountowed: function () {
+      this.amountowed=500; //actually get amount that user owes
+      var elem = document.getElementById('button2');
+      elem.parentNode.removeChild(elem);
+      this.temp='3';
+     return false;
+      
+    },
+
+    paynow: function () {
+      
+      this.amountpayed=this.amountpaying;
+      this.amountowed=this.amountowed - this.amountpayed;
+      //actually update database/what user owes
+      this.amountpaying=0;
+      
+    },
+    
+    signIn: function (Username, Password) {
+      AXIOS.get(`/signin/?username=` + Username + `&password=` + Password, {}, {})
+          .then((response) => {
+            this.Username= '',
+            this.Password= '',
+            this.errorMessage= '',
+            this.$router.push({name: this.userType.concat("Home")});
+          })
+          
+          .catch((e) => {
+            var error= e.response.data;
+            this.errorMessage = error;
+          });
+           
     }
+  }
+}
   
-}
-}
+
+  
 
 </script>
