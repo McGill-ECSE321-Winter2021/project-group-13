@@ -8,6 +8,7 @@ import AvailableAppointments from "@/components/AvailableAppointments"
 import BookAppointmentConfirmation from "@/components/BookAppointmentConfirmation"
 import PayInvoice from "@/components/PayInvoice"
 import AccountCreation from "@/components/AccountCreation"
+import AdminUserManagement from "@/components/AdminUserManagement"
 
 Vue.use(Router)
 
@@ -54,8 +55,13 @@ export default new Router({
       path: '/AccountCreation',
       name: 'AccountCreation',
       component: AccountCreation
-    }
+    },
     
+    {
+      path: '/AdminUserManagement',
+      name: 'AdminUserManagement',
+      component: AdminUserManagement
+    }
     
   ]
 })

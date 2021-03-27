@@ -144,7 +144,18 @@ export default {
             this.username = "";
             this.errorMessage = "";
             this.name = "";
-            this.$router.push({ name: "CustomerHome" });
+
+            AXIOS.get('/administrators/')
+              .then((response) => {
+                if(response.data.size() == 0) {
+                  AXIOS.post('/make/'.concat(username) + '/administrator') 
+                  this.$router.push({ name: "AdministratorHome" });
+                }
+                else {
+                  this.$router.push({ name: "CustomerHome" });
+                }
+              });
+            
           })
           .catch((e) => {
             var errormsg = e.response.data;

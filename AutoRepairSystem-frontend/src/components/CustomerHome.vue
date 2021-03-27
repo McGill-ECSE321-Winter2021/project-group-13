@@ -50,6 +50,8 @@
  </div>
 </div>
 </template>
+
+
 <style>
 
 #button, #deletebutton, #button2, #buttonlogout{
@@ -122,7 +124,7 @@ margin-left: 1100px;
     padding: 12px 15px;
 }
 
-..styled-table tbody tr {
+.styled-table tbody tr {
     border-bottom: 1px solid #dddddd;
 }
 

@@ -241,14 +241,14 @@ public class AutoRepairSystemController {
 
   // User controller methods
 
-  @GetMapping(value = {"/endusers", "/endusers/"})
+  @GetMapping(value = {"/endUsers", "/endUsers/"})
   public ResponseEntity<?> getAllEndUsers() {
     return new ResponseEntity<>(
         service.getAllEndUsers().stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
   }
 
 
-  @GetMapping(value = {"/endusers/{username}", "/endusers/{username}/"})
+  @GetMapping(value = {"/endUsers/{username}", "/endUsers/{username}/"})
   public ResponseEntity<?> getEndUser(@PathVariable("username") String username) {
     try {
       return new ResponseEntity<>(convertToDto(service.getEndUser(username)), HttpStatus.OK);
@@ -258,7 +258,7 @@ public class AutoRepairSystemController {
   }
 
 
-  @PutMapping(value = {"/endusers/{username}", "/endusers/{username}/"})
+  @PutMapping(value = {"/endUsers/{username}", "/endUsers/{username}/"})
   public ResponseEntity<?> updateEndUser(@PathVariable("username") String username, @RequestParam String password,
       @RequestParam String name, @RequestParam String email) {
     try {
@@ -269,7 +269,7 @@ public class AutoRepairSystemController {
   }
 
 
-  @DeleteMapping(value = {"/endusers/{username}", "/endusers/{username}/"})
+  @DeleteMapping(value = {"/endUsers/{username}", "/endUsers/{username}/"})
   public ResponseEntity<?> deleteEndUser(@PathVariable("username") String username) {
     try {
       return new ResponseEntity<>(convertToDto(service.deleteEndUser(username)), HttpStatus.OK);
