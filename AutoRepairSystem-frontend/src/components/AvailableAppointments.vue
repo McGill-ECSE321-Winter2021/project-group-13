@@ -6,6 +6,7 @@
     <div id="service-block">
       <h3>Services</h3>
       Select Desired Services:
+
       <div class="service-table">
       <table id="service-table">
         <thead>
@@ -16,115 +17,78 @@
         </tr>
         </thead>
         <tbody>
+          <template v-for="service in services">
           <tr>
-            <td><div id="servicediv"><input type="checkbox" id="service1" name="service1" value="Service1"><label for="service1"><span id="service">Service 1</span></label></div></td>
-            <td>10:00</td>
-            <td>$37</td>
+            <td><div id="servicediv"><input type="checkbox" v-bind:value="service" v-model="checkedServices"><span id="service">{{service.name}}</span></div></td>
+            <td>{{service.duration}} minutes</td>
+            <td>${{service.price}}</td>
           </tr>
-          <tr>
-            <td><div id="servicediv"><input type="checkbox" id="service2" name="service2" value="Service2"><label for="service2"><span id="service">Service 2</span></label></div></td>
-            <td>10:00</td>
-            <td>$37</td>
-          </tr>
-          <tr>
-            <td><div id="servicediv"><input type="checkbox" id="service3" name="service3" value="Service3"><label for="service3"><span id="service">Service 3</span></label></div></td>
-            <td>10:00</td>
-            <td>$37</td>
-          </tr>
-          <tr>
-            <td><div id="servicediv"><input type="checkbox" id="service4" name="service4" value="Service4"><label for="service4"><span id="service">Service 4</span></label></div></td>
-            <td>10:00</td>
-            <td>$37</td>
-          </tr>
-          <tr>
-            <td><div id="servicediv"><input type="checkbox" id="service5" name="service5" value="Service5"><label for="service5"><span id="service">Service 5</span></label></div></td>
-            <td>10:00</td>
-            <td>$37</td>
-          </tr>
-          <tr>
-            <td><div id="servicediv"><input type="checkbox" id="service6" name="service6" value="Service6"><label for="service6"><span id="service">Service 6</span></label></div></td>
-            <td>10:00</td>
-            <td>$37</td>
-          </tr>
-          <tr>
-            <td><div id="servicediv"><input type="checkbox" id="service6" name="service6" value="Service6"><label for="service6"><span id="service">Service 6</span></label></div></td>
-            <td>10:00</td>
-            <td>$37</td>
-          </tr>
-          <tr>
-            <td><div id="servicediv"><input type="checkbox" id="service6" name="service6" value="Service6"><label for="service6"><span id="service">Service 6</span></label></div></td>
-            <td>10:00</td>
-            <td>$37</td>
-          </tr>
-          <tr>
-            <td><div id="servicediv"><input type="checkbox" id="service6" name="service6" value="Service6"><label for="service6"><span id="service">Service 6</span></label></div></td>
-            <td>10:00</td>
-            <td>$37</td>
-          </tr>
-          <tr>
-            <td><div id="servicediv"><input type="checkbox" id="service6" name="service6" value="Service6"><label for="service6"><span id="service">Service 6</span></label></div></td>
-            <td>10:00</td>
-            <td>$37</td>
-          </tr>
+          </template>
         </tbody>
       </table>
+      </div>
+
+      <div id="totals">
+      Number of services: {{checkedServices.length}} checked services<br>
+      Total duration: {{getTotalServicesDuration()}} minutes<br>
+      Total price: ${{getTotalServicesPrice()}}
       </div>
 
       <div class="datetime-block">
         <h3>Date & Time</h3>
         <br>
-        <label for="appt-date">Select a Date: </label><span id="datetimepicker"><input type="date" id="appt-date" name="appt-date"></span>
+        <label for="appt-date">Select a Date: </label><span id="datetimepicker"><input type="date" @input="inputDate = getDateClean($event.target.value)"></span>
         <br><br>
-        <label for="appt-time">Select a time: </label><span id="datetimepicker"><input type="time" id="appt-time" name="appt-time"></span>
+        <label for="appt-time">Select a time: </label><span id="datetimepicker"><input type="time" pattern="[0-9]{2}:[0-9]{2}" @input="inputTime = getTimeClean($event.target.value)"></span>
       </div>
 
       <div style="margin-top: 30px;">
-        <button>Book Appointment</button>
+        <button v-bind:disabled="!inputDate || !inputTime || checkedServices.length<=0" v-on:click="createAppointment()">Book Appointment</button>
       </div>
 
-      <button class="back">Back</button>
+      <br><br>
+      <span v-if="errorMessage" style="color:red">Error: {{errorMessage}}</span>
+
+      <button class="back" v-on:click="backButton" >Back</button>
 
     </div>
   </div>
 
   <div class="calendar">
     <h2>Availability Calendar</h2>
-    <div id="month-header"><button><</button><span id="month">March 2021</span><button>></button></div>
+    <div id="month-header"><span id="month">{{month}} {{year}}</span></div>
+    <div id="week-buttons"><button class="week-change" v-on:click="changeWeek(false)">Previous</button><button class="week-change" v-on:click="changeWeek(true)">Next  </button></div>
     <table id="appointments-table">
       <tr id="calendar-top-row">
-        <td>Sun.<br>1</td>
-        <td>Mon.<br>2</td>
-        <td>Tue.<br>3</td>
-        <td>Wed.<br>4</td>
-        <td>Thu.<br>5</td>
-        <td>Fri.<br>6</td>
-        <td>Sat.<br>7</td>
+        <td>Sun.<br>{{weekdays[0]}}</td>
+        <td>Mon.<br>{{weekdays[1]}}</td>
+        <td>Tue.<br>{{weekdays[2]}}</td>
+        <td>Wed.<br>{{weekdays[3]}}</td>
+        <td>Thu.<br>{{weekdays[4]}}</td>
+        <td>Fri.<br>{{weekdays[5]}}</td>
+        <td>Sat.<br>{{weekdays[6]}}</td>
       </tr>
       <tr id="available-slots">
         <td>
-          <div id="availability-block">9:00<br>10:00</div>
-          <div id="availability-block">11:00<br>13:00</div>
-          <div id="availability-block">14:30<br>14:45</div>
-          <div id="availability-block">15:00<br>16:00</div>
-          <div id="availability-block">16:00<br>22:00</div>
+          <div id="availability-block" v-for="availability in availabilities[0]">{{availability.startTime}}<br>{{availability.endTime}}</div>
         </td>
         <td>
-          <div id="availability-block">9:00<br>17:00</div>
+          <div id="availability-block" v-for="availability in availabilities[1]">{{availability.startTime}}<br>{{availability.endTime}}</div>
         </td>
         <td>
-          <div id="availability-block">9:00<br>17:00</div>
+          <div id="availability-block" v-for="availability in availabilities[2]">{{availability.startTime}}<br>{{availability.endTime}}</div>
         </td>
         <td>
-          <div id="availability-block">9:00<br>17:00</div>
+          <div id="availability-block" v-for="availability in availabilities[3]">{{availability.startTime}}<br>{{availability.endTime}}</div>
         </td>
         <td>
-          <div id="availability-block">9:00<br>17:00</div>
+          <div id="availability-block" v-for="availability in availabilities[4]">{{availability.startTime}}<br>{{availability.endTime}}</div>
         </td>
         <td>
-          <div id="availability-block">9:00<br>17:00</div>
+          <div id="availability-block" v-for="availability in availabilities[5]">{{availability.startTime}}<br>{{availability.endTime}}</div>
         </td>
         <td>
-          <div id="availability-block">9:00<br>17:00</div>
+          <div id="availability-block" v-for="availability in availabilities[6]">{{availability.startTime}}<br>{{availability.endTime}}</div>
         </td>
       </tr>
     </table>
@@ -201,17 +165,25 @@ th {
 }
 
 #month-header {
-  margin-bottom: 5px;
-  font-size: 20px;
+  font-size: 25px;
+  float: left;
 }
 
-#month {
+#week-buttons {
+  float: right;
+  margin-bottom: 5px;
+}
+
+button.week-change {
   margin-left: 5px;
   margin-right: 5px;
+  width: 100px;
+  font-size: 20px;
 }
 
 #appointments-table {
   width: 100%;
+  table-layout: fixed;
 }
 
 tr, td {
@@ -253,11 +225,156 @@ body {
   margin-top: 0;
 }
 
-#test-div {
-  text-color: grey;
+#totals {
+  text-align: left;
 }
 
 </style>
 
 <script>
+import axios from 'axios';
+var config = require('../../config');
+
+var frontendUrl = 'http://' + config.dev.host + ':' + config.dev.port;
+var backendUrl = 'http://' + config.dev.backendHost + ':' + config.dev.backendPort;
+
+var AXIOS = axios.create({
+  baseURL: backendUrl,
+  headers: { 'Access-Control-Allow-Origin': frontendUrl }
+});
+
+//Variable which stores the date of the start of the displayed week (Sunday)
+var date = new Date();
+date.setDate(date.getDate()-date.getDay());
+
+//This function returns the month displayed (mid-week day's month)
+function getDisplayedMonth() {
+  var midWeek = new Date(date);
+  midWeek.setDate(midWeek.getDate()+3);
+  return midWeek.toLocaleString('default', { month: 'long' });
+}
+
+//This function returns the year displayed (mid-week day's year)
+function getDisplayedYear() {
+  var midWeek = new Date(date);
+  midWeek.setDate(midWeek.getDate()+3);
+  return midWeek.getFullYear();
+}
+
+//This function returns the day of the week displayed
+function getWeekdays() {
+  var datesOfWeek = ["", "", "", "", "", "", ""];
+
+  var day = new Date(date);
+  datesOfWeek[0] = date.getDate();
+  for (var i=1;i<7;i++) {
+    day.setDate(day.getDate()+1);
+    datesOfWeek[i] = day.getDate();
+  }
+
+  return datesOfWeek;
+}
+
+export default {
+  name: "AvailableAppointments",
+  data () {
+    return {
+      errorMessage: "",
+      month: getDisplayedMonth(),
+      year: getDisplayedYear(),
+      weekdays: getWeekdays(),
+      inputDate: "",
+      inputTime: "",
+      services: [],
+      checkedServices: [],
+      availabilities: [[], [], [], [], [], [], []],
+    }
+  },
+
+  created: function () {
+
+      AXIOS.get(`/workitems`)
+          .then((response) => {
+            this.services = response.data;
+          })
+          .catch((e) => {
+            this.errorMessage = e.response.data;
+          });
+      },
+
+
+  methods: {
+
+    //This method changes the displayed week and related information
+    changeWeek: function(addDays) {
+      this.errorMessage = this.services;
+      if (addDays) date.setDate(date.getDate()+7);
+      else date.setDate(date.getDate()-7)
+      this.year = getDisplayedYear();
+      this.month = getDisplayedMonth();
+      this.weekdays = getWeekdays();
+    },
+
+    //This method takes the user back to the customer home page
+    backButton: function() {
+      this.$router.push({name: "CustomerHome"});
+    },
+
+    getTotalServicesPrice: function() {
+      var totalPrice = 0;
+      for (var i=0; i<this.checkedServices.length; i++) {
+        totalPrice += this.checkedServices[i].price;
+      }
+      return totalPrice;
+    },
+
+    getTotalServicesDuration: function() {
+      var totalDuration = 0;
+      for (var i=0; i<this.checkedServices.length; i++) {
+        totalDuration += this.checkedServices[i].duration;
+      }
+      return totalDuration;
+    },
+
+    createAppointment: function () {
+      var dateString = this.inputDate.toLocaleString("default", { dateStyle: "full" });
+      var timeString = this.inputTime.toLocaleString("default", { timeStyle: "long"});
+
+      var servicesString = this.checkedServices[0].name;
+      for (var i=1; i<this.checkedServices.length-1; i++) {
+        servicesString += ", " + this.checkedServices[i].name;
+      }
+      servicesString += ", " + this.checkedServices[this.checkedServices.length-1].name + ".";
+
+      var confirmation = window.confirm("Are you sure you want to book an appointment on " + dateString + " at " + timeString + " with the followin services: " + servicesString);
+
+      if (confirmation) {
+        //Call Axios and create the appointment (NOTE: remember to update the parameters of the function in the html too when adding this)
+      }
+    },
+
+    getWeekAvailabilities: function() {
+      //Returns the availabilities for every day of the week
+    },
+
+    //This method converts date input field to a date object (Where we only care about the date)
+    getDateClean(currDate) {
+        if (currDate == "") return "";
+        var selectedDate = new Date(currDate + "T00:00:00");
+        return selectedDate;
+    },
+
+    //This method converts time input field to a date object (Where we only care about the time)
+    getTimeClean(currTime) {
+      if (currTime == "") return "";
+      var selectedTime = new Date();
+      var time = currTime.split(":");
+      selectedTime.setHours(time[0], time[1], "00");
+      return selectedTime;
+    }
+
+  }
+  
+}
+
 </script>

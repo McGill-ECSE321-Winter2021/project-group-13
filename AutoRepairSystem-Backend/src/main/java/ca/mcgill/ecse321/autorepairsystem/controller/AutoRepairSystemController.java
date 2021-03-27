@@ -94,7 +94,7 @@ public class AutoRepairSystemController {
   }
 
   //can't RequestParam objects, and can only RequestBody one object -> package all arguments as an appointment
-  @PutMapping(value = {"/create/appointment", "create/appointment/"})
+  @PostMapping(value = {"/create/appointment", "create/appointment/"})
   public ResponseEntity<?> createAppointment(@RequestBody AppointmentDto appointment) {
     
     TechnicianDto technicianDto = appointment.getTechnician();
@@ -378,7 +378,7 @@ public class AutoRepairSystemController {
   }
 
 
-  @PostMapping(value = {"/workitems/{name}", "/workbreaks/{name}/"})
+  @PostMapping(value = {"/workitems/{name}", "/workitems/{name}/"})
   public ResponseEntity<?> createWorkItem(@PathVariable("name") String name, @RequestParam int duration,
       @RequestParam int price) throws IllegalArgumentException {
     try {
