@@ -19,7 +19,6 @@
     </tbody>
 </table>
 
-
   </div>
 </div>
 </template>
@@ -42,11 +41,10 @@ var backendUrl = 'http://' + config.dev.backendHost + ':' + config.dev.backendPo
 
 var AXIOS = axios.create({
   baseURL: backendUrl,
-  headers: { "Access-Control-Allow-Origin": frontendUrl },
+  //headers: { "Access-Control-Allow-Origin": frontendUrl },
 })
 
 export default {
-
 
   data() {
     return {

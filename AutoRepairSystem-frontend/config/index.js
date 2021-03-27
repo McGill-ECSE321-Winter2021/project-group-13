@@ -5,9 +5,9 @@ module.exports = {
   build: {
     env: require('./prod.env'),
     host: 'autorepairsystem-backend-fs173.herokuapp.com',
-    port: 443,
+    port: 433,
     backendHost: 'autorepairsystem-backend-fs173.herokuapp.com',
-    backendPort: 443,
+    backendPort: 433,
     index: path.resolve(__dirname, '../dist/index.html'),
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
