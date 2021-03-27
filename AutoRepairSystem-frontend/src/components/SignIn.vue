@@ -1,105 +1,39 @@
 
 <template>
-  <div id="LogIn">
-    <table id="logintable">
-      <br>
-      <br>
-      <br>
-      <h3> Sign In </h3>
-<select type="text" id="select"  v-model="userType">
-  <option value="" disabled selected>Select User Type</option>
-  <option @onchange="setCustomer()">Customer</option>
-  <option @onchange="setTechnician()" >Technician</option>
-  <option @onchange="setAdministrator()">Administrator</option>
-</select>
-      <br>
-      <br>
-      <tr>
-          <td>
-              <input id="pass2" type="text" v-model="Username" placeholder="username">
-          </td>
-      </tr>
-       <tr>
-        <td>
-         <input id="pass2" type="password" v-model="Password" placeholder="password">
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <br>
-        <button id="button" v-bind:disabled="!Username || !Password || !userType" @click="isValidType(userType, Username, Password)"> Log In </button>
-        
-        </td> 
-      </tr>
-</table>
-<p>
-      <br>
-      <span v-if="errorMessage" style="color:red">Error: {{errorMessage}}</span>
-    </p>  
-<table id="createaccounttable">
-      <br>
-      <h3> Create Account </h3>
-      <br>
-      <tr>
-          <td>
-              <input id="pass2" type="text" v-model="name" placeholder="name">
-          </td>
-      </tr>
-      <tr>
-        <td>
-         <input id="pass2" type="text" v-model="email" placeholder="email">
-        </td>
-      </tr>
-      <tr>
-        <td>
-         <input id="pass2" type="text" v-model="username2" placeholder="username">
-        </td>
-      </tr>
-      <tr>
-        <td>
-         <input id="pass2" type="password" v-model="password2" placeholder="password">
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <br>
-        <button id="button" v-bind:disabled="!username2 || !password2 || !name || !email" @click="createAccount(username2, password2, name, email)" >Create Account</button>
-        </td>
-      </tr>
-    </table>
-    <p>
-      <br>
-      <span v-if="error" style="color:red">Error: {{error}}</span>
-    </p>
+<div id="LogIn">
+  <div id="central-signin">
+    <h2>Account Sign In</h2>
+    <div id="fields-signin">
+      <div>
+        <select type="text" id="select"  v-model="userType">
+          <option value="" disabled selected>Select User Type</option>
+          <option @onchange="setCustomer()">Customer</option>
+          <option @onchange="setTechnician()" >Technician</option>
+          <option @onchange="setAdministrator()">Administrator</option>
+        </select>
+      </div>
+      
+      <div>
+        <input class="pass2" id="username-icon" type="text" v-model="username" placeholder="Username">
+      </div>
+
+      <div>
+        <input class="pass2" id="password-icon" type="password" v-model="password" placeholder="Password">
+      </div>
     </div>
+    
+    <div>
+      <span v-if="errorMessage" style="color:red">Error: {{errorMessage}}</span>
+      <br>  
+      <button id="button" v-bind:disabled="!username || !password || !userType" @click="isValidType(userType, username, password)"> Log In </button>
+      <br><br>
+      <span>Create an account? <router-link to="/AccountCreation">Sign up</router-link></span>
+    </div>
+  </div>
+</div>
 </template>
 
 <style>
-
-#LogIn {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    color: #2c3e50;
-    background: #CDD7DE;
-    position: relative;
-  }
-
-#logintable{
-margin-top: 10px;
-margin-left: 580px;
-  }
-
-#createaccounttable{
-margin-top: 10px;
-margin-left: 600px;
-
-  }
-
-  #pass2{
-  padding:5px;
-  border-radius:10px;
-  width:100%
-  }
-
 
 #button:enabled{
   border-color: #3498db;
@@ -112,9 +46,54 @@ margin-left: 600px;
   box-shadow: 0 0 10px 0 #3498db inset, 0 0 10px 4px #3498db;
 }
 
+#button {
+  width: 200px;
+}
+
+#button-signin {
+  margin-top: 15px;
+}
+
 #select{
  border-radius:15px;
  background-color:darkgrey;
+ margin-top: 25px;
+}
+
+input.pass2 {
+  margin-top: 10px;
+  padding-left: 25px;
+  border-radius: 10px;
+}
+
+input.pass2:focus {
+  border: 2px solid #555;
+  -webkit-transition: 0.5s;
+}
+
+#LogIn {
+  background-color: #CDD7DE;
+  height: 100vh;
+  position: relative;
+}
+
+#central-signin {
+  width: 400px;
+  height: 320px;
+  background-color: #EAF0F4;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -42vh 0 0 -200px;
+  padding-top: 20px;
+}
+
+#username-icon {
+  background: white url(../assets/username-icon.png) left no-repeat;
+}
+
+#password-icon {
+  background: white url(../assets/password-icon.png) left no-repeat;
 }
 
 
@@ -129,7 +108,6 @@ var frontendUrl = "https://" + config.build.host + ":" + config.build.port;
 var backendUrl =
   "https://" + config.build.backendHost + ":" + config.build.backendPort;
 
-
   var AXIOS = axios.create({
   baseURL: backendUrl,
   headers: { "Access-Control-Allow-Origin": frontendUrl },
@@ -139,27 +117,21 @@ export default {
   name: "SignIn",
   data () {
     return {
-      Username: '',
-      Password: '',
+      username: '',
+      password: '',
       errorMessage: '',
       userType: '',
-      username2: '',
-      password2: '',
-      name: '',
-      email: '',
-      error: '',
-    
     }
   },
 
   methods: {
 
     
-    signIn: function (Username, Password) {
-      AXIOS.get(`/signin/?username=` + Username + `&password=` + Password, {}, {})
+    signIn: function (username, password) {
+      AXIOS.get(`/signin/?username=` + username + `&password=` + password, {}, {})
           .then((response) => {
-            this.Username= '',
-            this.Password= '',
+            this.username= '',
+            this.password= '',
             this.errorMessage= '',
             this.$router.push({name: this.userType.concat("Home")});
           })
@@ -171,14 +143,14 @@ export default {
            
       },
 
-       isValidType: function (userType, Username, Password) {
+       isValidType: function (userType, username, password) {
           var usertype="";
           if(userType == "Customer") usertype="endusers";
           if(userType == "Technician") usertype="technicians";
           if(userType == "Administrator") usertype="administrators";
-      AXIOS.get('/'.concat(usertype).concat("/").concat(Username), {}, {})
+      AXIOS.get('/'.concat(usertype).concat("/").concat(username), {}, {})
           .then((response) => {
-            console.log(this.signIn(Username, Password))
+            console.log(this.signIn(username, password))
             
           })
           .catch((e) => {
@@ -186,25 +158,6 @@ export default {
             this.errorMessage = errorMsg;
           });
     },
-  
-    createAccount: function (username2, password2, name, email) {
-      AXIOS.post(`/customers/`.concat(username2) + `?password=` + password2 + `&name=` + name + `&email=` + email, {}, {})
-          .then((response) => {
-            this.email = "";
-            this.password2 = "";
-            this.username2 = "";
-            this.error = "";
-            this.name = "";
-            this.$router.push({ name: "CustomerHome" });
-          })
-          .catch((e) => {
-            var errormsg = e.response.data;
-            this.errorMessage = errormsg;
-          });
-    },
-
-        
-
       
     },
     setCustomer: function () {

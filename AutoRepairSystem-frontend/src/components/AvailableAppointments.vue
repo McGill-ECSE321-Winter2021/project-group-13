@@ -11,9 +11,9 @@
       <table id="service-table">
         <thead>
         <tr>
-          <th>Service</th>
-          <th>Duration</th>
-          <th>Price</th>
+          <th id="header-appointments">Service</th>
+          <th id="header-appointments">Duration</th>
+          <th id="header-appointments">Price</th>
         </tr>
         </thead>
         <tbody>
@@ -139,7 +139,7 @@
   margin-top: 5px;
 }
 
-th {
+#header-appointments {
   background: white;
 }
 
@@ -186,7 +186,7 @@ button.week-change {
   table-layout: fixed;
 }
 
-tr, td {
+#available-slots, #available-slots td, #calendar-top-row, #calendar-top-row td, #service-table tr, #service-table td {
   border: 1px solid black;
   text-align: center;
 }
@@ -280,9 +280,9 @@ export default {
   data () {
     return {
       errorMessage: "",
-      month: getDisplayedMonth(),
-      year: getDisplayedYear(),
-      weekdays: getWeekdays(),
+      month: "",
+      year: "",
+      weekdays: "",
       inputDate: "",
       inputTime: "",
       services: [],
@@ -292,14 +292,17 @@ export default {
   },
 
   created: function () {
+    AXIOS.get(`/workitems`)
+        .then((response) => {
+          this.services = response.data;
+        })
+        .catch((e) => {
+          this.errorMessage = e.response.data;
+        });
 
-      AXIOS.get(`/workitems`)
-          .then((response) => {
-            this.services = response.data;
-          })
-          .catch((e) => {
-            this.errorMessage = e.response.data;
-          });
+    this.month = getDisplayedMonth();
+    this.year = getDisplayedYear();
+    this.weekdays = getWeekdays();
       },
 
 
@@ -307,7 +310,6 @@ export default {
 
     //This method changes the displayed week and related information
     changeWeek: function(addDays) {
-      this.errorMessage = this.services;
       if (addDays) date.setDate(date.getDate()+7);
       else date.setDate(date.getDate()-7)
       this.year = getDisplayedYear();
@@ -355,6 +357,11 @@ export default {
 
     getWeekAvailabilities: function() {
       //Returns the availabilities for every day of the week
+
+      for (var i=0; i<7; i++) {
+        //Call Axios here
+      }
+
     },
 
     //This method converts date input field to a date object (Where we only care about the date)

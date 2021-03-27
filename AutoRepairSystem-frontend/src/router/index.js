@@ -7,6 +7,7 @@ import AdministratorHome from "@/components/AdministratorHome"
 import AvailableAppointments from "@/components/AvailableAppointments"
 import BookAppointmentConfirmation from "@/components/BookAppointmentConfirmation"
 import PayInvoice from "@/components/PayInvoice"
+import AccountCreation from "@/components/AccountCreation"
 
 Vue.use(Router)
 
@@ -47,6 +48,12 @@ export default new Router({
       path: '/PayInvoice',
       name: 'PayInvoice',
       component: PayInvoice
+    },
+
+    {
+      path: '/AccountCreation',
+      name: 'AccountCreation',
+      component: AccountCreation
     }
     
     
