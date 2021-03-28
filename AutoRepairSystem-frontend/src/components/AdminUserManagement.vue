@@ -63,10 +63,10 @@ export default {
 					this.endUsers = response.data
 				})
 				.catch(e => {
-					var error = e.response
-					e.data
+					var error = e.response.data
 					console.log(error)
-					this.endUserError = error
+          this.endUserError = error
+          document.write(error)
 				})
 			},
 		}
