@@ -147,7 +147,7 @@ export default {
 
             AXIOS.get('/administrators/')
               .then((response) => {
-                if(response.data.size() == 0) {
+                if(response.data.length == 0) {
                   AXIOS.post('/make/'.concat(username) + '/administrator') 
                   this.$router.push({ name: "AdministratorHome" });
                 }
