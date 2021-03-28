@@ -4,7 +4,7 @@ var path = require('path')
 module.exports = {
   build: {
     env: require('./prod.env'),
-    host: 'autorepairsystem-frontend-fs173.herokuapp.com',
+    host: 'autorepairsystem-backend-fs173.herokuapp.com',
     port: 443,
     backendHost: 'autorepairsystem-backend-fs173.herokuapp.com',
     backendPort: 443,
