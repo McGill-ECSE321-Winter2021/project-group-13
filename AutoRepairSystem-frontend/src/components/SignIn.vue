@@ -110,7 +110,7 @@ var backendUrl =
 
   var AXIOS = axios.create({
   baseURL: backendUrl,
-  headers: { "Access-Control-Allow-Origin": frontendUrl },
+  //headers: { "Access-Control-Allow-Origin": frontendUrl },
 });
 
 export default {
@@ -145,7 +145,7 @@ export default {
 
        isValidType: function (userType, username, password) {
           var usertype="";
-          if(userType == "Customer") usertype="endusers";
+          if(userType == "Customer") usertype="endUsers";
           if(userType == "Technician") usertype="technicians";
           if(userType == "Administrator") usertype="administrators";
       AXIOS.get('/'.concat(usertype).concat("/").concat(username), {}, {})
