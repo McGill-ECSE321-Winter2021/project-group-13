@@ -6,6 +6,7 @@ public class EndUserDto {
 	private String password;
 	private String name;
 	private String email;
+	private String userType;
 	
 	public EndUserDto() {
 		
@@ -13,14 +14,15 @@ public class EndUserDto {
 	
 	
 	public EndUserDto(String email) {
-		this(null,null,null,email);
+		this(null,null,null,email,null);
 	}
 
-	public EndUserDto(String username, String password, String name, String email){
+	public EndUserDto(String username, String password, String name, String email, String userType){
 		this.username = username;
 		this.password = password;
 		this.name = name;
 		this.email = email;
+		this.userType = userType;
 		
 	}
 	
@@ -45,6 +47,10 @@ public class EndUserDto {
 		
 	}
 	
+	public String getUserType() {
+		return userType;
+	}
+	
 	public void setUsername(String username) {
 		this.username = username;
 		
@@ -58,6 +64,10 @@ public class EndUserDto {
 	public void setEmail(String email) {
 		this.email= email;
 		
+	}
+	
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 	
 	public void setPassword(String password) {

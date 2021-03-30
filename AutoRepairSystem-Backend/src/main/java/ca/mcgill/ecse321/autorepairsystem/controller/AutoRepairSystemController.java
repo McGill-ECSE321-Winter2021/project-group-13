@@ -545,7 +545,17 @@ public class AutoRepairSystemController {
     if (u == null) {
       throw new IllegalArgumentException("There is no such EndUser!");
     }
-    EndUserDto userDto = new EndUserDto(u.getUsername(), u.getPassword(), u.getName(), u.getEmail());
+    String userType = null;
+    if (u instanceof Customer) {
+    	userType = "customer";
+    } else if (u instanceof Technician) {
+    	userType = "technician";
+    } else if (u instanceof Administrator) {
+    	userType = "administrator";
+    }
+ 
+    
+    EndUserDto userDto = new EndUserDto(u.getUsername(), u.getPassword(), u.getName(), u.getEmail(), userType);
     return userDto;
   }
 
@@ -553,8 +563,9 @@ public class AutoRepairSystemController {
     if (a == null) {
       throw new IllegalArgumentException("There is no such Administrator!");
     }
+    
     AdministratorDto administratorDto =
-        new AdministratorDto(a.getUsername(), a.getPassword(), a.getName(), a.getEmail());
+        new AdministratorDto(a.getUsername(), a.getPassword(), a.getName(), a.getEmail(),"administrator");
     return administratorDto;
   }
 
@@ -563,7 +574,7 @@ public class AutoRepairSystemController {
       throw new IllegalArgumentException("There is no such Customer!");
     }
     CustomerDto customerDto =
-        new CustomerDto(c.getUsername(), c.getPassword(), c.getName(), c.getEmail(), c.getAmountOwed());
+        new CustomerDto(c.getUsername(), c.getPassword(), c.getName(), c.getEmail(),"customer", c.getAmountOwed());
     return customerDto;
   }
 
@@ -581,7 +592,7 @@ public class AutoRepairSystemController {
       technicianHourDtos = t.getTechnicianHour().stream().map(p -> convertToDto(p)).collect(Collectors.toSet());
     }
     
-    TechnicianDto technicianDto = new TechnicianDto(t.getUsername(), t.getPassword(), t.getName(), t.getEmail(),
+    TechnicianDto technicianDto = new TechnicianDto(t.getUsername(), t.getPassword(), t.getName(), t.getEmail(),"technician",
         technicianHourDtos);
     return technicianDto;
   }

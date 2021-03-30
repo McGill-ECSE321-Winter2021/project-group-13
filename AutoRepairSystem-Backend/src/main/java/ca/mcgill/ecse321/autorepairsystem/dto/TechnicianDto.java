@@ -11,11 +11,11 @@ public class TechnicianDto extends EndUserDto {
 	
 	@SuppressWarnings("unchecked")
 	public TechnicianDto(String email) {
-		this(null, null, null, email, Collections.EMPTY_SET);
+		this(null, null, null, email, null, Collections.EMPTY_SET);
 	}
 	
-	public TechnicianDto(String username, String password, String name, String email ,Set<TechnicianHourDto> technicianhours) {
-		super(username, password, name, email);
+	public TechnicianDto(String username, String password, String name, String email, String userType, Set<TechnicianHourDto> technicianhours) {
+		super(username, password, name, email,userType);
 		this.technicianhours = technicianhours;
 		
 	}

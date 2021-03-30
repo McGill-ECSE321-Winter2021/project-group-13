@@ -7,11 +7,11 @@ public class AdministratorDto extends EndUserDto {
 	}
 	
 	public AdministratorDto(String email) {
-		this(null,null,null,email);
+		this(null,null,null,email,null);
 	}
 
-	public AdministratorDto(String username, String password, String name, String email){
-		super(username, password, name, email);
+	public AdministratorDto(String username, String password, String name, String email, String userType){
+		super(username, password, name, email, userType);
 		
 	}
 }

@@ -8,11 +8,11 @@ public class CustomerDto extends EndUserDto {
 	
 	
 	public CustomerDto(String email) {
-		this(null, null, null, email, 0);
+		this(null, null, null, email,null, 0);
 	}
 	
-	public CustomerDto(String username, String password, String name, String email, int amountOwed) {
-		super(username, password, name, email);
+	public CustomerDto(String username, String password, String name, String email,String userType, int amountOwed) {
+		super(username, password, name, email,userType);
 		this.amountOwed= amountOwed;
 		
 		
