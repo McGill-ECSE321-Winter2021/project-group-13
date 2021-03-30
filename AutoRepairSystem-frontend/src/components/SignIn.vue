@@ -5,15 +5,6 @@
     <h2>Account Sign In</h2>
     <div id="fields-signin">
       <div>
-        <select type="text" id="select"  v-model="userType">
-          <option value="" disabled selected>Select User Type</option>
-          <option @onchange="setCustomer()">Customer</option>
-          <option @onchange="setTechnician()" >Technician</option>
-          <option @onchange="setAdministrator()">Administrator</option>
-        </select>
-      </div>
-      
-      <div>
         <input class="pass2" id="username-icon" type="text" v-model="username" placeholder="Username">
       </div>
 
@@ -129,50 +120,26 @@ export default {
     
     signIn: function (username, password) {
       AXIOS.get(`/signin/?username=` + username + `&password=` + password, {}, {})
-          .then((response) => {
-            this.username= '',
-            this.password= '',
-            this.errorMessage= '',
-            document.write(response.data.userType);
-            this.$router.push({name: response.data.userType.concat("Home")});
-          })
-          .catch((e) => {
-            var error= e.data;
-            this.errorMessage = error;
-          });
+        .then((response) => {
+          this.username= '',
+          this.password= '',
+          this.errorMessage= '';
+          if (response.data.userType === "customer") {
+            this.$router.push({name: "CustomerHome" });
+          } else if(response.data.userType === "technician") {
+            this.$router.push({name: "TechnicianHome"});
+          } else if (response.data.userType === "administrator") {
+            this.$router.push({name: "AdministratorHome"}) 
+          }
+        })
+        .catch((e) => {
+          var error= e.response.data;
+          this.errorMessage = error;
+        });
            
-      },
-
-       isValidType: function (userType, username, password) {
-          var usertype="";
-          if(userType == "Customer") usertype="endUsers";
-          if(userType == "Technician") usertype="technicians";
-          if(userType == "Administrator") usertype="administrators";
-      AXIOS.get('/'.concat(usertype).concat("/").concat(username), {}, {})
-          .then((response) => {
-            console.log(this.signIn(username, password))
-            
-          })
-          .catch((e) => {
-            var errorMsg = e.response.data;
-            this.errorMessage = errorMsg;
-          });
     },
       
-    },
-    setCustomer: function () {
-      
-      this.userType = "Customer";
-    },
-    setTechnician: function () {
-    
-      this.userType = "Technician";
-    },
-    setAdministrator: function () {
-      
-      this.userType = "Administrator";
-    }
-
+  },
   
 }
 
