@@ -118,6 +118,30 @@ public class AutoRepairSystemController {
       return ResponseEntity.badRequest().body(e.getMessage());
     }
   }
+  
+  //can't RequestParam objects, and can only RequestBody one object -> package all arguments as an appointment
+  @PostMapping(value = {"/create/appointment/any", "create/appointment/any/"})
+  public ResponseEntity<?> createAppointmentAnyTechnician(@RequestBody AppointmentDto appointment) {
+    
+    CustomerDto customerDto = appointment.getCustomer();
+    Set<WorkItemDto> servicesDto = appointment.getServices();
+    Time startTime = appointment.getStartTime();
+    Date date = appointment.getDate();
+
+    try {
+      Set<WorkItem> services = new HashSet<WorkItem>();
+      for (WorkItemDto s : servicesDto) {
+        services.add(service.getWorkItem(s.getName()));
+      }
+
+      Customer customer = service.getCustomerByUsername(customerDto.getUsername());
+
+      return new ResponseEntity<>(service.createAppointmentAnyTechnician(services, customer, startTime, date),
+          HttpStatus.OK);
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
+  }
 
 
 

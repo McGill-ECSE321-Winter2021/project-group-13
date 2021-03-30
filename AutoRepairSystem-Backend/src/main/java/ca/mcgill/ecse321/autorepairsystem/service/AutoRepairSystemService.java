@@ -98,6 +98,85 @@ public class AutoRepairSystemService {
   }
 
   // add update appointment method
+  
+  @Transactional
+  public Appointment createAppointmentAnyTechnician(Set<WorkItem> services, Customer customer, 
+      java.sql.Time startTime, java.sql.Date date) throws IllegalArgumentException {
+
+      if (services == null || services.size() == 0) {
+        throw new IllegalArgumentException("No services specified");
+      }
+
+      if (customer == null) {
+        throw new IllegalArgumentException("Invalid customer");
+      }
+      
+      if (startTime == null || date == null) {
+        throw new IllegalArgumentException("Invalid date and time");
+      }
+
+      try {
+        getCustomerByUsername(customer.getUsername());
+      } catch (Exception e) {
+        throw new IllegalArgumentException("Customer does not exist");
+      }
+
+      // sum up service durations
+      int sumMin = 0;
+      int sumPrice = 0;
+      for (WorkItem s : services) {
+        sumMin += s.getDuration();
+        sumPrice += s.getPrice();
+      }
+
+      // set endTime
+      Calendar cal = Calendar.getInstance();
+      cal.setTime(startTime);
+      cal.add(Calendar.MINUTE, sumMin);
+
+      java.sql.Time endTime = new java.sql.Time(cal.getTimeInMillis());
+
+      Map<Technician, List<TechnicianHour>> availabilities = getTechnicianAvailableTechnicianHoursByDate(date, sumMin);
+      
+      Technician availableTechnician = null;
+
+      boolean available = false;
+      for (Technician technician : availabilities.keySet()) {
+        
+        List<TechnicianHour> availabilitiesForTechnician = availabilities.get(technician);
+        
+        for (TechnicianHour h : availabilitiesForTechnician) {
+          available = available | (!h.getStartTime().after(startTime) && !h.getEndTime().before(endTime));
+          
+          if (available) {
+            availableTechnician = technician;
+            break;
+          }
+        }
+        
+        if (available) {
+          break;
+        }
+      }
+
+      if (!available) {
+        throw new IllegalArgumentException("Technician not available during specified time");
+      }
+
+      Appointment appointment = new Appointment();
+      appointment.setStartTime(startTime);
+      appointment.setEndTime(endTime);
+      appointment.setTechnician(availableTechnician);
+      appointment.setWorkItem(services);
+      appointment.setCustomer(customer);
+      appointment.setDate(date);
+
+      customer.setAmountOwed(customer.getAmountOwed() + sumPrice);
+
+      appointmentRepository.save(appointment);
+
+      return appointment;
+  }
 
   @Transactional
   public Appointment createAppointment(Set<WorkItem> services, Customer customer, Technician technician,
