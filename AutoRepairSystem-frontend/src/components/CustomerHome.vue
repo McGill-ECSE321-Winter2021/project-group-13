@@ -18,28 +18,19 @@
             <th>Time</th>
         </tr>
     </thead>
-    <tbody>
-        <tr>
-            <td>Car Wash</td>
-            <td>02/12/21</td>
-            <td>12:00</td>
-        </tr>
-        <tr>
-            <td>Car Wash</td>
-            <td>02/12/21</td>
-            <td>12:00</td>
-        </tr>
-          <tr>
-            <td>Car Wash</td>
-            <td>02/12/21</td>
-            <td>12:00</td>
-        </tr>
-        <tr>
-            <td>Car Wash</td>
-            <td>02/12/21</td>
-            <td>12:00</td>
-        </tr>
-    </tbody>
+      <tbody>
+          <tr v-for="appointments in appointments">
+            <td>{{ appointments.services }}</td>
+            <td>{{ administrator.date }}</td>
+            <td>{{ administrator.startTime }}</td>
+          </tr>
+          <tr v-for="n in emptyAdministrators" v-bind:key="n">
+          <td></td>
+          <td></td>
+          <td></td>
+          </tr>
+
+        </tbody>
 </table>
  <br>
  <br>
@@ -163,15 +154,35 @@ export default {
       amountpayed:0,
       amountowed:0,
       temp:'',
+      appointments:[],
+      Username: 'user3', //get current user username
     }
   },
 
+   created: function() {
+    this.fetch()
+  },
+
   methods: {
+		fetch (){
+			AXIOS.get('//appointments/bycustomer/') //figure this out
+      .then(response => {
+        this.appointments = response.data
+      })
+      .catch(e => {
+        var error = e.response.data
+        console.log(error)
+        this.endUserError = error
+        document.write(error)
+      })
+
+    },
 
 //actually delete account in database and then go to sign in
     deleteaccountpopup: function () {
        if (confirm('Do you want to Delete?')) {
-           this.$router.push({name: "SignIn"}); //replace with delete account function and call this in that function
+          console.log(this.deleteuser())
+           
        } else {
            return false;
        }
@@ -194,13 +205,10 @@ export default {
       
     },
     
-    signIn: function (Username, Password) {
-      AXIOS.get(`/signin/?username=` + Username + `&password=` + Password, {}, {})
+    deleteuser: function () {
+      AXIOS.delete(`/endUsers/`.concat(this.Username), {}, {})
           .then((response) => {
-            this.Username= '',
-            this.Password= '',
-            this.errorMessage= '',
-            this.$router.push({name: this.userType.concat("Home")});
+            this.$router.push({name: "SignIn"});
           })
           
           .catch((e) => {
