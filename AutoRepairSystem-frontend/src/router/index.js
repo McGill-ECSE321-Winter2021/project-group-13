@@ -9,6 +9,8 @@ import BookAppointmentConfirmation from "@/components/BookAppointmentConfirmatio
 import PayInvoice from "@/components/PayInvoice"
 import AccountCreation from "@/components/AccountCreation"
 import AdminUserManagement from "@/components/AdminUserManagement"
+import AdminNavbar from "@/components/AdminNavbar"
+import CustomerNavbar from "@/components/CustomerNavbar"
 
 Vue.use(Router)
 
@@ -49,6 +51,18 @@ export default new Router({
       path: '/PayInvoice',
       name: 'PayInvoice',
       component: PayInvoice
+    },
+
+    {
+      path: '/AdminNav',
+      name: 'AdminNavbar',
+      component: AdminNavbar
+    },
+
+      {
+      path: '/CustomerNav',
+      name: 'CustomerNavbar',
+      component: CustomerNavbar
     },
 
     {

@@ -1,34 +1,41 @@
 <template>
 <div>
+
+  <div class="navbarContainer">
+      <AdminNavbar/>
+  </div>
+  
   <div id="home">
     <h2>Home (ADMIN) </h2>
   
-<div id="invoices">
-       <button id="button2" @click="checkinvoices()">Check/Pay Outstanding Balances</button> 
+    <div id="invoices">
+      <button id="button2" @click="checkinvoices()">Check/Pay Outstanding Balances</button> 
        
-       <button id="buttonlogout" @click="logout()">Log Out </button> 
-       </div>
+      <button id="buttonlogout" @click="logout()">Log Out </button> 
+    </div>
     <div id="currentappointments">
-     <h2> Current Appointments </h2>
-  <table class="styled-table">
-    <thead>
-        <tr>
+      <h2> Current Appointments </h2>
+      <table class="styled-table">
+        <thead>
+          <tr>
             <th>Service</th>
             <th>Date</th>
             <th>Time</th>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
- <br>
- <br>
- <button id="deletebutton" @click="deleteaccountpopup()">Delete Account</button>
- <br>
- </div>
- </div>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    <br>
+    <br>
+    <button id="deletebutton" @click="deleteaccountpopup()">Delete Account</button>
+    <br>
+    </div>
+  </div>
 </div>
 </template>
+
+
 <style>
 
 #button, #deletebutton, #button2, #buttonlogout{
@@ -113,12 +120,15 @@ margin-left: 1100px;
     border-bottom: 2px solid #009879;
 }
 
+.navbarContainer {
+  margin-bottom: 0px;
+}
 
 
 </style>
 
 <script>
-
+import AdminNavbar from '@/components/AdminNavbar'
 
 import axios from "axios";
 var config = require("../../config");
@@ -141,6 +151,10 @@ export default {
       amountowed:0,
       temp:'',
     }
+  },
+
+  components: {
+    AdminNavbar
   },
 
   methods: {

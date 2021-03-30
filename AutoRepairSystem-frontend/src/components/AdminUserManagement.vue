@@ -1,9 +1,15 @@
 <template>
 <div>
-  <div>
-    <h2> User Management </h2>
+  <head>
+    <title> User Management </title>
+  </head>
+
+    <div class="navbarContainer">
+      <AdminNavbar/>
+    </div>
+    <h2 style="text-align: center"> User Management </h2>
     <div id="CustomerList" class = "column">
-    <h3>Customers</h3>
+    <h4>Customers</h4>
       <table>
         <thead>
           <tr id ="header">
@@ -116,17 +122,12 @@
         </button>
       </div>
     </div>
-  </div>
+
 </div>
 </template>
 
 
 <style>
-#AdminUserManagement {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    color: #2c3e50;
-    background: #f2ece8;
-  }
 
 .inline {
   display:inline-block;
@@ -180,6 +181,7 @@ tr.highlight {
 .column {
   float:left;
   width: 33.33%;
+  text-align: center;
 }
 
 #header {
@@ -187,9 +189,15 @@ tr.highlight {
   width: calc(100% - 17px);
 }
 
+.navbarContainer {
+  margin-bottom: 0px;
+}
+
 </style>
 
 <script>
+import AdminNavbar from '@/components/AdminNavbar'
+
 import axios from "axios";
 var config = require("../../config");
 var frontendUrl = "https://" + config.build.host + ":" + config.build.port;
@@ -214,6 +222,10 @@ export default {
 
   created: function() {
     this.fetch()
+  },
+
+  components: {
+    AdminNavbar
   },
 
   computed: {

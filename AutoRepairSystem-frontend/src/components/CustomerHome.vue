@@ -1,5 +1,10 @@
 <template>
 <div>
+  <div class="navbarContainer">
+    <CustomerNavbar/>
+  </div>
+
+
   <div id="home">
     <h2>Home</h2>
   
@@ -136,12 +141,16 @@ margin-left: 1100px;
     border-bottom: 2px solid #009879;
 }
 
+.navbarContainer {
+  margin-bottom: 0px;
+}
+
 
 
 </style>
 
 <script>
-
+import CustomerNavbar from '@/components/CustomerNavbar'
 
 import axios from "axios";
 var config = require("../../config");
@@ -164,6 +173,10 @@ export default {
       amountowed:0,
       temp:'',
     }
+  },
+
+   components: {
+    CustomerNavbar
   },
 
   methods: {

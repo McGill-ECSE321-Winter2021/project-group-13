@@ -1,5 +1,10 @@
 <template>
 <div>
+
+  <div class="navbarContainer">
+    <CustomerNavbar/>
+  </div>
+
   <div id="payment">
     <h2>Payment</h2>
      <div id="amountowed">
@@ -77,7 +82,9 @@ align: right;
 margin-left: 1000px;
 }
 
-
+.navbarContainer {
+  margin-bottom: 0px;
+}
 
 
 
@@ -85,6 +92,7 @@ margin-left: 1000px;
 </style>
 
 <script>
+import CustomerNavbar from '@/components/CustomerNavbar'
 
 
 import axios from "axios";
@@ -108,6 +116,10 @@ export default {
       amountowed:0,
       temp:'',
     }
+  },
+
+  components: {
+    CustomerNavbar
   },
 
   methods: {

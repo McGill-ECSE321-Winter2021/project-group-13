@@ -1,5 +1,8 @@
 <template>
 <div id="appointments-page">
+  <div class="navbarContainer">
+    <CustomerNavbar/>
+  </div>
 
   <div class="sidemenu">
     <h2>Book Appointment</h2>
@@ -229,9 +232,15 @@ body {
   text-align: left;
 }
 
+.navbarContainer {
+  margin-bottom: 0px;
+}
+
 </style>
 
 <script>
+import CustomerNavbar from '@/components/CustomerNavbar'
+
 import axios from 'axios';
 var config = require('../../config');
 
@@ -289,6 +298,10 @@ export default {
       checkedServices: [],
       availabilities: [[], [], [], [], [], [], []],
     }
+  },
+
+  components: {
+    CustomerNavbar
   },
 
   created: function () {

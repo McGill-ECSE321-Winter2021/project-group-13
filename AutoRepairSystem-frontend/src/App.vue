@@ -21,4 +21,6 @@ export default {
   background: #CDD7DE;;
   
 }
+
+@import'~bootstrap/dist/css/bootstrap.css'
 </style>
