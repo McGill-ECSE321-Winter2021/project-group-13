@@ -23,7 +23,7 @@
         </tr>
     </thead>
       <tbody>
-          <tr v-for="appointments in appointments">
+          <tr v-for="appointment in appointments">
             <td>{{ appointments.services }}</td>
             <td>{{ administrator.date }}</td>
             <td>{{ administrator.startTime }}</td>

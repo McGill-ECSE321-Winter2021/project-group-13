@@ -1156,15 +1156,27 @@ public class AutoRepairSystemService {
     return technicianHour;
   }
 
-  @Transactional
-  public TechnicianHour getTechnicianHour(Integer id) throws IllegalArgumentException {
-    TechnicianHour technicianHour = technicianHourRepository.findTechnicianHourById(id);
-
-    if (technicianHour == null) {
-      throw new IllegalArgumentException("Technician Hour cannot be found!");
-    }
-    return technicianHour;
-  }
+	@Transactional
+	public TechnicianHour getTechnicianHour(Integer id) throws IllegalArgumentException {
+		TechnicianHour technicianHour = technicianHourRepository.findTechnicianHourById(id);
+	
+		if (technicianHour == null) {
+			throw new IllegalArgumentException("Technician Hour cannot be found!");
+		}
+		return technicianHour;
+	}
+  
+	@Transactional
+	public List<TechnicianHour> getAllTechnicianHoursByDate(Date date) throws IllegalArgumentException {
+		
+		if (date == null) {
+			throw new IllegalArgumentException("A valid date must be provided!");
+		}
+		
+		Set<TechnicianHour> technicianHours = technicianHourRepository.findTechnicianHourByDate(date);
+		
+		return toList(technicianHours);
+	}
 
 
   @Transactional
@@ -1332,6 +1344,18 @@ public class AutoRepairSystemService {
 			throw new IllegalArgumentException("Business hour cannot be found!");
 		}
 		return businessHour;
+	}
+	
+	@Transactional
+	public List<BusinessHour> getBusinessHoursByDate(Date date) throws IllegalArgumentException {
+		
+		if (date == null) {
+			throw new IllegalArgumentException("A valid date must be provided!");
+		}
+		
+		Set<BusinessHour> businessHours = businessHourRepository.findBusinessHourByDate(date);
+
+		return toList(businessHours);
 	}
 	
 	@Transactional

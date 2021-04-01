@@ -19,7 +19,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="customer in customers" @click="selectRow(customer.username)" v-bind:key="customer.username" :class="{'highlight': (customer.username == selectedUser)}">
+          <tr v-for="customer in customers" @click="selectRow(customer)" v-bind:key="customer.username" :class="{'highlight': (customer.username === selectedUsername)}">
             <td>{{ customer.username }}</td>
             <td>{{ customer.name }}</td>
             <td>{{ customer.email }}</td>
@@ -33,22 +33,25 @@
       </table>
       <div>
           <button
-            type="button"
+            type="button" 
+            v-bind:disabled= "(selectedUserType !== 'customer')"
             class="inline"
             id="delete-button"
-            @click ="deleteAccount(selectedUser)">Delete Account
+            @click ="deleteAccount(selectedUsername)">Delete Account
           </button>
           <button
             type="button"
+            v-bind:disabled= "(selectedUserType !== 'customer')"
             class="inline"
             id="makeTechnician-button"
-            @click ="makeTechnician(selectedUser)">Make Technician
+            @click ="makeTechnician(selectedUsername)">Make Technician
           </button>
           <button
             type="button"
+            v-bind:disabled= "(selectedUserType !== 'customer')"
             class="inline"
             id="makeAdmin-button"
-            @click ="makeAdmin(selectedUser)">Make Admin
+            @click ="makeAdmin(selectedUsername)">Make Admin
           </button>
       </div>
     </div>
@@ -64,7 +67,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="technician in technicians" @click="selectRow(technician.username)" v-bind:key="technician.username" :class="{'highlight': (technician.username == selectedUser)}">
+          <tr v-for="technician in technicians" @click="selectRow(technician)" v-bind:key="technician.username" :class="{'highlight': (technician.username === selectedUsername)}">
             <td>{{ technician.username }}</td>
             <td>{{ technician.name }}</td>
             <td>{{ technician.email }}</td>
@@ -79,9 +82,10 @@
       <div id = "buttons">
           <button
             type="button"
+            v-bind:disabled= "(selectedUserType !== 'technician')"
             class="inline"
             id="delete-button"
-            @click ="deleteAccount(selectedUser)">Delete Account
+            @click ="deleteAccount(selectedUsername)">Delete Account
           </button>
       </div>
     </div>
@@ -99,7 +103,7 @@
         </thead>
 
         <tbody>
-          <tr v-for="administrator in administrators" @click="selectRow(administrator.username)" v-bind:key="administrator.username" :class="{'highlight': (administrator.username == selectedUser)}">
+          <tr v-for="administrator in administrators" @click="selectRow(administrator)" v-bind:key="administrator.username" :class="{'highlight': (administrator.username === selectedUsername)}">
             <td>{{ administrator.username }}</td>
             <td>{{ administrator.name }}</td>
             <td>{{ administrator.email }}</td>
@@ -116,9 +120,10 @@
       <div>
         <button
           type="button"
+          v-bind:disabled= "(selectedUserType !== 'administrator')"
           class="inline"
           id="delete-button"
-          @click ="deleteAccount(selectedUser)">Delete Account
+          @click ="deleteAccount(selectedUsername)">Delete Account
         </button>
       </div>
     </div>
@@ -216,7 +221,8 @@ export default {
       customers: [],
       administrators: [],
       technicians: [],
-      selectedUser: null,
+      selectedUsername: null,
+      selectedUserType: null,
     }
   },
 
@@ -246,7 +252,7 @@ export default {
         return 0;
       }
       return Math.max(5-this.administrators.length,0);
-    }
+    },
   },
 
 	methods: {
@@ -310,7 +316,8 @@ export default {
     },
 
     selectRow(user) {
-      this.selectedUser = user;
+      this.selectedUsername = user.username;
+      this.selectedUserType = user.userType;
     }
 
 
