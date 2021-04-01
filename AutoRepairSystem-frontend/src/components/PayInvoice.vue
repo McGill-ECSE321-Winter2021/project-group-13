@@ -9,8 +9,7 @@
     <h2>Payment</h2>
      <div id="amountowed">
        <button id="button2" @click="getamountowed()">View Amount Owed</button>
-       <span v-if=" temp2=='5'" style="color:blue">No Outstanding Balance, Please Return Home!</span> <br>
-       <span v-if=" temp=='3' && amountowed==0" style="color:blue">No Outstanding Balance, Please Return Home!</span> <br>
+       <span v-if="(amountowed==0 && temp6=='2' && temp2=='5')" style="color:blue">No Outstanding Balance, Please Return Home!</span> <br>
    <h2 v-if="amountowed && amountowed!=0"> Amount Owed: ${{amountowed}} </h2>
    <br>
    <span v-if="amountowed!=0 && amountpaying && amountpaying<=amountowed && amountpaying>0" style="color:red">New Amount Owed If You Pay ${{amountpaying}}:<br> ${{amountowed}} - ${{amountpaying}} = ${{amountowed - amountpaying}}</span>
@@ -118,7 +117,8 @@ export default {
       temp:'',
       temp2:'',
       temp6:'',
-      Username: 'test', //actually get username of current user
+      temp7: '',
+      Username: this.$store.getters.getActiveUserName,
     }
   },
 
@@ -134,8 +134,8 @@ export default {
     },
 
     getamountowed: function () {
+      console.log(this.getamountowednow());
       this.temp6='2';
-      this.amountowed=2; //actually get amount that user owes
       if(!this.amountowed){
         this.temp2='5';
       }
@@ -151,16 +151,29 @@ export default {
       this.amountpayed=this.amountpaying;
       this.amountowed=this.amountowed - this.amountpayed;
       //actually update database/what user owes
-      //this.amountowed=console.log(this.payment())
-      if(this.anountowed==0){
+      console.log(this.payment());
+      if(this.amountowed==0){
         this.temp2='5';
       }
       this.amountpaying=0;
       
     },
+
+    getamountowednow: function () {
+      AXIOS.get(`/customers/`.concat(this.Username), {}, {})
+          .then((response) => {
+           this.amountowed=response.data.amountOwed;
+          })
+          
+          .catch((e) => {
+            var error= e.response.data;
+            this.errorMessage = error;
+          });
+      
+    },
     
-    payment: function (amountPaying) {
-      AXIOS.put(`/customers/`.concat(this.Username).concat("/payment" + `&amount=` + this.amountpaying), {}, {})
+    payment: function () {
+      AXIOS.put(`/customers/`.concat(this.Username).concat("/payment" + `?amount=` + this.amountpayed), {}, {})
           .then((response) => {
            
           })

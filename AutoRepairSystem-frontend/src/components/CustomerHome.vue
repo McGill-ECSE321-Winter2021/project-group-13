@@ -162,6 +162,8 @@ export default {
       amountpayed:0,
       amountowed:0,
       temp:'',
+      appointments: [],
+      Username: 'test', //get actual username
     }
   },
 
@@ -174,10 +176,21 @@ export default {
   },
 
   methods: {
-
+    fetch (){
+			AXIOS.get('/customers/')
+      .then(response => {
+        this.customers = response.data
+      })
+      .catch(e => {
+        var error = e.response.data
+        console.log(error)
+        this.endUserError = error
+        document.write(error)
+      })
+    },
 //actually delete account in database and then go to sign in
     deleteaccountpopup: function () {
-       if (confirm('Do you want to Delete?')) {
+       if (confirm('Do you want to Delete?'.concat(this.$store.getters.getActiveUserName))) {
           console.log(this.deleteuser())
            
        } else {

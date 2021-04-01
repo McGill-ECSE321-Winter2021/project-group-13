@@ -138,6 +138,7 @@ export default {
 
       AXIOS.post(`/customers/`.concat(username) + `?password=` + password + `&name=` + name + `&email=` + email, {}, {})
           .then((response) => {
+            this.$store.dispatch("setActiveUserName", this.username);
             this.email = "";
             this.password = "";
             this.passwordCheck = "";

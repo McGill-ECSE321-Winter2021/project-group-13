@@ -1,4 +1,3 @@
-
 <template>
 <div id="LogIn">
   <div id="central-signin">
@@ -25,7 +24,6 @@
 </template>
 
 <style>
-
 #button:enabled{
   border-color: #3498db;
   color: #fff;
@@ -36,38 +34,31 @@
 #button:enabled:hover {
   box-shadow: 0 0 10px 0 #3498db inset, 0 0 10px 4px #3498db;
 }
-
 #button {
   width: 200px;
 }
-
 #button-signin {
   margin-top: 15px;
 }
-
 #select{
  border-radius:15px;
  background-color:darkgrey;
  margin-top: 25px;
 }
-
 input.pass2 {
   margin-top: 10px;
   padding-left: 25px;
   border-radius: 10px;
 }
-
 input.pass2:focus {
   border: 2px solid #555;
   -webkit-transition: 0.5s;
 }
-
 #LogIn {
   background-color: #CDD7DE;
   height: 100vh;
   position: relative;
 }
-
 #central-signin {
   width: 400px;
   height: 320px;
@@ -78,32 +69,24 @@ input.pass2:focus {
   margin: -42vh 0 0 -200px;
   padding-top: 20px;
 }
-
 #username-icon {
   background: white url(../assets/username-icon.png) left no-repeat;
 }
-
 #password-icon {
   background: white url(../assets/password-icon.png) left no-repeat;
 }
-
-
-
 </style>
 
 <script>
-
 import axios from "axios";
 var config = require("../../config");
 var frontendUrl = "https://" + config.build.host + ":" + config.build.port;
 var backendUrl =
   "https://" + config.build.backendHost + ":" + config.build.backendPort;
-
   var AXIOS = axios.create({
   baseURL: backendUrl,
   //headers: { "Access-Control-Allow-Origin": frontendUrl },
 });
-
 export default {
   name: "SignIn",
   data () {
@@ -114,13 +97,12 @@ export default {
       userType: '',
     }
   },
-
   methods: {
-
     
     signIn: function (username, password) {
       AXIOS.get(`/signin/?username=` + username + `&password=` + password, {}, {})
         .then((response) => {
+          this.$store.dispatch("setActiveUserName", this.username);
           this.username= '',
           this.password= '',
           this.errorMessage= '';
@@ -142,5 +124,4 @@ export default {
   },
   
 }
-
 </script>
