@@ -437,6 +437,16 @@ public class AutoRepairSystemController {
 
 
   // business Hour Controller methods
+  @GetMapping(value = {"/businesshours/{date}", "/businesshours/{date}/"})
+  public ResponseEntity<?> getBusinessHourByDate(@PathVariable("date") Date date) throws IllegalArgumentException {
+    try {
+      return new ResponseEntity<>( 
+    		  service.getBusinessHoursByDate(date).stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
+  }
+  
 
   @GetMapping(value = {"/businesshours", "/businesshours/"})
   public ResponseEntity<?> getAllBusinessHours() {
@@ -500,7 +510,16 @@ public class AutoRepairSystemController {
       return ResponseEntity.badRequest().body(e.getMessage());
     }
   }
-
+  
+  @GetMapping(value = {"/technicianhours/{date}", "/technicianhours/{date}/"})
+  public ResponseEntity<?> getAllTechnicianHoursByDate(@PathVariable("date") Date date) throws IllegalArgumentException {
+    try {
+      return new ResponseEntity<>(
+    		  service.getAllTechnicianHoursByDate(date).stream().map(p -> convertToDto(p)).collect(Collectors.toList()), HttpStatus.OK);
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
+  }
 
   @PostMapping(value = {"/technicianhours/{technicianUsername}", "/technicianhours/{technicianUsername}/"})
   public ResponseEntity<?> createTechnicianHour(@PathVariable("technicianUsername") String technicianUsername,

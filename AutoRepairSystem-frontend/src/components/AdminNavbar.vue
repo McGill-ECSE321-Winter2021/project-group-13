@@ -11,16 +11,13 @@
           <a class="nav-link active" href="#/AdministratorHome">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="#/AdminUserManagement">User Management</a>
+          <router-link class="nav-link active" to="/AdminUserManagement">User Management</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="#/AdminTechnicianSchedule">Technician Schedule</a>
+          <router-link class="nav-link active" to="/AdminTechnicianSchedule">Technician Schedule</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="#/AdminBusinessHours">Business Hours</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active"  href="#/">Log Out</a>
+          <router-link class="nav-link active" to="/">Log Out</router-link>
         </li>
       </ul>
     </div>

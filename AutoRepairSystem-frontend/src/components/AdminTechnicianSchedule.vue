@@ -1,51 +1,143 @@
 <template>
 	<div>
+    <div id = "navBarContainer">
+      <AdminNavbar/>
+    </div>
+    <div class="sidemenu">
+      <div class="businessHourMenu">
+        <h2>Business Hour</h2>
+        <div class = "createBusinessHour" v-if="selectedBusinessHourId <= 0 || selectedBusinessHourId == null">
+          <div class = "timePick">
+          <p class = "leftPick"> Open Time:</p> 
+          <p class = "rightPick" > 
+            <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="startBusinessHourInput"></vue-timepicker>
+          </p>
+          </div>
+          <div class = "timePick">
+          <p class = "leftPick"> Close Time:</p> 
+          <p class = "rightPick" > 
+            <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="endBusinessHourInput"></vue-timepicker>
+          </p>
+          </div>
+          <div>
+            <button
+            v-bind:disabled="(selectedBusinessHour == null || businessHourStart.HH == '' || businessHourStart.mm == '' ||  businessHourEnd.HH == '' || businessHourEnd.mm == '')" 
+            v-on:click="createBusinessHour(selectedBusinessHour.col)" 
+            >
+              Create Business Hour
+            </button>
+          </div>
+        </div>
+          <div class = "createBusinessHour" v-if="selectedBusinessHourId > 0">
+            <div class = "timePick">
+            <p class = "leftPick"> New Open Time:</p> 
+            <p class = "rightPick" > 
+              <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="startBusinessHourInput"></vue-timepicker>
+            </p>
+            </div>
+            <div class = "timePick">
+            <p class = "leftPick"> New Close Time:</p> 
+            <p class = "rightPick" > 
+              <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="endBusinessHourInput"></vue-timepicker>
+            </p>
+            </div>
+            <div>
+            <div v-if="selectedBusinessHourId > 0" >
+              <button
+              v-bind:disabled="(selectedBusinessHour == null || businessHourStart.HH == '' || businessHourStart.mm == '' ||  businessHourEnd.HH == '' || businessHourEnd.mm == '')" 
+              v-on:click="updateBusinessHour(selectedBusinessHour)" 
+              >
+                Update Business Hour
+              </button>
+              <button
+              v-bind:disabled="(selectedBusinessHour == null)"
+              v-on:click="deleteBusinessHour(selectedBusinessHour)"
+              >
+                Delete Business Hour
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 		<div class="calendar">
-    	<h2>Availability Calendar</h2>
-    		<div id="month-header"><span id="month">{{month}} {{year}}</span></div>
-    			<div id="week-buttons"><button class="week-change" v-on:click="changeWeek(false)">Previous</button><button class="week-change" v-on:click="changeWeek(true)">Next  </button></div>
-    				<table id="appointments-table">
-      					<tr id="calendar-top-row">
-							<td>Sun.<br>{{weekdays[0]}}</td>
-							<td>Mon.<br>{{weekdays[1]}}</td>
-							<td>Tue.<br>{{weekdays[2]}}</td>
-							<td>Wed.<br>{{weekdays[3]}}</td>
-							<td>Thu.<br>{{weekdays[4]}}</td>
-							<td>Fri.<br>{{weekdays[5]}}</td>
-							<td>Sat.<br>{{weekdays[6]}}</td>
-      					</tr>
-      				<tr id="available-slots">
-        		<td>
-					<div id="availability-block" v-for="availability in availabilities[0]">{{availability.startTime}}<br>{{availability.endTime}}</div>
-				</td>
-				<td>
-					<div id="availability-block" v-for="availability in availabilities[1]">{{availability.startTime}}<br>{{availability.endTime}}</div>
-				</td>
-				<td>
-					<div id="availability-block" v-for="availability in availabilities[2]">{{availability.startTime}}<br>{{availability.endTime}}</div>
-				</td>
-				<td>
-					<div id="availability-block" v-for="availability in availabilities[3]">{{availability.startTime}}<br>{{availability.endTime}}</div>
-				</td>
-				<td>
-					<div id="availability-block" v-for="availability in availabilities[4]">{{availability.startTime}}<br>{{availability.endTime}}</div>
-				</td>
-				<td>
-					<div id="availability-block" v-for="availability in availabilities[5]">{{availability.startTime}}<br>{{availability.endTime}}</div>
-				</td>
-				<td>
-					<div id="availability-block" v-for="availability in availabilities[6]">{{availability.startTime}}<br>{{availability.endTime}}</div>
-				</td>
-      </tr>
-    </table>
+    <h2>Technician Schedule</h2>
+      <div id="month-header"><span id="month">{{month}} {{year}}</span></div>
+      <div id="week-buttons"><button class="week-change" v-on:click="changeWeek(false)">Previous</button><button class="week-change" v-on:click="changeWeek(true)">Next  </button></div>
+      <table id="appointments-table">
+        <tr id="calendar-top-row">
+          <td></td>
+          <td>Sun.<br>{{weekdays[0]}}</td>
+          <td>Mon.<br>{{weekdays[1]}}</td>
+          <td>Tue.<br>{{weekdays[2]}}</td>
+          <td>Wed.<br>{{weekdays[3]}}</td>
+          <td>Thu.<br>{{weekdays[4]}}</td>
+          <td>Fri.<br>{{weekdays[5]}}</td>
+          <td>Sat.<br>{{weekdays[6]}}</td>
+        </tr>
+        <tr id="businessHourRow">  
+          <td class ="rowHeader"> Business Hours </td>
+          <td @click="selectBusinessHour(businessHour)" class="businessHourSlot" :class="{'highlight': (businessHour.id == selectedBusinessHourId)}" v-for="businessHour in businessHoursWeek" v-bind:key="businessHour.id">
+            <div v-if="businessHour.id > 0" >
+            open: {{ formatTimeDisplay(businessHour.startTime) }}<br> 
+            close: {{ formatTimeDisplay(businessHour.endTime) }}
+            </div>
+            <div v-if="businessHour.id < 0">
+              CLOSED
+            </div>
+          </td>
+          
+        </tr>
+        <tr class="technicianRows" v-for="technician in technicians" v-bind:key="technician.username">
+          <td> {{technician.name}} </td>
+          <td class="technicianHourSlot" v-for="i in 7" v-bind:key="i">
+            <div> 
+              {{ a = getTechnicianHoursWeek(technician,(i-1)) }}
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
-</div>
 </template>
 <style>
 
+#businessHourRow {
+  height: 60px;
+  border: 1px solid black;
+}
+
+.rowHeader {
+  text-align: center;
+  font-weight: bolder;
+}
+
+.timePick {
+  height: 60px;
+}
+
+.leftPick {
+  position:relative; top:5px;
+  float: left;
+  margin-left: 5px;
+}
+
+.rightPick {
+  float: right;
+  margin-right: 5px;
+}
+
+.businessHourSlot {
+  border: 1px solid black;
+}
+
+.technicianRows {
+  height: 20px;
+  border: 1px solid black;
+}
 .sidemenu {
   background-color: #353A57;
-  width: 25%;
+  width: 280px;
   height: 100vh;
   float: left;
   padding: 10px;
@@ -54,20 +146,10 @@
 
 .calendar {
   background-color: #CDD7DE;
-  width: 75%;
+  width: calc(100% - 280px);
   height: 100vh;
   float: right;
   padding: 10px;
-}
-
-.service-table {
-  overflow-y: auto;
-  height: 30vh;
-}
-
-.service-table thead th {
-  position: sticky;
-  top: 0;
 }
 
 #service-table {
@@ -120,6 +202,10 @@
   margin-bottom: 5px;
 }
 
+.highlight {
+ background: yellow;
+}
+
 button.week-change {
   margin-left: 5px;
   margin-right: 5px;
@@ -142,25 +228,7 @@ button.week-change {
 #calendar-top-row {
   background-color: white;
   font-size: 20px;
-}
-
-#available-slots {
-  height: calc(100vh - 150px);
-  background-color: #EAF0F4;
-}
-
-/*Availability blocks in the appointment calendar:
-*/
-#availability-block {
-  background-color: white;
-  width: 95%;
-  border-radius: 50px;
-  border: 1px solid black;
-  margin: 0 auto;
-  padding-left: 10px;
-  padding-right: 10px;
-  margin-bottom: 5px;
-  margin-top: 5px;
+  height: 80px;
 }
 
 body {
@@ -179,10 +247,16 @@ body {
   margin-bottom: 0px;
 }
 
+table {
+  empty-cells: show;
+}
+
 </style>
 
 <script>
 import AdminNavbar from '@/components/AdminNavbar'
+import VueTimepicker from 'vue2-timepicker'
+import 'vue2-timepicker/dist/VueTimepicker.css'
 
 import axios from "axios";
 var config = require("../../config");
@@ -200,6 +274,20 @@ var AXIOS = axios.create({
 //Variable which stores the date of the start of the displayed week (Sunday)
 var date = new Date();
 date.setDate(date.getDate()-date.getDay());
+
+var fakeIdCounter = -1;
+
+function incrementFakeIdCounter() {
+  fakeIdCounter--;
+}
+
+class fakeWorkHour {
+  constructor(col) {
+    this.id = fakeIdCounter;
+    this.col = col;
+    incrementFakeIdCounter();
+  }
+}
 
 //This function returns the month displayed (mid-week day's month)
 function getDisplayedMonth() {
@@ -229,8 +317,18 @@ function getWeekdays() {
   return datesOfWeek;
 }
 
+function formatDate(aDate) {
+  return aDate.toISOString().slice(0, 10);
+}
+
+function addDays(aDate,numDays) {
+  var newDate = new Date(aDate);
+  newDate.setDate(aDate.getDate() + numDays);
+  return newDate;
+}
+
 export default {
-  name: "AvailableAppointments",
+  name: "AdminTechnicianSchedule",
   data () {
     return {
       errorMessage: "",
@@ -239,30 +337,29 @@ export default {
       weekdays: "",
       inputDate: "",
       inputTime: "",
-      services: [],
-      checkedServices: [],
-      availabilities: [[], [], [], [], [], [], []],
+      technicians: [],
+      businessHours: [],
+      businessHoursWeek: [],
+      selectedBusinessHour: null,
+      selectedBusinessHourId: null,
+
+      businessHourStart: {HH: "", mm: ""},
+      businessHourEnd: {HH: "", mm: ""},
     }
   },
 
   components: {
-    CustomerNavbar
+    AdminNavbar,
+    VueTimepicker
   },
 
   created: function () {
-    AXIOS.get(`/workitems`)
-        .then((response) => {
-          this.services = response.data;
-        })
-        .catch((e) => {
-          this.errorMessage = e.response.data;
-        });
-
+    this.getAllTechnicians();
+    this.getAllBusinessHours();
     this.month = getDisplayedMonth();
     this.year = getDisplayedYear();
     this.weekdays = getWeekdays();
-      },
-
+    },
 
   methods: {
 
@@ -273,53 +370,71 @@ export default {
       this.year = getDisplayedYear();
       this.month = getDisplayedMonth();
       this.weekdays = getWeekdays();
+      this.businessHoursWeek = this.getBusinessHoursWeek();
+    },
+
+    getAllTechnicians: function() {
+      AXIOS.get("/technicians/")
+      .then(response => {
+        this.technicians = response.data;
+      })
+      .catch(e => {
+        this.errorMessage = e.data;
+        console.log(e);
+      })
+    },
+
+    getTechnicianHoursWeek: function(technician,i) {
+      var technicianHours = technician.technicianHours;
+      var tempTechnicianHoursWeek = null;
+      if(typeof(this.technicianHours) !== 'undefined') {
+        var numHours = technicianHours.length;
+        for(var j = 0; j < numHours; j++) {
+          if(technicianHours[j].date === formatDate(addDays(date,i))) {
+            tempTechnicianHoursWeek = technicianHours[j];
+          }
+        }
+      }
+      if(tempTechnicianHoursWeek == null) {
+        tempTechnicianHoursWeek = new fakeWorkHour(i);
+      }
+      return tempTechnicianHoursWeek;
+    },
+
+    getAllBusinessHours: function() {
+      AXIOS.get('/businesshours/')
+      .then(response => {
+        this.businessHours = response.data;
+        this.businessHoursWeek = this.getBusinessHoursWeek();
+      })
+      .catch(e => {
+        this.errorMessage = e;
+      });
+    },
+
+    getBusinessHoursWeek: function() {
+      var tempBusinessHoursWeek = new Array();
+      if(typeof(this.businessHours) !== 'undefined') {
+        for(var i = 0; i < 7; i++) {
+          var numBusinessHours = this.businessHours.length;
+          for(var j = 0; j < numBusinessHours; j++) {
+            if(this.businessHours[j].date === formatDate(addDays(date,i))) {
+              tempBusinessHoursWeek[i] = this.businessHours[j];
+            }
+          }
+        }
+      }
+      for (var i = 0; i < 7; i++ ) {
+        if(typeof(tempBusinessHoursWeek[i]) == 'undefined') {
+          tempBusinessHoursWeek[i] = new fakeWorkHour(i);
+        }
+      }
+      return tempBusinessHoursWeek;
     },
 
     //This method takes the user back to the customer home page
     backButton: function() {
       this.$router.push({name: "CustomerHome"});
-    },
-
-    getTotalServicesPrice: function() {
-      var totalPrice = 0;
-      for (var i=0; i<this.checkedServices.length; i++) {
-        totalPrice += this.checkedServices[i].price;
-      }
-      return totalPrice;
-    },
-
-    getTotalServicesDuration: function() {
-      var totalDuration = 0;
-      for (var i=0; i<this.checkedServices.length; i++) {
-        totalDuration += this.checkedServices[i].duration;
-      }
-      return totalDuration;
-    },
-
-    createAppointment: function () {
-      var dateString = this.inputDate.toLocaleString("default", { dateStyle: "full" });
-      var timeString = this.inputTime.toLocaleString("default", { timeStyle: "long"});
-
-      var servicesString = this.checkedServices[0].name;
-      for (var i=1; i<this.checkedServices.length-1; i++) {
-        servicesString += ", " + this.checkedServices[i].name;
-      }
-      servicesString += ", " + this.checkedServices[this.checkedServices.length-1].name + ".";
-
-      var confirmation = window.confirm("Are you sure you want to book an appointment on " + dateString + " at " + timeString + " with the followin services: " + servicesString);
-
-      if (confirmation) {
-        //Call Axios and create the appointment (NOTE: remember to update the parameters of the function in the html too when adding this)
-      }
-    },
-
-    getWeekAvailabilities: function() {
-      //Returns the availabilities for every day of the week
-
-      for (var i=0; i<7; i++) {
-        //Call Axios here
-      }
-
     },
 
     //This method converts date input field to a date object (Where we only care about the date)
@@ -336,7 +451,75 @@ export default {
       var time = currTime.split(":");
       selectedTime.setHours(time[0], time[1], "00");
       return selectedTime;
+    },
+
+    selectBusinessHour(businessHour) {
+      this.selectedBusinessHour = businessHour;
+      this.selectedBusinessHourId = businessHour.id;
+    },
+
+    startBusinessHourInput(eventData) {
+      this.businessHourStart = eventData;
+    },
+
+    endBusinessHourInput(eventData) {
+      this.businessHourEnd = eventData;
+    },
+
+    createBusinessHour(selectedCol) {
+      var dateString = formatDate(addDays(date,selectedCol));
+      var startTimeString = + this.businessHourStart.HH + ":" + this.businessHourEnd.mm + ":00";
+      var endTimeString =  + this.businessHourEnd.HH + ":" + this.businessHourEnd.mm + ":00";
+      
+      AXIOS.post("/businesshours/" + dateString + "?start=" + startTimeString + "&end=" + endTimeString)
+        .then(response => {
+          this.getAllBusinessHours();
+        })
+        .catch(e => {
+
+        });
+        
+    },
+
+    updateBusinessHour(selectedBusinessHour) {
+
+      var startTimeString = + this.businessHourStart.HH + ":" + this.businessHourEnd.mm + ":00";
+      var endTimeString =  + this.businessHourEnd.HH + ":" + this.businessHourEnd.mm + ":00";
+      
+      AXIOS.put("/businesshours/" + selectedBusinessHour.id + "?start=" + startTimeString + "&end=" + endTimeString + "&date=" + selectedBusinessHour.date)
+        .then(response => {
+          this.getAllBusinessHours();
+        })
+        .catch(e => {
+
+        });
+    },
+
+    deleteBusinessHour(selectedBusinessHour) {
+
+      var startTimeString = + this.businessHourStart.HH + ":" + this.businessHourEnd.mm + ":00";
+      var endTimeString =  + this.businessHourEnd.HH + ":" + this.businessHourEnd.mm + ":00";
+      
+      AXIOS.delete("/businesshours/" + selectedBusinessHour.id)
+        .then(response => {
+          this.getAllBusinessHours();
+        })
+        .catch(e => {
+
+        });
+      this.selectedBusinessHour = null;
+      this.selectedBusinessHourId = null;
+    },
+
+    formatTimeDisplay(aTime) {
+      var str = aTime;
+      str = str.slice(0,5);
+      if(str.charAt(0) === "0") {
+        str = str.slice(1,5);
+      }
+      return str;
     }
+
 
   }
   

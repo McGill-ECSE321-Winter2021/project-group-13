@@ -61,7 +61,7 @@ export default new Router({
     },
 
       {
-      path: '/CustomerNav',
+      path: '/CustomerNavbar',
       name: 'CustomerNavbar',
       component: CustomerNavbar
     },
@@ -79,6 +79,12 @@ export default new Router({
     },
     
     {
+      path: '/AdminTechnicianSchedule',
+      name: 'AdminTechnicianSchedule',
+      component: AdminTechnicianSchedule
+    },
+
+        {
       path: '/AdminTechnicianSchedule',
       name: 'AdminTechnicianSchedule',
       component: AdminTechnicianSchedule
