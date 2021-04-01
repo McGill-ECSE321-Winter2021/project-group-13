@@ -5,7 +5,7 @@
     </div>
     <div class="sidemenu">
       <div class="businessHourMenu">
-        <h2>Business Hour</h2>
+        <h2>Manage <br>Business Hours</h2>
         <div class = "createBusinessHour" v-if="selectedBusinessHourId <= 0 || selectedBusinessHourId == null">
           <div class = "timePick">
           <p class = "leftPick"> Open Time:</p> 
@@ -19,7 +19,7 @@
             <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="endBusinessHourInput"></vue-timepicker>
           </p>
           </div>
-          <div>
+          <div class ="businessHourButtonContainer">
             <button
             v-bind:disabled="(selectedBusinessHour == null || businessHourStart.HH == '' || businessHourStart.mm == '' ||  businessHourEnd.HH == '' || businessHourEnd.mm == '')" 
             v-on:click="createBusinessHour(selectedBusinessHour.col)" 
@@ -42,8 +42,8 @@
             </p>
             </div>
             <div>
-            <div v-if="selectedBusinessHourId > 0" >
-              <button
+            <div class = "businessHourButtonContainer" v-if="selectedBusinessHourId > 0" >
+              <button style ="margin-bottom: 10px"
               v-bind:disabled="(selectedBusinessHour == null || businessHourStart.HH == '' || businessHourStart.mm == '' ||  businessHourEnd.HH == '' || businessHourEnd.mm == '')" 
               v-on:click="updateBusinessHour(selectedBusinessHour)" 
               >
@@ -60,7 +60,7 @@
         </div>
       </div> <!-- close business hour window -->
       <div class="technicianHourWindow">
-        <h2>Technician Shift</h2>
+        <h2>Manage <br> Technician Shifts</h2>
         <div class = "createTechnicianHour" v-if="selectedTechnicianHourId <= 0 || selectedTechnicianHourId == null">
           <div class = "timePick">
           <p class = "leftPick"> Shift Start :</p> 
@@ -77,7 +77,7 @@
           <div>
             <button
             v-bind:disabled="(selectedTechnicianHour == null || technicianHourStart.HH == '' || technicianHourStart.mm == '' ||  technicianHourEnd.HH == '' || technicianHourEnd.mm == '')" 
-            v-on:click="createBusinessHour(selectedTechnicianHour.col)" 
+            v-on:click="createTechnicianHour(selectedTechnicianHour.col,selectedTechnician)" 
             >
               Schedule Shift
             </button>
@@ -100,15 +100,15 @@
             <div v-if="selectedTechnicianHourId > 0" >
               <button
               v-bind:disabled="(selectedTechnicianHour == null || technicianHourStart.HH == '' || technicianHourStart.mm == '' ||  technicianHourEnd.HH == '' || technicianHourEnd.mm == '')" 
-              v-on:click="updateBusinessHour(selectedTechnicianHour)" 
+              v-on:click="updateTechnicianHour(selectedTechnicianHour)" 
               >
-                Update Business Hour
+                Update Shift
               </button>
               <button
               v-bind:disabled="(selectedTechnicianHour == null)"
-              v-on:click="deleteBusinessHour(selectedTechnicianHour)"
+              v-on:click="deleteTechnicianHour(selectedTechnicianHour)"
               >
-                Delete Business Hour
+                Delete Shift
               </button>
             </div>
           </div>
@@ -118,7 +118,14 @@
 		<div class="calendar">
     <h2>Technician Schedule</h2>
       <div id="month-header"><span id="month">{{month}} {{year}}</span></div>
-      <div id="week-buttons"><button class="week-change" v-on:click="changeWeek(false)">Previous</button><button class="week-change" v-on:click="changeWeek(true)">Next  </button></div>
+      <div id="week-buttons"> 
+        <button class="week-change" v-on:click="changeWeek(false)">
+          Previous
+        </button>
+        <button class="week-change" v-on:click="changeWeek(true)">
+          Next  
+        </button>
+      </div>
       <table id="appointments-table">
         <tr id="calendar-top-row">
           <td></td>
@@ -132,7 +139,10 @@
         </tr>
         <tr id="businessHourRow">  
           <td class ="rowHeader"> Business Hours </td>
-          <td @click="selectBusinessHour(businessHour)" class="businessHourSlot" :class="{'highlight': (businessHour.id == selectedBusinessHourId)}" v-for="businessHour in businessHoursWeek" v-bind:key="businessHour.id">
+          <td class="hourSlot" 
+          v-for="businessHour in businessHoursWeek" v-bind:key="businessHour.id" 
+          @click="selectBusinessHour(businessHour)" 
+          :class="{'highlight': (businessHour.id == selectedBusinessHourId)}" >
             <div v-if="businessHour.id > 0" >
             open: {{ formatTimeDisplay(businessHour.startTime) }}<br> 
             close: {{ formatTimeDisplay(businessHour.endTime) }}
@@ -143,16 +153,15 @@
           </td>
           
         </tr>
-        <tr class="technicianRows" v-for="technician in technicians" v-bind:key="technician.username">
+        <tr class="technicianRows" v-for="(technician,index) in technicians" v-bind:key="technician.username">
           <td> {{technician.name}} </td>
-          <td class="technicianHourSlot" v-for="i in 7" v-bind:key="i">
-            <div hidden>
-            {{ technicianHour = getTechnicianHoursWeek(technician,(i-1)) }}
-            </div>
-            <div @click="selectTechnicianHour(technicianHour)">
+          <td class="hourSlot" 
+          v-for="technicianHour in technicianHoursWeek[index]" v-bind:key="technicianHour.id" 
+          @click="selectTechnicianHour(technicianHour), selectTechnician(technician)" 
+          :class="{'highlight': (technicianHour.id == selectedTechnicianHourId)}" >
+            <div >
               <div v-if="technicianHour.id > 0">
-                {{technicianHour.startTime }};
-                {{technicianHour.endTime}};
+                {{ formatTimeDisplay(technicianHour.startTime) }} <span>&ndash;</span> {{ formatTimeDisplay(technicianHour.endTime) }}
               </div>
               <div v-if="technicianHour.id < 0">
                 X
@@ -169,6 +178,10 @@
 #businessHourRow {
   height: 60px;
   border: 1px solid black;
+}
+
+.businessHourButtonContainer {
+  height: 80px;
 }
 
 .rowHeader {
@@ -191,7 +204,7 @@
   margin-right: 5px;
 }
 
-.businessHourSlot {
+.hourSlot {
   border: 1px solid black;
 }
 
@@ -402,12 +415,16 @@ export default {
       inputDate: "",
       inputTime: "",
       technicians: [],
+      numTechnicians: 0,
+      technicianHoursWeek: [],
       businessHours: [],
       businessHoursWeek: [],
       selectedBusinessHour: "",
       selectedBusinessHourId: "",
       selectedTechnicianHour: "",
       selectedTechnicianHourId: "",
+      selectedTechnician: "",
+      
 
       businessHourStart: {HH: "", mm: ""},
       businessHourEnd: {HH: "", mm: ""},
@@ -445,6 +462,11 @@ export default {
       AXIOS.get("/technicians/")
       .then(response => {
         this.technicians = response.data;
+        this.sortTechniciansByName();
+        if(typeof(this.technicians) !== 'undefined') {
+          this.numTechnicians = this.technicians.length;
+        }
+        this.getTechnicianHoursWeek();
       })
       .catch(e => {
         this.errorMessage = e.data;
@@ -452,21 +474,24 @@ export default {
       })
     },
 
-    getTechnicianHoursWeek: function(technician,i) {
-      var technicianHours = technician.technicianHours;
-      var tempTechnicianHoursWeek = null;
-      if(typeof(this.technicianHours) !== 'undefined') {
-        var numHours = technicianHours.length;
-        for(var j = 0; j < numHours; j++) {
-          if(technicianHours[j].date === formatDate(addDays(date,i))) {
-            tempTechnicianHoursWeek = technicianHours[j];
+    getTechnicianHoursWeek: function() {
+      for(var i = 0; i < this.numTechnicians; i++) { // iterating over every technician
+        var tempTechnicianHours = this.technicians[i].technicianHours; 
+        var tempTechnicianHoursWeek = new Array(7).fill(null);
+        for(var j = 0; j < 7; j++) { // iterating over each day of the week
+          if(typeof(tempTechnicianHours) !== 'undefined') {
+            for(var k = 0; k < tempTechnicianHours.length; k++) { // iterating over each of the technician's hours to see if it falls on the current day of the week
+              if(tempTechnicianHours[k].date === formatDate(addDays(date,j))) { // date variable is a global variable that stores date of first day of displayed week
+                tempTechnicianHoursWeek[j] = tempTechnicianHours[k];
+              }
+            }
+          }
+          if(tempTechnicianHoursWeek[j] == null) {
+            tempTechnicianHoursWeek[j] = new fakeWorkHour(j);
           }
         }
+        this.technicianHoursWeek[i] = tempTechnicianHoursWeek;
       }
-      if(tempTechnicianHoursWeek == null) {
-        tempTechnicianHoursWeek = new fakeWorkHour(i);
-      }
-      return tempTechnicianHoursWeek;
     },
 
     getAllBusinessHours: function() {
@@ -535,6 +560,10 @@ export default {
       this.selectedBusinessHourId = "";
     },
 
+    selectTechnician(technician) {
+      this.selectedTechnician = technician;
+    },
+
     startBusinessHourInput(eventData) {
       this.businessHourStart = eventData;
     },
@@ -553,7 +582,7 @@ export default {
 
     createBusinessHour(selectedCol) {
       var dateString = formatDate(addDays(date,selectedCol));
-      var startTimeString = + this.businessHourStart.HH + ":" + this.businessHourEnd.mm + ":00";
+      var startTimeString = + this.businessHourStart.HH + ":" + this.businessHourStart.mm + ":00";
       var endTimeString =  + this.businessHourEnd.HH + ":" + this.businessHourEnd.mm + ":00";
       
       AXIOS.post("/businesshours/" + dateString + "?start=" + startTimeString + "&end=" + endTimeString)
@@ -568,7 +597,7 @@ export default {
 
     updateBusinessHour(selectedBusinessHour) {
 
-      var startTimeString = + this.businessHourStart.HH + ":" + this.businessHourEnd.mm + ":00";
+      var startTimeString = + this.businessHourStart.HH + ":" + this.businessHourStart.mm + ":00";
       var endTimeString =  + this.businessHourEnd.HH + ":" + this.businessHourEnd.mm + ":00";
       
       AXIOS.put("/businesshours/" + selectedBusinessHour.id + "?start=" + startTimeString + "&end=" + endTimeString + "&date=" + selectedBusinessHour.date)
@@ -582,7 +611,7 @@ export default {
 
     deleteBusinessHour(selectedBusinessHour) {
 
-      var startTimeString = + this.businessHourStart.HH + ":" + this.businessHourEnd.mm + ":00";
+      var startTimeString = + this.businessHourStart.HH + ":" + this.businessHourStart.mm + ":00";
       var endTimeString =  + this.businessHourEnd.HH + ":" + this.businessHourEnd.mm + ":00";
       
       AXIOS.delete("/businesshours/" + selectedBusinessHour.id)
@@ -596,6 +625,51 @@ export default {
       this.selectedBusinessHourId = null;
     },
 
+    createTechnicianHour(selectedCol,selectedTechnician) {
+      var dateString = formatDate(addDays(date,selectedCol));
+      var startTimeString = + this.technicianHourStart.HH + ":" + this.technicianHourStart.mm + ":00";
+      var endTimeString =  + this.technicianHourEnd.HH + ":" + this.technicianHourEnd.mm + ":00";
+      
+      AXIOS.post("/technicianhours/" + selectedTechnician.username + "?start=" + startTimeString + "&end=" + endTimeString + "&date=" + dateString)
+        .then(response => {
+          this.getAllTechnicianHours();
+        })
+        .catch(e => {
+
+        });
+        
+    },
+
+    updateTechnicianHour(selectedTechnicianHour) {
+
+      var startTimeString = + this.technicianHourStart.HH + ":" + this.technicianHourStart.mm + ":00";
+      var endTimeString =  + this.technicianHourEnd.HH + ":" + this.technicianHourEnd.mm + ":00";
+      
+      AXIOS.put("/technicianhours/" + selectedTechnicianHour.id + "?start=" + startTimeString + "&end=" + endTimeString + "&date=" + selectedTechnicianHour.date)
+        .then(response => {
+          this.getAllTechnicianHours();
+        })
+        .catch(e => {
+
+        });
+    },
+
+    deleteTechnicianHour(selectedTechnicianHour) {
+
+      var startTimeString = + this.technicianHourStart.HH + ":" + this.technicianHourStart.mm + ":00";
+      var endTimeString =  + this.technicianHourEnd.HH + ":" + this.technicianHourEnd.mm + ":00";
+      
+      AXIOS.delete("/technicianhours/" + selectedTechnicianHour.id)
+        .then(response => {
+          this.getAllTechnicianHours();
+        })
+        .catch(e => {
+
+        });
+      this.selectedTechnicianHour = null;
+      this.selectedTechnicianHourId = null;
+    },
+
     formatTimeDisplay(aTime) {
       var str = aTime;
       str = str.slice(0,5);
@@ -603,7 +677,23 @@ export default {
         str = str.slice(1,5);
       }
       return str;
-    }
+    },
+
+    sortTechniciansByName() { // using insertion sort
+      var sortedTechnicians = this.technicians;
+      if(this.numTechnicians > 1) {
+        for (var i = 1; i < this.numTechnicians; i++) {
+          var current = sortedTechnicians[i];
+          var j = i-1;
+          while((j > - 1) && (current.name < sortedTechnicians[j].name)) {
+            sortedTechnicians[j+1] = sortedTechnicians[j];
+            j--;
+          }
+          sortedTechnicians[j+1] = current;
+        }
+      }
+      this.technicians = sortedTechnicians;
+    },
 
 
   }
