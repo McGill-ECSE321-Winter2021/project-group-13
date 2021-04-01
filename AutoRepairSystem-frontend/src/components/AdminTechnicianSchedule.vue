@@ -58,8 +58,63 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </div> <!-- close business hour window -->
+      <div class="technicianHourWindow">
+        <h2>Technician Shift</h2>
+        <div class = "createTechnicianHour" v-if="selectedTechnicianHourId <= 0 || selectedTechnicianHourId == null">
+          <div class = "timePick">
+          <p class = "leftPick"> Shift Start :</p> 
+          <p class = "rightPick" > 
+            <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="startTechnicianHourInput"></vue-timepicker>
+          </p>
+          </div>
+          <div class = "timePick">
+          <p class = "leftPick"> Shift End:</p> 
+          <p class = "rightPick" > 
+            <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="endTechnicianHourInput"></vue-timepicker>
+          </p>
+          </div>
+          <div>
+            <button
+            v-bind:disabled="(selectedTechnicianHour == null || technicianHourStart.HH == '' || technicianHourStart.mm == '' ||  technicianHourEnd.HH == '' || technicianHourEnd.mm == '')" 
+            v-on:click="createBusinessHour(selectedTechnicianHour.col)" 
+            >
+              Schedule Shift
+            </button>
+          </div>
+        </div>
+          <div class = "updateTechnicianHour" v-if="selectedTechnicianHourId > 0">
+          <div class = "timePick">
+          <p class = "leftPick"> Updated Shift Start :</p> 
+          <p class = "rightPick" > 
+            <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="startTechnicianHourInput"></vue-timepicker>
+          </p>
+          </div>
+          <div class = "timePick">
+          <p class = "leftPick"> Updated Shift End:</p> 
+          <p class = "rightPick" > 
+            <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="endTechnicianHourInput"></vue-timepicker>
+          </p>
+          </div>
+          <div>
+            <div v-if="selectedTechnicianHourId > 0" >
+              <button
+              v-bind:disabled="(selectedTechnicianHour == null || technicianHourStart.HH == '' || technicianHourStart.mm == '' ||  technicianHourEnd.HH == '' || technicianHourEnd.mm == '')" 
+              v-on:click="updateBusinessHour(selectedTechnicianHour)" 
+              >
+                Update Business Hour
+              </button>
+              <button
+              v-bind:disabled="(selectedTechnicianHour == null)"
+              v-on:click="deleteBusinessHour(selectedTechnicianHour)"
+              >
+                Delete Business Hour
+              </button>
+            </div>
+          </div>
+        </div>
+      </div> <!-- close technician hour window -->
+    </div> <!-- close sidebar -->
 		<div class="calendar">
     <h2>Technician Schedule</h2>
       <div id="month-header"><span id="month">{{month}} {{year}}</span></div>
@@ -91,8 +146,17 @@
         <tr class="technicianRows" v-for="technician in technicians" v-bind:key="technician.username">
           <td> {{technician.name}} </td>
           <td class="technicianHourSlot" v-for="i in 7" v-bind:key="i">
-            <div> 
-              {{ a = getTechnicianHoursWeek(technician,(i-1)) }}
+            <div hidden>
+            {{ technicianHour = getTechnicianHoursWeek(technician,(i-1)) }}
+            </div>
+            <div @click="selectTechnicianHour(technicianHour)">
+              <div v-if="technicianHour.id > 0">
+                {{technicianHour.startTime }};
+                {{technicianHour.endTime}};
+              </div>
+              <div v-if="technicianHour.id < 0">
+                X
+              </div>
             </div>
           </td>
         </tr>
@@ -132,7 +196,7 @@
 }
 
 .technicianRows {
-  height: 20px;
+  height: 60px;
   border: 1px solid black;
 }
 .sidemenu {
@@ -340,11 +404,15 @@ export default {
       technicians: [],
       businessHours: [],
       businessHoursWeek: [],
-      selectedBusinessHour: null,
-      selectedBusinessHourId: null,
+      selectedBusinessHour: "",
+      selectedBusinessHourId: "",
+      selectedTechnicianHour: "",
+      selectedTechnicianHourId: "",
 
       businessHourStart: {HH: "", mm: ""},
       businessHourEnd: {HH: "", mm: ""},
+      technicianHourStart: {HH: "", mm: ""},
+      technicianHourEnd: {HH: "",mm: ""},
     }
   },
 
@@ -456,6 +524,15 @@ export default {
     selectBusinessHour(businessHour) {
       this.selectedBusinessHour = businessHour;
       this.selectedBusinessHourId = businessHour.id;
+      this.selectedTechnicianHour = "";
+      this.selectedTechnicianHourId = "";
+    },
+
+    selectTechnicianHour(technicianHour) {
+      this.selectedTechnicianHour = technicianHour;
+      this.selectedTechnicianHourId = technicianHour.id;
+      this.selectedBusinessHour = "";
+      this.selectedBusinessHourId = "";
     },
 
     startBusinessHourInput(eventData) {
@@ -464,6 +541,14 @@ export default {
 
     endBusinessHourInput(eventData) {
       this.businessHourEnd = eventData;
+    },
+
+    startTechnicianHourInput(eventData) {
+      this.technicianHourStart = eventData;
+    },
+
+    endTechnicianHourInput(eventData) {
+      this.technicianHourEnd = eventData;
     },
 
     createBusinessHour(selectedCol) {
