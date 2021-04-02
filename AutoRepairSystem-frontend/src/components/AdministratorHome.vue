@@ -23,7 +23,6 @@
       <table class="styled-table">
         <thead>
           <tr>
-            <th>Service</th>
             <th>Technician</th>
             <th>Start Time</th>
             <th>End Time</th>
@@ -31,7 +30,6 @@
         </thead>
         <tbody>
           <tr v-for="appointment in appointments" @click="selectRow(appointment)" v-bind:key="appointment.id" :class="{'highlight': (appointment.id === selectedAppointment)}">
-            <td>{{ appointment.id }}</td>
             <td>{{ appointment.technician.name }}</td>
             <td>{{ appointment.startTime }}</td>
             <td>{{ appointment.endTime }}</td>
@@ -93,6 +91,10 @@ margin-right: 100px;
 #deletebutton{
 align: right;
 margin-left: 1100px;
+}
+
+tr.highlight {
+  background-color: yellow;
 }
 
 #deletebutton:hover, #button2:hover, #buttonlogout:hover, #button:hover {

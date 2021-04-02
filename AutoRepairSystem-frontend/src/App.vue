@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h2> Auto Repair Online System </h2>
+    <img class="logo" src="https://i.ibb.co/kcj0HD4/circle-cropped-1.png" width="100">
     <router-view></router-view>
   </div>
 </template>
@@ -12,14 +12,23 @@ export default {
 </script>
 
 <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background: #CDD7DE;;
+  background: white;
   
+}
+
+.logo{
+	left: 0;
+	margin: 10px;
+	text-align: left;
 }
 
 @import'~bootstrap/dist/css/bootstrap.css'
