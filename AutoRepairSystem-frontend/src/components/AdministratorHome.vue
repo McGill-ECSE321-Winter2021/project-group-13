@@ -13,17 +13,29 @@
        
       <button id="buttonlogout" @click="logout()">Log Out </button> 
     </div>
+
     <div id="currentappointments">
       <h2> Current Appointments </h2>
+      <br>
+      <div class="datetime-block">
+        <label for="appt-date">Select a Date: </label><span id="datetimepicker"><input type="date" @input="getDateClean($event.target.value)"></span>
+      </div>
       <table class="styled-table">
         <thead>
           <tr>
             <th>Service</th>
-            <th>Date</th>
-            <th>Time</th>
+            <th>Technician</th>
+            <th>Start Time</th>
+            <th>End Time</th>
           </tr>
         </thead>
         <tbody>
+          <tr v-for="appointment in appointments" @click="selectRow(appointment)" v-bind:key="appointment.id" :class="{'highlight': (appointment.id === selectedAppointment)}">
+            <td>{{ appointment.id }}</td>
+            <td>{{ appointment.technician.name }}</td>
+            <td>{{ appointment.startTime }}</td>
+            <td>{{ appointment.endTime }}</td>
+          </tr>
         </tbody>
       </table>
     <br>
@@ -150,11 +162,18 @@ export default {
       amountpayed:0,
       amountowed:0,
       temp:'',
+      inputDate: null,
+      appointments: [],
+      selectedAppointment: null,
     }
   },
 
   components: {
     AdminNavbar
+  },
+
+  created: function() {
+
   },
 
   methods: {
@@ -171,6 +190,41 @@ export default {
     logout: function () {
       this.$router.push({name: "SignIn"});
       
+    },
+
+    getAppointments: function() {
+      AXIOS.get(`/appointments/` + this.inputDate, {}, {})
+          .then((response) => {
+            this.appointments = response.data
+          })
+          
+          .catch((e) => {
+            var error= e.response.data;
+            this.errorMessage = error;
+          });
+    },
+
+    //This method converts date input field to a date object (Where we only care about the date)
+    getDateClean(currDate) {
+
+      console.log(currDate);
+
+      this.inputDate = currDate;
+
+      //console.log(currDate);
+
+      //if (currDate == "") return "";
+      //var selectedDate = new Date(currDate + "T00:00:00");
+
+      this.getAppointments();
+
+      //console.log(selectedDate);
+
+        //return selectedDate;
+    },
+
+    selectRow(appointment) {
+      this.selectedAppointment = appointment.id;
     },
 
     

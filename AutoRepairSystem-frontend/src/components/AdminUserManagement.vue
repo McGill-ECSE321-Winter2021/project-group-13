@@ -257,9 +257,9 @@ export default {
 
 	methods: {
 		fetch (){
-			AXIOS.get('/appointments/')
+			AXIOS.get('/customers/')
       .then(response => {
-        this.appointments = response.data
+        this.customers = response.data
       })
       .catch(e => {
         var error = e.response.data
