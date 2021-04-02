@@ -11,6 +11,7 @@ import AccountCreation from "@/components/AccountCreation"
 import AdminUserManagement from "@/components/AdminUserManagement"
 import AdminNavbar from "@/components/AdminNavbar"
 import CustomerNavbar from "@/components/CustomerNavbar"
+import AdminTechnicianSchedule from "@/components/AdminTechnicianSchedule"
 
 Vue.use(Router)
 
@@ -60,7 +61,7 @@ export default new Router({
     },
 
       {
-      path: '/CustomerNav',
+      path: '/CustomerNavbar',
       name: 'CustomerNavbar',
       component: CustomerNavbar
     },
@@ -75,7 +76,18 @@ export default new Router({
       path: '/AdminUserManagement',
       name: 'AdminUserManagement',
       component: AdminUserManagement
-    }
+    },
     
+    {
+      path: '/AdminTechnicianSchedule',
+      name: 'AdminTechnicianSchedule',
+      component: AdminTechnicianSchedule
+    },
+
+        {
+      path: '/AdminTechnicianSchedule',
+      name: 'AdminTechnicianSchedule',
+      component: AdminTechnicianSchedule
+    },
   ]
 })
