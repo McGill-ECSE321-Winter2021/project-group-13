@@ -24,11 +24,11 @@
         </tr>
     </thead>
       <tbody>
-          <tr v-for="appointments in appointments">
-            <td>{{ appointments.services.name }}</td>
-            <td>{{ appointments.date }}</td>
-            <td>{{ appointments.startTime }}</td>
-            <td>{{ appointments.endTime }}</td>
+          <tr v-for="appointment in appointments">
+            <td>{{ appointment.services.name }}</td>
+            <td>{{ appointment.date }}</td>
+            <td>{{ appointment.startTime }}</td>
+            <td>{{ appointment.endTime }}</td>
           </tr>
           <tr v-for="n in emptyAdministrators" v-bind:key="n">
           <td></td>
@@ -190,7 +190,6 @@ export default {
         var error = e.response.data
         console.log(error)
         this.endUserError = error
-        document.write(error)
       })
     },
 //actually delete account in database and then go to sign in
