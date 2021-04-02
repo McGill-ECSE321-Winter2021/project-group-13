@@ -19,14 +19,16 @@
         <tr>
             <th>Service</th>
             <th>Date</th>
-            <th>Time</th>
+            <th>Start Time</th>
+            <th>End Time</th>
         </tr>
     </thead>
       <tbody>
           <tr v-for="appointments in appointments">
-            <td>{{ appointments.services }}</td>
-            <td>{{ administrator.date }}</td>
-            <td>{{ administrator.startTime }}</td>
+            <td>{{ appointments.services.name }}</td>
+            <td>{{ appointments.date }}</td>
+            <td>{{ appointments.startTime }}</td>
+            <td>{{ appointments.endTime }}</td>
           </tr>
           <tr v-for="n in emptyAdministrators" v-bind:key="n">
           <td></td>
@@ -154,6 +156,8 @@ var backendUrl =
   //headers: { "Access-Control-Allow-Origin": frontendUrl },
 });
 
+
+
 export default {
   name: "SignIn",
   data () {
@@ -163,7 +167,8 @@ export default {
       amountowed:0,
       temp:'',
       appointments: [],
-      Username: 'test', //get actual username
+      username: this.$store.getters.getActiveUserName, //get actual username
+  
     }
   },
 
@@ -177,9 +182,9 @@ export default {
 
   methods: {
     fetch (){
-			AXIOS.get('/customers/')
+			AXIOS.post(`/appointments/bycustomer`, {username: this.username}, {})
       .then(response => {
-        this.customers = response.data
+        this.appointments = response.data
       })
       .catch(e => {
         var error = e.response.data
@@ -190,7 +195,7 @@ export default {
     },
 //actually delete account in database and then go to sign in
     deleteaccountpopup: function () {
-       if (confirm('Do you want to Delete?'.concat(this.$store.getters.getActiveUserName))) {
+       if (confirm('Do you want to Delete?')) {
           console.log(this.deleteuser())
            
        } else {
