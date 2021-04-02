@@ -25,7 +25,7 @@
     <div>
       <span v-if="errorMessage" style="color:red">Error: {{errorMessage}}</span>
       <br>  
-      <button id="button" class="btn-hover color" v-bind:disabled="!username || !password || !userType" @click="isValidType(userType, username, password)"> Log In </button>
+      <button id="button" class="btn-hover color" v-bind:disabled="!username || !password" @click="signIn(username, password)"> Log In </button>
       <br><br>
       <span>Create an account? <router-link to="/AccountCreation">Sign up</router-link></span>
     </div>
