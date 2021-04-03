@@ -58,7 +58,7 @@
   <div class="calendar">
     <h2>Availability Calendar</h2>
     <div id="month-header"><span id="month">{{month}} {{year}}</span></div>
-    <div id="week-buttons"><button class="week-change" v-on:click="changeWeek(false)">Previous</button><button class="week-change" v-on:click="changeWeek(true)">Next  </button></div>
+    <div id="week-buttons" v-if="loaded"><button class="week-change" v-on:click="changeWeek(false)">Previous</button><button class="week-change" v-on:click="changeWeek(true)">Next  </button></div>
     <table id="appointments-table">
       <tr id="calendar-top-row">
         <td>Sun.<br>{{weekdays[0]}}</td>
@@ -71,25 +71,25 @@
       </tr>
       <tr id="available-slots">
         <td>
-          <div id="availability-block" v-for="availability in availabilities[0]">{{availability.startTime}}<br>{{availability.endTime}} {{availabilities[0]}}</div>
+          <div id="availability-block" v-for="availability in availabilities[0]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
         <td>
-          <div id="availability-block" v-for="availability in availabilities[1]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[1]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
         <td>
-          <div id="availability-block" v-for="availability in availabilities[2]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[2]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
         <td>
-          <div id="availability-block" v-for="availability in availabilities[3]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[3]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
         <td>
-          <div id="availability-block" v-for="availability in availabilities[4]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[4]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
         <td>
-          <div id="availability-block" v-for="availability in availabilities[5]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[5]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
         <td>
-          <div id="availability-block" v-for="availability in availabilities[6]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[6]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
       </tr>
     </table>
@@ -219,7 +219,7 @@ button.week-change {
 }
 
 body {
-  overflow: hidden; /*This stops the page from having a scroll bar (might be able to remove this later)*/
+  --overflow: hidden; /*This stops the page from having a scroll bar (might be able to remove this later)*/
 }
 
 #app {
@@ -307,6 +307,7 @@ export default {
       checkedServices: [],
       availabilities: [],
       username: this.$store.getters.getActiveUserName,
+      loaded: true,
     }
   },
 
@@ -390,6 +391,7 @@ export default {
         .then((response) => {
           window.alert("Thank you for booking an appointment with us!");
           this.errorMessage = "";
+          this.getWeekAvailabilities();
         })
         .catch((e) => {
           this.errorMessage = e.response.data;
@@ -399,20 +401,34 @@ export default {
       }
     },
 
-    getWeekAvailabilities: function(firstDay) {
-      //Returns the availabilities for every day of the week
-        /*this.availabilities = [];
+    getWeekAvailabilities: async function() {   //Returns the availabilities for every day of the week
+      this.loaded = false;
+      this.availabilities = [];
+      var currDate = new Date(date);
 
-        AXIOS.get(`/available/2021-03-31?minDuration=10`)
-        .then((response) => {
-          for (x in response.data) {
-            this.availabilities[0].push(response.data[x][0]);
-          }
-          this.errorMessage = response.data;
-        })
-        .catch((e) => {
-          this.errorMessage = e.response.data;
-        });*/
+      for (var i=0; i<7; i++) {
+        var dailyAvailabilities = [];
+        var dateInput = currDate.toISOString().split("T")[0];
+
+        this.availabilities.push([]);
+
+        await AXIOS.get(`/available/` + dateInput + `?minDuration=0`)
+          .then((response) => {
+            for (var x in response.data) {
+              for (var y in response.data[x]) {
+                this.availabilities[i].push(response.data[x][y]);
+              }
+            }
+          })
+          .catch((e) => {
+            console.log(e);
+            this.errorMessage = e.response.data;
+          });
+
+        currDate.setDate(currDate.getDate()+1);
+      }
+
+      this.loaded = true;
     },
 
     //This method converts date input field to a date object (Where we only care about the date)
