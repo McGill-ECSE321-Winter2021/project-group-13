@@ -48,8 +48,6 @@
       <div style="margin-top: 30px;">
         <button v-bind:disabled="!inputDate || !inputTime || checkedServices.length<=0" v-on:click="createAppointment()">Book Appointment</button>
       </div>
-
-      <br><br>
       <span v-if="errorMessage" style="color:red">Error: {{errorMessage}}</span>
 
       <button class="back" v-on:click="backButton" >Back</button>
@@ -73,7 +71,7 @@
       </tr>
       <tr id="available-slots">
         <td>
-          <div id="availability-block" v-for="availability in availabilities[0]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[0]">{{availability.startTime}}<br>{{availability.endTime}} {{availabilities[0]}}</div>
         </td>
         <td>
           <div id="availability-block" v-for="availability in availabilities[1]">{{availability.startTime}}<br>{{availability.endTime}}</div>
@@ -284,6 +282,17 @@ function getWeekdays() {
   return datesOfWeek;
 }
 
+function CustomerDto(username) {
+  this.username = username;
+}
+
+function AppointmentDto(customer, services, startTime, startDate) {
+    this.customer = new CustomerDto(customer);
+    this.services = services;
+    this.startTime = startTime;
+    this.date = startDate;
+}
+
 export default {
   name: "AvailableAppointments",
   data () {
@@ -291,12 +300,13 @@ export default {
       errorMessage: "",
       month: "",
       year: "",
-      weekdays: "",
+      weekdays: ["", "", "", "", "", "", ""],
       inputDate: "",
       inputTime: "",
       services: [],
       checkedServices: [],
-      availabilities: [[], [], [], [], [], [], []],
+      availabilities: [],
+      username: this.$store.getters.getActiveUserName,
     }
   },
 
@@ -316,7 +326,10 @@ export default {
     this.month = getDisplayedMonth();
     this.year = getDisplayedYear();
     this.weekdays = getWeekdays();
-      },
+
+    this.getWeekAvailabilities();
+
+  },
 
 
   methods: {
@@ -328,6 +341,7 @@ export default {
       this.year = getDisplayedYear();
       this.month = getDisplayedMonth();
       this.weekdays = getWeekdays();
+      this.getWeekAvailabilities();
     },
 
     //This method takes the user back to the customer home page
@@ -352,29 +366,53 @@ export default {
     },
 
     createAppointment: function () {
-      var dateString = this.inputDate.toLocaleString("default", { dateStyle: "full" });
+      var dateString = this.inputDate.toLocaleString("default");
       var timeString = this.inputTime.toLocaleString("default", { timeStyle: "long"});
 
       var servicesString = this.checkedServices[0].name;
       for (var i=1; i<this.checkedServices.length-1; i++) {
         servicesString += ", " + this.checkedServices[i].name;
       }
-      servicesString += ", " + this.checkedServices[this.checkedServices.length-1].name + ".";
 
-      var confirmation = window.confirm("Are you sure you want to book an appointment on " + dateString + " at " + timeString + " with the followin services: " + servicesString);
+      if (this.checkedServices[this.checkedServices.length-1].name !== this.checkedServices[0].name) {
+        servicesString += ", " + this.checkedServices[this.checkedServices.length-1].name + ".";
+      }
+
+      var confirmation = window.confirm("Are you sure you want to book an appointment on " + dateString + " at " + timeString + " with the following services: " + servicesString);
 
       if (confirmation) {
-        //Call Axios and create the appointment (NOTE: remember to update the parameters of the function in the html too when adding this)
+        var timeInput = this.inputTime.toLocaleString("default", { timeStyle: "medium", hour12: false});
+        this.inputDate.setDate(this.inputDate.getDate() + 1);
+        var dateInput = this.inputDate.toISOString().split("T")[0];
+        var apptDto = new AppointmentDto(this.username, this.checkedServices, timeInput, dateInput);
+
+        AXIOS.post(`/create/appointment/any`, apptDto)
+        .then((response) => {
+          window.alert("Thank you for booking an appointment with us!");
+          this.errorMessage = "";
+        })
+        .catch((e) => {
+          this.errorMessage = e.response.data;
+        });
+
+        this.inputDate.setDate(this.inputDate.getDate() - 1);
       }
     },
 
-    getWeekAvailabilities: function() {
+    getWeekAvailabilities: function(firstDay) {
       //Returns the availabilities for every day of the week
+        /*this.availabilities = [];
 
-      for (var i=0; i<7; i++) {
-        //Call Axios here
-      }
-
+        AXIOS.get(`/available/2021-03-31?minDuration=10`)
+        .then((response) => {
+          for (x in response.data) {
+            this.availabilities[0].push(response.data[x][0]);
+          }
+          this.errorMessage = response.data;
+        })
+        .catch((e) => {
+          this.errorMessage = e.response.data;
+        });*/
     },
 
     //This method converts date input field to a date object (Where we only care about the date)
