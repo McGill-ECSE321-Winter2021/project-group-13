@@ -5,7 +5,8 @@
   </div>
 
   <div id="home">
-    <h2>Home</h2>
+    <h2>Home (CUSTOMER)</h2>
+    <h4>My Info : {{username}}</h4>
   
 <div id="invoices">
        <button id="button2" @click="checkinvoices()">Check/Pay Outstanding Balances</button> 
@@ -17,7 +18,7 @@
   <table class="styled-table">
     <thead>
         <tr>
-            <th>Service</th>
+            <th>Services</th>
             <th>Date</th>
             <th>Start Time</th>
             <th>End Time</th>
@@ -25,7 +26,7 @@
     </thead>
       <tbody>
           <tr v-for="appointment in appointments">
-            <td>{{ appointment.services.name }}</td>
+            <td>{{ formattedServices(appointment) }}</td>
             <td>{{ appointment.date }}</td>
             <td>{{ appointment.startTime }}</td>
             <td>{{ appointment.endTime }}</td>
@@ -107,7 +108,8 @@ margin-left: 1100px;
     font-family: sans-serif;
     min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    margin-left: 500px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .styled-table thead tr {
@@ -220,7 +222,7 @@ export default {
     },
     
     deleteuser: function () {
-      AXIOS.delete(`/endUsers/`.concat(this.Username), {}, {})
+      AXIOS.delete(`/endUsers/`.concat(this.username), {}, {})
           .then((response) => {
             this.$router.push({name: "SignIn"});
           })
@@ -230,6 +232,19 @@ export default {
             this.errorMessage = error;
           });
            
+    },
+
+    formattedServices: function(appointment) {
+
+      var servicesString = "";
+
+      var i=0;
+      for (; i<appointment.services.length-1; i++) {
+          servicesString += appointment.services[i].name + ", ";
+      }
+      servicesString += appointment.services[i].name;
+
+      return servicesString;
     }
   }
 }

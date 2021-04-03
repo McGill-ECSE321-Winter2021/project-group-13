@@ -57,7 +57,7 @@
   <div class="calendar">
     <h2>Availability Calendar</h2>
     <div id="month-header"><span id="month">{{month}} {{year}}</span></div>
-    <div id="week-buttons" v-if="loaded"><button class="week-change" v-on:click="changeWeek(false)">Previous</button><button class="week-change" v-on:click="changeWeek(true)">Next  </button></div>
+    <div id="week-buttons"><button class="week-change" :disabled="!loaded" v-on:click="changeWeek(false)">Previous</button><button class="week-change" :disabled="!loaded" v-on:click="changeWeek(true)">Next  </button></div>
     <table id="appointments-table">
       <tr id="calendar-top-row">
         <td>Sun.<br>{{weekdays[0]}}</td>
