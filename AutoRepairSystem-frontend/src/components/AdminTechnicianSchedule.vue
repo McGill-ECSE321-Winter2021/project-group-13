@@ -1,25 +1,25 @@
 <template>
 	<div>
-    <div id = "navBarContainer">
+    <div id = "navbar-container">
       <AdminNavbar/>
     </div>
-    <div class="sidemenu">
+    <div class="side-menu">
       <div class="businessHourMenu">
         <h2>Manage <br>Business Hours</h2>
         <div class = "createBusinessHour" v-if="selectedBusinessHourId <= 0 || selectedBusinessHourId == null">
-          <div class = "timePick">
-          <p class = "leftPick"> Open Time:</p> 
-          <p class = "rightPick" > 
+          <div class = "time-pick">
+          <p class = "left-pick"> Open Time:</p> 
+          <p class = "right-pick" > 
             <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="startBusinessHourInput"></vue-timepicker>
           </p>
           </div>
-          <div class = "timePick">
-          <p class = "leftPick"> Close Time:</p> 
-          <p class = "rightPick" > 
+          <div class = "time-pick">
+          <p class = "left-pick"> Close Time:</p> 
+          <p class = "right-pick" > 
             <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="endBusinessHourInput"></vue-timepicker>
           </p>
           </div>
-          <div class ="businessHourButtonContainer">
+          <div class ="button-container">
             <button
             v-bind:disabled="(selectedBusinessHour == null || businessHourStart.HH == '' || businessHourStart.mm == '' ||  businessHourEnd.HH == '' || businessHourEnd.mm == '')" 
             v-on:click="createBusinessHour(selectedBusinessHour.col)" 
@@ -29,20 +29,20 @@
           </div>
         </div>
           <div class = "createBusinessHour" v-if="selectedBusinessHourId > 0">
-            <div class = "timePick">
-            <p class = "leftPick"> New Open Time:</p> 
-            <p class = "rightPick" > 
+            <div class = "time-pick">
+            <p class = "left-pick"> New Open Time:</p> 
+            <p class = "right-pick" > 
               <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="startBusinessHourInput"></vue-timepicker>
             </p>
             </div>
-            <div class = "timePick">
-            <p class = "leftPick"> New Close Time:</p> 
-            <p class = "rightPick" > 
+            <div class = "time-pick">
+            <p class = "left-pick"> New Close Time:</p> 
+            <p class = "right-pick" > 
               <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="endBusinessHourInput"></vue-timepicker>
             </p>
             </div>
             <div>
-            <div class = "businessHourButtonContainer" v-if="selectedBusinessHourId > 0" >
+            <div class = "button-container" v-if="selectedBusinessHourId > 0" >
               <button style ="margin-bottom: 10px"
               v-bind:disabled="(selectedBusinessHour == null || businessHourStart.HH == '' || businessHourStart.mm == '' ||  businessHourEnd.HH == '' || businessHourEnd.mm == '')" 
               v-on:click="updateBusinessHour(selectedBusinessHour)" 
@@ -62,15 +62,15 @@
       <div class="technicianHourWindow">
         <h2>Manage <br> Technician Shifts</h2>
         <div class = "createTechnicianHour" v-if="selectedTechnicianHourId <= 0 || selectedTechnicianHourId == null">
-          <div class = "timePick">
-          <p class = "leftPick"> Shift Start :</p> 
-          <p class = "rightPick" > 
+          <div class = "time-pick">
+          <p class = "left-pick"> Shift Start :</p> 
+          <p class = "right-pick" > 
             <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="startTechnicianHourInput"></vue-timepicker>
           </p>
           </div>
-          <div class = "timePick">
-          <p class = "leftPick"> Shift End:</p> 
-          <p class = "rightPick" > 
+          <div class = "time-pick">
+          <p class = "left-pick"> Shift End:</p> 
+          <p class = "right-pick" > 
             <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="endTechnicianHourInput"></vue-timepicker>
           </p>
           </div>
@@ -84,15 +84,15 @@
           </div>
         </div>
           <div class = "updateTechnicianHour" v-if="selectedTechnicianHourId > 0">
-          <div class = "timePick">
-          <p class = "leftPick"> Updated Shift Start :</p> 
-          <p class = "rightPick" > 
+          <div class = "time-pick">
+          <p class = "left-pick"> Updated Shift Start :</p> 
+          <p class = "right-pick" > 
             <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="startTechnicianHourInput"></vue-timepicker>
           </p>
           </div>
-          <div class = "timePick">
-          <p class = "leftPick"> Updated Shift End:</p> 
-          <p class = "rightPick" > 
+          <div class = "time-pick">
+          <p class = "left-pick"> Updated Shift End:</p> 
+          <p class = "right-pick" > 
             <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="endTechnicianHourInput"></vue-timepicker>
           </p>
           </div>
@@ -126,7 +126,7 @@
           Next  
         </button>
       </div>
-      <table id="appointments-table">
+      <table id="hours-table">
         <tr id="calendar-top-row">
           <td></td>
           <td>Sun.<br>{{weekdays[0]}}</td>
@@ -137,9 +137,9 @@
           <td>Fri.<br>{{weekdays[5]}}</td>
           <td>Sat.<br>{{weekdays[6]}}</td>
         </tr>
-        <tr id="businessHourRow">  
-          <td class ="rowHeader"> Business Hours </td>
-          <td class="hourSlot" 
+        <tr id="business-hour-row">  
+          <td class ="row-header"> Business Hours </td>
+          <td class="hour-slot" 
           v-for="businessHour in businessHoursWeek" v-bind:key="businessHour.id" 
           @click="selectBusinessHour(businessHour)" 
           :class="{'highlight': (businessHour.id == selectedBusinessHourId)}" >
@@ -155,7 +155,7 @@
         </tr>
         <tr class="technicianRows" v-for="(technician,index) in technicians" v-bind:key="technician.username">
           <td> {{technician.name}} </td>
-          <td class="hourSlot" 
+          <td class="hour-slot" 
           v-for="technicianHour in technicianHoursWeek[index]" v-bind:key="technicianHour.id" 
           @click="selectTechnicianHour(technicianHour), selectTechnician(technician)" 
           :class="{'highlight': (technicianHour.id == selectedTechnicianHourId)}" >
@@ -175,36 +175,36 @@
 </template>
 <style>
 
-#businessHourRow {
+#business-hour-row {
   height: 60px;
   border: 1px solid black;
 }
 
-.businessHourButtonContainer {
+.button-container {
   height: 80px;
 }
 
-.rowHeader {
+.row-header {
   text-align: center;
   font-weight: bolder;
 }
 
-.timePick {
+.time-pick {
   height: 60px;
 }
 
-.leftPick {
+.left-pick {
   position:relative; top:5px;
   float: left;
   margin-left: 5px;
 }
 
-.rightPick {
+.right-pick {
   float: right;
   margin-right: 5px;
 }
 
-.hourSlot {
+.hour-slot {
   border: 1px solid black;
 }
 
@@ -212,7 +212,7 @@
   height: 60px;
   border: 1px solid black;
 }
-.sidemenu {
+.side-menu {
   background-color: #353A57;
   width: 280px;
   height: 100vh;
@@ -229,21 +229,6 @@
   padding: 10px;
 }
 
-#service-table {
-  border-collapse: collapse;
-  width: 100%;
-  background-color: #EAF0F4;
-  color: black;
-}
-
-#service {
-  margin-left: 10px;
-}
-
-#servicediv {
-  margin-top: 5px;
-}
-
 #header-appointments {
   background: white;
 }
@@ -256,10 +241,6 @@
 
 .datetime-block h3 {
   text-align: center;
-}
-
-#datetimepicker {
-  margin-left: 10px;
 }
 
 .back {
@@ -290,18 +271,16 @@ button.week-change {
   font-size: 20px;
 }
 
-#appointments-table {
+#hours-table {
   width: 100%;
   table-layout: fixed;
 }
 
-#available-slots, #available-slots td, #calendar-top-row, #calendar-top-row td, #service-table tr, #service-table td {
+#calendar-top-row, #calendar-top-row td {
   border: 1px solid black;
   text-align: center;
 }
 
-/*The rows of the appointment calendar:
-*/
 #calendar-top-row {
   background-color: white;
   font-size: 20px;
@@ -316,11 +295,7 @@ body {
   margin-top: 0;
 }
 
-#totals {
-  text-align: left;
-}
-
-.navbarContainer {
+.navbar-container {
   margin-bottom: 0px;
 }
 
