@@ -395,7 +395,9 @@ function getWeekdays() {
 }
 
 function formatDate(aDate) {
-  return aDate.toISOString().slice(0, 10);
+  var offset = aDate.getTimezoneOffset()*60000; // timezone offset in milliseconds
+  var formattedDate = (new Date(aDate - offset)).toISOString().slice(0,10);
+  return formattedDate;
 }
 
 function addDays(aDate,numDays) {
@@ -424,7 +426,6 @@ export default {
       selectedTechnicianHour: "",
       selectedTechnicianHourId: "",
       selectedTechnician: "",
-      
 
       businessHourStart: {HH: "", mm: ""},
       businessHourEnd: {HH: "", mm: ""},
