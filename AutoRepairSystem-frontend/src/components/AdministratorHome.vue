@@ -7,6 +7,7 @@
   
   <div id="home">
     <h2>Home (ADMIN) </h2>
+    <h4>My Info : {{username}}</h4>
   
     <div id="invoices">
       <button id="button2" @click="checkinvoices()">Check/Pay Outstanding Balances</button> 
@@ -167,6 +168,7 @@ export default {
       inputDate: null,
       appointments: [],
       selectedAppointment: null,
+      username:this.$store.getters.getActiveUserName,
     }
   },
 

@@ -5,7 +5,8 @@
   </div>
 
   <div id="home">
-    <h2>Home</h2>
+    <h2>Home (CUSTOMER)</h2>
+    <h4>My Info : {{username}}</h4>
   
 <div id="invoices">
        <button id="button2" @click="checkinvoices()">Check/Pay Outstanding Balances</button> 
@@ -107,7 +108,8 @@ margin-left: 1100px;
     font-family: sans-serif;
     min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    margin-left: 500px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .styled-table thead tr {
