@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img class="logo" src="https://i.ibb.co/kcj0HD4/circle-cropped-1.png" width="100">
+    <!-- <img class="logo" src="https://i.ibb.co/kcj0HD4/circle-cropped-1.png" width="100"> -->
     <router-view></router-view>
   </div>
 </template>
@@ -26,9 +26,7 @@ export default {
 }
 
 .logo{
-	left: 0;
 	margin: 10px;
-	text-align: left;
 }
 
 @import'~bootstrap/dist/css/bootstrap.css'

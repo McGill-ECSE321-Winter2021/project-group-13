@@ -8,12 +8,12 @@
   <div id="home">
     <h2>Home (ADMIN) </h2>
     <h4>My Info : {{username}}</h4>
-  
+    
     <div id="invoices">
       <button id="button2" @click="checkinvoices()">Check/Pay Outstanding Balances</button> 
-       
-      <button id="buttonlogout" @click="logout()">Log Out </button> 
     </div>
+
+
 
     <div id="currentappointments">
       <h2> Current Appointments </h2>
@@ -21,7 +21,7 @@
       <div class="datetime-block">
         <label for="appt-date">Select a Date: </label><span id="datetimepicker"><input type="date" @input="getDateClean($event.target.value)"></span>
       </div>
-      <table class="styled-table">
+      <table class="content-table">
         <thead>
           <tr>
             <th>Technician</th>
@@ -34,6 +34,11 @@
             <td>{{ appointment.technician.name }}</td>
             <td>{{ appointment.startTime }}</td>
             <td>{{ appointment.endTime }}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
           </tr>
         </tbody>
       </table>
@@ -59,7 +64,7 @@
 
 
 #home {
-  background-color: #CDD7DE;
+  background-color:white;
   width: 100%;
   height: 100vh;
   float: right;
@@ -77,10 +82,8 @@ margin-right: 1000px;
 
 }
 
-#buttonlogout{
-margin-top: 10px;
-align: left;
-margin-right: 282px;
+h2{
+font-family: 'Poppins', sans-serif;
 }
 
 #button2{
@@ -94,51 +97,61 @@ align: right;
 margin-left: 1100px;
 }
 
-tr.highlight {
-  background-color: yellow;
-}
-
 #deletebutton:hover, #button2:hover, #buttonlogout:hover, #button:hover {
   box-shadow: 0 0 10px 0 #3498db inset, 0 0 10px 4px #3498db;
 }
 
-.styled-table {
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 0.9em;
-    font-family: sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    margin-left: 500px;
+.content-table {
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.9em;
+  min-width: 400px;
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+  padding-top: 100px;
+  margin: auto;
+  width: 30%;
 }
 
-.styled-table thead tr {
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
+.content-table thead tr {
+  background-color: 
+#013bbe;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
 }
 
-.styled-table th,
-.styled-table td {
-    padding: 12px 15px;
+.content-table th,
+.content-table td {
+  padding: 12px 15px;
 }
 
-.styled-table tbody tr {
-    border-bottom: 1px solid #dddddd;
+.content-table tbody tr {
+  border-bottom: 1px solid #dddddd;
 }
 
-.styled-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
+.content-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
 }
 
-.styled-table tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
+.content-table tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
+
+.content-table tbody tr.highlight {
+  font-weight: bold;
+  color: #009879;
 }
 
 .navbarContainer {
   margin-bottom: 0px;
 }
 
+.datetime-block{
+  margin-bottom: 50px;
+}
 
 </style>
 
@@ -190,11 +203,6 @@ export default {
            return false;
        }
     },
-//removes current user
-    logout: function () {
-      this.$router.push({name: "SignIn"});
-      
-    },
 
     getAppointments: function() {
       AXIOS.get(`/appointments/` + this.inputDate, {}, {})
@@ -210,8 +218,6 @@ export default {
 
     //This method converts date input field to a date object (Where we only care about the date)
     getDateClean(currDate) {
-
-      console.log(currDate);
 
       this.inputDate = currDate;
 
