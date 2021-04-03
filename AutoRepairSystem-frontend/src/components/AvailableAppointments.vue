@@ -5,10 +5,8 @@
   </div>
 
   <div class="sidemenu">
-    <h2>Book Appointment</h2>
+    <h3>Book Appointment</h3>
     <div id="service-block">
-      <h3>Services</h3>
-      Select Desired Services:
 
       <div class="service-table">
       <table id="service-table">
@@ -31,6 +29,8 @@
       </table>
       </div>
 
+      <div class="btn-group mt-2 mb-4" role="group" aria-label="actionButtons"> </div>
+
       <div id="totals">
       Number of services: {{checkedServices.length}} checked services<br>
       Total duration: {{getTotalServicesDuration()}} minutes<br>
@@ -40,9 +40,8 @@
       <div class="datetime-block">
         <h3>Date & Time</h3>
         <br>
-        <label for="appt-date">Select a Date: </label><span id="datetimepicker"><input type="date" @input="inputDate = getDateClean($event.target.value)"></span>
-        <br><br>
-        <label for="appt-time">Select a time: </label><span id="datetimepicker"><input type="time" pattern="[0-9]{2}:[0-9]{2}" @input="inputTime = getTimeClean($event.target.value)"></span>
+        <label for="appt-date"></label><span id="datetimepicker"><input type="date" @input="inputDate = getDateClean($event.target.value)"></span>
+        <label for="appt-time"></label><span id="datetimepicker"><input type="time" pattern="[0-9]{2}:[0-9]{2}" @input="inputTime = getTimeClean($event.target.value)"></span>
       </div>
 
       <div style="margin-top: 30px;">
@@ -101,25 +100,53 @@
 <style>
 
 .sidemenu {
-  background-color: #353A57;
+  /*background-color: #353A57;*/
   width: 25%;
   height: 100vh;
   float: left;
   padding: 10px;
   color: white;
+
+  margin-top: 5px;
+  margin-left: 5px;
+
+  border-radius: 20px;
+
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+  background: linear-gradient(-45deg, #380036, #0CBABA);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .calendar {
-  background-color: #CDD7DE;
-  width: 75%;
+  background-color: white;
+  width: 70%;
   height: 100vh;
   float: right;
   padding: 10px;
+  margin-right: 2%;
 }
 
 .service-table {
   overflow-y: auto;
   height: 30vh;
+}
+
+h2, h3{
+font-family: 'Poppins', sans-serif;
 }
 
 .service-table thead th {

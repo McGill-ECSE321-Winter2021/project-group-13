@@ -1,7 +1,9 @@
 <template>
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	<nav class="navbar navbar-expand-lg navbar-light">
+
+<img class="logo" src="https://i.ibb.co/kcj0HD4/circle-cropped-1.png" width="70">
+
 	<div class="container-fluid">
-    <a class="navbar-brand" href="#/nav">Navbar</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -25,6 +27,14 @@
 </nav>
 </template>
 <style>
+
+.navbar, .container-fluid, .navbar-collapse{
+  height: 80px;
+  background-color: white;
+}
+
+.navbar{box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);}
+
 </style>
 <script>
 export default {

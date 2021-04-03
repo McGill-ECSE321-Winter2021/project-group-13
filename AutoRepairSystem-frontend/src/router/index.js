@@ -84,7 +84,7 @@ export default new Router({
       component: AdminTechnicianSchedule
     },
 
-        {
+    {
       path: '/AdminTechnicianSchedule',
       name: 'AdminTechnicianSchedule',
       component: AdminTechnicianSchedule
