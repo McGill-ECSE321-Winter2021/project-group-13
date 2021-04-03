@@ -1401,6 +1401,14 @@ public class AutoRepairSystemService {
 			}
 		}
 		
+		Set<TechnicianHour> technicianHourSet = technicianHourRepository.findTechnicianHourByDate(date);
+		for(TechnicianHour t : technicianHourSet) {
+			if(t.getStartTime().before(startTime) || t.getEndTime().after(endTime)) {
+				throw new IllegalArgumentException("Business hour cannot be changed such that existing technician hours are invalid");
+			}
+		}
+		
+		
 		
 		businessHour.setStartTime(startTime);
 		businessHour.setEndTime(endTime);

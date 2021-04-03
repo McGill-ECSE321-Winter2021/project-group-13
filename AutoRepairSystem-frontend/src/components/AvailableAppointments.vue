@@ -47,8 +47,6 @@
       <div style="margin-top: 30px;">
         <button v-bind:disabled="!inputDate || !inputTime || checkedServices.length<=0" v-on:click="createAppointment()">Book Appointment</button>
       </div>
-
-      <br><br>
       <span v-if="errorMessage" style="color:red">Error: {{errorMessage}}</span>
 
       <button class="back" v-on:click="backButton" >Back</button>
@@ -59,7 +57,7 @@
   <div class="calendar">
     <h2>Availability Calendar</h2>
     <div id="month-header"><span id="month">{{month}} {{year}}</span></div>
-    <div id="week-buttons"><button class="week-change" v-on:click="changeWeek(false)">Previous</button><button class="week-change" v-on:click="changeWeek(true)">Next  </button></div>
+    <div id="week-buttons" v-if="loaded"><button class="week-change" v-on:click="changeWeek(false)">Previous</button><button class="week-change" v-on:click="changeWeek(true)">Next  </button></div>
     <table id="appointments-table">
       <tr id="calendar-top-row">
         <td>Sun.<br>{{weekdays[0]}}</td>
@@ -72,25 +70,25 @@
       </tr>
       <tr id="available-slots">
         <td>
-          <div id="availability-block" v-for="availability in availabilities[0]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[0]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
         <td>
-          <div id="availability-block" v-for="availability in availabilities[1]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[1]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
         <td>
-          <div id="availability-block" v-for="availability in availabilities[2]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[2]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
         <td>
-          <div id="availability-block" v-for="availability in availabilities[3]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[3]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
         <td>
-          <div id="availability-block" v-for="availability in availabilities[4]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[4]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
         <td>
-          <div id="availability-block" v-for="availability in availabilities[5]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[5]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
         <td>
-          <div id="availability-block" v-for="availability in availabilities[6]">{{availability.startTime}}<br>{{availability.endTime}}</div>
+          <div id="availability-block" v-for="availability in availabilities[6]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
       </tr>
     </table>
@@ -248,7 +246,7 @@ button.week-change {
 }
 
 body {
-  overflow: hidden; /*This stops the page from having a scroll bar (might be able to remove this later)*/
+  --overflow: hidden; /*This stops the page from having a scroll bar (might be able to remove this later)*/
 }
 
 #app {
@@ -311,6 +309,17 @@ function getWeekdays() {
   return datesOfWeek;
 }
 
+function CustomerDto(username) {
+  this.username = username;
+}
+
+function AppointmentDto(customer, services, startTime, startDate) {
+    this.customer = new CustomerDto(customer);
+    this.services = services;
+    this.startTime = startTime;
+    this.date = startDate;
+}
+
 export default {
   name: "AvailableAppointments",
   data () {
@@ -318,12 +327,14 @@ export default {
       errorMessage: "",
       month: "",
       year: "",
-      weekdays: "",
+      weekdays: ["", "", "", "", "", "", ""],
       inputDate: "",
       inputTime: "",
       services: [],
       checkedServices: [],
-      availabilities: [[], [], [], [], [], [], []],
+      availabilities: [],
+      username: this.$store.getters.getActiveUserName,
+      loaded: true,
     }
   },
 
@@ -343,7 +354,10 @@ export default {
     this.month = getDisplayedMonth();
     this.year = getDisplayedYear();
     this.weekdays = getWeekdays();
-      },
+
+    this.getWeekAvailabilities();
+
+  },
 
 
   methods: {
@@ -355,6 +369,7 @@ export default {
       this.year = getDisplayedYear();
       this.month = getDisplayedMonth();
       this.weekdays = getWeekdays();
+      this.getWeekAvailabilities();
     },
 
     //This method takes the user back to the customer home page
@@ -379,29 +394,68 @@ export default {
     },
 
     createAppointment: function () {
-      var dateString = this.inputDate.toLocaleString("default", { dateStyle: "full" });
+      var dateString = this.inputDate.toLocaleString("default");
       var timeString = this.inputTime.toLocaleString("default", { timeStyle: "long"});
 
       var servicesString = this.checkedServices[0].name;
       for (var i=1; i<this.checkedServices.length-1; i++) {
         servicesString += ", " + this.checkedServices[i].name;
       }
-      servicesString += ", " + this.checkedServices[this.checkedServices.length-1].name + ".";
 
-      var confirmation = window.confirm("Are you sure you want to book an appointment on " + dateString + " at " + timeString + " with the followin services: " + servicesString);
+      if (this.checkedServices[this.checkedServices.length-1].name !== this.checkedServices[0].name) {
+        servicesString += ", " + this.checkedServices[this.checkedServices.length-1].name + ".";
+      }
+
+      var confirmation = window.confirm("Are you sure you want to book an appointment on " + dateString + " at " + timeString + " with the following services: " + servicesString);
 
       if (confirmation) {
-        //Call Axios and create the appointment (NOTE: remember to update the parameters of the function in the html too when adding this)
+        var timeInput = this.inputTime.toLocaleString("default", { timeStyle: "medium", hour12: false});
+        this.inputDate.setDate(this.inputDate.getDate() + 1);
+        var dateInput = this.inputDate.toISOString().split("T")[0];
+        var apptDto = new AppointmentDto(this.username, this.checkedServices, timeInput, dateInput);
+
+        AXIOS.post(`/create/appointment/any`, apptDto)
+        .then((response) => {
+          window.alert("Thank you for booking an appointment with us!");
+          this.errorMessage = "";
+          this.getWeekAvailabilities();
+        })
+        .catch((e) => {
+          this.errorMessage = e.response.data;
+        });
+
+        this.inputDate.setDate(this.inputDate.getDate() - 1);
       }
     },
 
-    getWeekAvailabilities: function() {
-      //Returns the availabilities for every day of the week
+    getWeekAvailabilities: async function() {   //Returns the availabilities for every day of the week
+      this.loaded = false;
+      this.availabilities = [];
+      var currDate = new Date(date);
 
       for (var i=0; i<7; i++) {
-        //Call Axios here
+        var dailyAvailabilities = [];
+        var dateInput = currDate.toISOString().split("T")[0];
+
+        this.availabilities.push([]);
+
+        await AXIOS.get(`/available/` + dateInput + `?minDuration=0`)
+          .then((response) => {
+            for (var x in response.data) {
+              for (var y in response.data[x]) {
+                this.availabilities[i].push(response.data[x][y]);
+              }
+            }
+          })
+          .catch((e) => {
+            console.log(e);
+            this.errorMessage = e.response.data;
+          });
+
+        currDate.setDate(currDate.getDate()+1);
       }
 
+      this.loaded = true;
     },
 
     //This method converts date input field to a date object (Where we only care about the date)
