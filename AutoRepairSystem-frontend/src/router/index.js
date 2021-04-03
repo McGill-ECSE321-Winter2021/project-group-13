@@ -83,5 +83,14 @@ export default new Router({
       name: 'AdminTechnicianSchedule',
       component: AdminTechnicianSchedule
     },
+<<<<<<< HEAD
+=======
+
+    {
+      path: '/AdminTechnicianSchedule',
+      name: 'AdminTechnicianSchedule',
+      component: AdminTechnicianSchedule
+    },
+>>>>>>> refs/remotes/origin/master
   ]
 })

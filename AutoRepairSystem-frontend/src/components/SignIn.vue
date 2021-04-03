@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
+<img class="logo" src="https://i.ibb.co/kcj0HD4/circle-cropped-1.png" width="100">
+
 <div id="LogIn">
   <div id="central-signin">
     <h2>Sign In</h2>
