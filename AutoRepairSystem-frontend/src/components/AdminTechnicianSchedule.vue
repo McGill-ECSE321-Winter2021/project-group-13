@@ -463,10 +463,11 @@ export default {
       AXIOS.get("/technicians/")
       .then(response => {
         this.technicians = response.data;
-        this.sortTechniciansByName();
         if(typeof(this.technicians) !== 'undefined') {
           this.numTechnicians = this.technicians.length;
         }
+
+        this.sortTechniciansByName();
         this.getTechnicianHoursWeek();
       })
       .catch(e => {
@@ -633,10 +634,11 @@ export default {
       
       AXIOS.post("/technicianhours/" + selectedTechnician.username + "?start=" + startTimeString + "&end=" + endTimeString + "&date=" + dateString)
         .then(response => {
-          this.getAllTechnicianHours();
+          this.getAllTechnicians();
         })
         .catch(e => {
-
+          console.log(e);
+          console.log(e.message);
         });
         
     },
@@ -648,7 +650,7 @@ export default {
       
       AXIOS.put("/technicianhours/" + selectedTechnicianHour.id + "?start=" + startTimeString + "&end=" + endTimeString + "&date=" + selectedTechnicianHour.date)
         .then(response => {
-          this.getAllTechnicianHours();
+          this.getAllTechnicians();
         })
         .catch(e => {
 
@@ -662,7 +664,7 @@ export default {
       
       AXIOS.delete("/technicianhours/" + selectedTechnicianHour.id)
         .then(response => {
-          this.getAllTechnicianHours();
+          this.getAllTechnicians();
         })
         .catch(e => {
 
@@ -681,8 +683,8 @@ export default {
     },
 
     sortTechniciansByName() { // using insertion sort
-      var sortedTechnicians = this.technicians;
-      if(this.numTechnicians > 1) {
+      var sortedTechnicians = new Object(this.technicians);
+      if(this.numTechnicians > 0) {
         for (var i = 1; i < this.numTechnicians; i++) {
           var current = sortedTechnicians[i];
           var j = i-1;
