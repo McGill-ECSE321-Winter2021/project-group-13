@@ -1,4 +1,11 @@
 <template>
+
+<html>
+
+<head>
+    <link href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" rel="stylesheet">
+</head>
+
 <div>
 
   <div class="navbarContainer">
@@ -7,13 +14,15 @@
   
   <div id="home">
 
+<!--
     <div id="invoices">
       <button id="button2" @click="checkinvoices()">Check/Pay Outstanding Balances</button> 
     </div>
+    -->
 
 
-
-    <div id="currentappointments">
+<div style="display: flex;">
+    <div id="currentappointments" style="width: 50%;">
       <h2> Current Appointments </h2>
       <br>
       <div class="datetime-block">
@@ -25,6 +34,7 @@
             <th>Technician</th>
             <th>Start Time</th>
             <th>End Time</th>
+            <th>Customer</th>
           </tr>
         </thead>
         <tbody>
@@ -32,6 +42,7 @@
             <td>{{ appointment.technician.name }}</td>
             <td>{{ appointment.startTime }}</td>
             <td>{{ appointment.endTime }}</td>
+            <td>{{ appointment.customer.name }}</td>
           </tr>
           <tr>
             <td></td>
@@ -40,17 +51,145 @@
           </tr>
         </tbody>
       </table>
+
+          <button
+            type="button" 
+            class="btn-hover color2 small"
+            id="delete-button"
+            @click ="deleteAppointment(selectedAppointment)"><i class="fa fa-trash"></i> Delete
+      </button>
+
     <br>
     <br>
-    <button id="deletebutton" @click="deleteaccountpopup()">Delete Account</button>
+    </div>
+
+    <div id="currentappointments" style="flex-grow: 1;">
+      <h2> Services </h2>
+      <br>
+      <table class="content-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Duration</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="service in services" @click="selectService(service)" v-bind:key="service.name" :class="{'highlight': (service.name === selectedService)}">
+            <td>{{ service.name }}</td>
+            <td>{{ service.duration }}</td>
+            <td>{{ service.price }}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button
+            type="button" 
+            class="btn-hover color2 small"
+            id="delete-button"
+            @click ="deleteService(selectedService)"><i class="fa fa-trash"></i> Delete
+      </button>
+
+      <div>
+        <h2 style="margin-top: 30px;"> Add Service </h2>
+
+<div id="Service">
+
+      <div class="field">
+      <i class="fa fa-signature icon"></i>
+        <input v-model="name" placeholder="Name">
+      </div>
+
+      <div class="field">
+		<i class="fas fa-clock icon"></i>
+        <input v-model="duration" placeholder="Duration">
+      </div>
+
+      <div class="field">
+		<i class="fas fa-dollar-sign icon"></i>
+        <input v-model="price" id="password-icon"  placeholder="Price">
+      </div>
+
+<button class="btn-hover color" @click="addService(name, duration, price)"> Add </button>
+
+</div>
+
+        </div>
     <br>
+    <br>
+    </div>
+
     </div>
   </div>
 </div>
+
+</html>
 </template>
 
 
 <style>
+
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.btn-hover.color {
+    background-image: linear-gradient(to right, #25aae1, #4481eb, #04befe, #3f86ed);
+}
+
+.field{
+  margin: 5px;
+}
+
+.btn-hover.color {
+    background-image: linear-gradient(to right, #25aae1, #4481eb, #04befe, #3f86ed);
+}
+
+
+.btn-hover.color2 {
+    background-image: linear-gradient(to right, #DC1C13, #EA4C46, #F07470);
+}
+
+.btn-hover {
+    width: 150px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    margin: 5px;
+    height: 40px;
+    text-align:center;
+    border: none;
+    background-size: 300% 100%;
+
+    border-radius: 20px;
+    moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+
+    margin-top: 20px;
+}
+
+.small {
+  width: 100px;
+}
+
+.btn-hover:hover {
+    background-position: 100% 0;
+    moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
 
 #button, #deletebutton, #button2, #buttonlogout{
   border-color: #3498db;
@@ -178,7 +317,9 @@ export default {
       temp:'',
       inputDate: null,
       appointments: [],
+      services: [],
       selectedAppointment: null,
+      selectedService: null,
     }
   },
 
@@ -187,7 +328,9 @@ export default {
   },
 
   created: function() {
-
+    window.setInterval(() => {
+      this.getServices()
+    }, 2000)
   },
 
   methods: {
@@ -213,6 +356,60 @@ export default {
           });
     },
 
+    getServices: function() {
+      AXIOS.get(`/workitems/`, {}, {})
+          .then((response) => {
+            this.services = response.data
+          })
+          
+          .catch((e) => {
+            var error= e.response.data;
+            this.errorMessage = error;
+          });
+    },
+
+    addService(name, duration, price){
+          AXIOS.post(`/workitems/` + name + '?duration=' + duration + "&price=" + price, {}, {})
+          .then((response) => {
+            this.getServices();
+          })
+          
+          .catch((e) => {
+            var error= e.response.data;
+            this.errorMessage = error;
+            window.alert(this.errorMessage);
+          });
+    },
+
+    deleteService(service){
+      AXIOS.delete(`/workitem/` + service, {}, {})
+          .then((response) => {
+            this.getServices();
+          })
+          
+          .catch((e) => {
+            var error= e.response.data;
+            this.errorMessage = error;
+
+            window.alert(this.errorMessage);
+          });
+    },
+
+    deleteAppointment(appointment){
+      AXIOS.delete(`/delete/appointment/` + appointment.id, {}, {})
+          .then((response) => {
+            this.getAppointments();
+          })
+          
+          .catch((e) => {
+            var error= e.response.data;
+            this.errorMessage = error;
+
+            window.alert(this.errorMessage);
+          });
+    },
+
+
     //This method converts date input field to a date object (Where we only care about the date)
     getDateClean(currDate) {
 
@@ -234,7 +431,10 @@ export default {
       this.selectedAppointment = appointment.id;
     },
 
-    
+    selectService(service){
+      this.selectedService = service.name;
+    },
+
     signIn: function (Username, Password) {
       AXIOS.get(`/signin/?username=` + Username + `&password=` + Password, {}, {})
           .then((response) => {
