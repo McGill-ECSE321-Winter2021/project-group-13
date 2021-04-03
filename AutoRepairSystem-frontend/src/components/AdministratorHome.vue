@@ -13,8 +13,14 @@
   </div>
   
   <div id="home">
+<<<<<<< HEAD
 
 <!--
+=======
+    <h2>Home (ADMIN) </h2>
+    <h4>My Info : {{username}}</h4>
+    
+>>>>>>> c29ef1758c4e029a33629eaf42a5f1e2675e2006
     <div id="invoices">
       <button id="button2" @click="checkinvoices()">Check/Pay Outstanding Balances</button> 
     </div>
@@ -320,6 +326,7 @@ export default {
       services: [],
       selectedAppointment: null,
       selectedService: null,
+      username:this.$store.getters.getActiveUserName,
     }
   },
 
