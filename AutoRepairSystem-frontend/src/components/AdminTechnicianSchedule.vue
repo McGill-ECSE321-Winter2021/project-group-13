@@ -471,8 +471,7 @@ export default {
         this.getTechnicianHoursWeek();
       })
       .catch(e => {
-        this.errorMessage = e.data;
-        console.log(e);
+        this.errorMessage = e.response.data;
       })
     },
 
@@ -503,7 +502,7 @@ export default {
         this.businessHoursWeek = this.getBusinessHoursWeek();
       })
       .catch(e => {
-        this.errorMessage = e;
+        this.errorMessage = e.response.data;
       });
     },
 
@@ -592,7 +591,7 @@ export default {
           this.getAllBusinessHours();
         })
         .catch(e => {
-
+          this.errorMessage = e.response.data;
         });
         
     },
@@ -607,7 +606,7 @@ export default {
           this.getAllBusinessHours();
         })
         .catch(e => {
-
+          this.errorMessage = e.response.data;
         });
     },
 
@@ -621,7 +620,7 @@ export default {
           this.getAllBusinessHours();
         })
         .catch(e => {
-
+          this.errorMessage = e.response.data;
         });
       this.selectedBusinessHour = null;
       this.selectedBusinessHourId = null;
@@ -637,7 +636,7 @@ export default {
           this.getAllTechnicians();
         })
         .catch(e => {
-          console.log(e);
+          this.errorMessage = e.response.data;
         });
         
     },
@@ -652,7 +651,7 @@ export default {
           this.getAllTechnicians();
         })
         .catch(e => {
-
+          this.errorMessage = e.response.data;
         });
     },
 
@@ -666,7 +665,7 @@ export default {
           this.getAllTechnicians();
         })
         .catch(e => {
-
+          this.errorMessage = e.response.data;
         });
       this.selectedTechnicianHour = null;
       this.selectedTechnicianHourId = null;
@@ -696,12 +695,7 @@ export default {
       }
       this.technicians = sortedTechnicians;
     },
-
-
   }
-  
 }
-
-
 
 </script>
