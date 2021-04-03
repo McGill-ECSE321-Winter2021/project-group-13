@@ -269,12 +269,13 @@ import CustomerNavbar from '@/components/CustomerNavbar'
 import axios from 'axios';
 var config = require('../../config');
 
-var frontendUrl = 'http://' + config.dev.host + ':' + config.dev.port;
-var backendUrl = 'http://' + config.dev.backendHost + ':' + config.dev.backendPort;
+var frontendUrl = "https://" + config.build.host + ":" + config.build.port;
+var backendUrl =
+  "https://" + config.build.backendHost + ":" + config.build.backendPort;
 
-var AXIOS = axios.create({
+  var AXIOS = axios.create({
   baseURL: backendUrl,
-  headers: { 'Access-Control-Allow-Origin': frontendUrl }
+  //headers: { "Access-Control-Allow-Origin": frontendUrl },
 });
 
 //Variable which stores the date of the start of the displayed week (Sunday)
@@ -314,10 +315,16 @@ function CustomerDto(username) {
 }
 
 function AppointmentDto(customer, services, startTime, startDate) {
-    this.customer = new CustomerDto(customer);
-    this.services = services;
-    this.startTime = startTime;
-    this.date = startDate;
+  this.customer = new CustomerDto(customer);
+  this.services = services;
+  this.startTime = startTime;
+  this.date = startDate;
+}
+
+function formatDate(aDate) {
+  var offset = aDate.getTimezoneOffset()*60000; // timezone offset in milliseconds
+  var formattedDate = (new Date(aDate - offset)).toISOString().slice(0,10);
+  return formattedDate;
 }
 
 export default {
@@ -435,7 +442,7 @@ export default {
 
       for (var i=0; i<7; i++) {
         var dailyAvailabilities = [];
-        var dateInput = currDate.toISOString().split("T")[0];
+        var dateInput = formatDate(currDate);
 
         this.availabilities.push([]);
 
@@ -472,7 +479,7 @@ export default {
       var time = currTime.split(":");
       selectedTime.setHours(time[0], time[1], "00");
       return selectedTime;
-    }
+    },
 
   }
   
