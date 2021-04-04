@@ -1116,6 +1116,10 @@ public class AutoRepairSystemService {
 
     // check that technician hour is within business hour of the same day
     Set<BusinessHour> businessHourSet = businessHourRepository.findBusinessHourByDate(date);
+	if(businessHourSet.size() == 0) {
+		throw new IllegalArgumentException("Technician hour must exist within a business hour");
+	}
+	
     for (BusinessHour b : businessHourSet) {
       if (startTime.before(b.getStartTime()) || (endTime.after(b.getEndTime()))) {
         throw new IllegalArgumentException("Technician hour must exist within a business hour");
