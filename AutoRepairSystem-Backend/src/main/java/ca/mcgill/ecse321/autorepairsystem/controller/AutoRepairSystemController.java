@@ -361,8 +361,8 @@ public class AutoRepairSystemController {
 
 
   @PutMapping(value = {"/workbreaks/{id}", "/workbreaks/{id}/"})
-  public ResponseEntity<?> updateWorkBreak(@PathVariable("id") Integer id, @RequestParam Time newStartTime,
-      @RequestParam Time newEndTime) {
+  public ResponseEntity<?> updateWorkBreak(@PathVariable("id") Integer id, @RequestParam Time startBreak,
+      @RequestParam Time endBreak) {
     try {
       return new ResponseEntity<>(convertToDto(service.updateWorkBreak(id, newStartTime, newEndTime)), HttpStatus.OK);
     } catch (IllegalArgumentException e) {
