@@ -1,8 +1,8 @@
 <template>
 <div>
-  <div class="navbarContainer">
-    <CustomerNavbar/>
-  </div>
+<div class="navbarContainer">
+  <CustomerNavbar/>
+</div>
 
   <div id="home">
   
@@ -11,40 +11,68 @@
   <table class="styled-table">
     <thead>
         <tr>
-            <th>Services</th>
-            <th>Date</th>
-            <th>Start Time</th>
-            <th>End Time</th>
+          <th>Services</th>
+          <th>Date</th>
+          <th>Start Time</th>
+          <th>End Time</th>
         </tr>
-    </thead>
+      </thead>
       <tbody>
-          <tr v-for="appointment in appointments">
-            <td>{{ formattedServices(appointment) }}</td>
-            <td>{{ appointment.date }}</td>
-            <td>{{ appointment.startTime }}</td>
-            <td>{{ appointment.endTime }}</td>
-          </tr>
-          <tr v-for="n in emptyAdministrators" v-bind:key="n">
-          <td></td>
-          <td></td>
-          <td></td>
-          </tr>
+        <tr v-for="appointment in appointments">
+          <td>{{ formattedServices(appointment) }}</td>
+          <td>{{ appointment.date }}</td>
+          <td>{{ appointment.startTime }}</td>
+          <td>{{ appointment.endTime }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-        </tbody>
-</table>
- <br>
- <br>
- <button id="deletebutton" @click="deleteaccountpopup()">Delete Account</button>
- <br>
- </div>
- </div>
+  <div id="accountManagement">
+    <div id="accountInfo">
+      <h2>My Account: {{currentCustomer.username}}</h2>
+      <table id="accountTable">
+        <tr>
+          <td id="leftBlock"><b>Name:</b><br>{{currentCustomer.name}}</td>
+          <td id="rightBlock"><button @click="openUpdateName()">Edit</button></td>
+        </tr>
+        <tr>
+          <td id="leftBlock"><b>E-mail:</b><br>{{currentCustomer.email}}</td>
+          <td id="rightBlock"><button @click="openUpdateEmail()">Edit</button></td>
+        </tr>
+      </table>
+      <span v-if="updatingName">
+        <input style="margin-top: 10px" type="text" v-model="newName" placeholder="New Name">
+        <button @click="updateAccount(currentCustomer.username, currentCustomer.password, newName, currentCustomer.email)" v-bind:disabled="!newName">Update</button>
+      </span>
+      <span v-if="updatingEmail">
+        <input style="margin-top: 10px" type="text" v-model="newEmail" placeholder="New E-mail">
+        <button @click="updateAccount(currentCustomer.username, currentCustomer.password, currentCustomer.name, newEmail)" v-bind:disabled="!newEmail">Update</button>
+      </span>
+    </div>
+    <div id="passwordChange">
+      <h2>Change Password</h2>
+      Current Password:<br><input type="password" v-model="password" placeholder="Password">
+      <br><br>
+      New Password:<br><input type="password" v-model="newPassword" placeholder="New Password">
+      <br><br>
+      <button @click="updatePassword()" v-bind:disabled="!password || !newPassword">Update Password</button>
+    </div>
+
+    <div style="margin-top: 50px">
+      <button id="deletebutton" @click="deleteaccountpopup()">Delete Account</button>
+      <br><br>
+      <span v-if="errorMessage" style="color:red">Error: {{errorMessage}}</span>
+    </div>
+  </div>
+</div>
 </div>
 </template>
 
 
 <style>
 
-#button, #deletebutton, #button2, #buttonlogout{
+#deletebutton{
   border-color: #3498db;
   color: #fff;
   box-shadow: 0 0 40px 40px #3498db inset, 0 0 0 0 #3498db;
@@ -57,51 +85,46 @@
   background-color: #CDD7DE;
   width: 100%;
   height: 100vh;
-  float: right;
-  
 }
 
 #currentappointments{
   margin-top: 60px;
+  width: 50%;
+  float: right;
   }
 
-
-#invoices{
-
-margin-right: 1000px;
-
+#accountInfo {
+  margin-top: 60px;
+  height: 260px;
 }
 
-#buttonlogout{
-margin-top: 10px;
-align: left;
-margin-right: 282px;
+#accountTable {
+  width: 20%;
+  margin: auto;
+  border: 3px solid black;
+  background-color: #f3f3f3;
 }
 
-#button2{
-
-align: left;
-margin-right: 100px;
+#accountTable tr {
+  border: 3px solid black;
 }
 
-#deletebutton{
-align: right;
-margin-left: 1100px;
+#leftBlock {
+  float:left;
+  text-align: left;
 }
 
-#deletebutton:hover, #button2:hover, #buttonlogout:hover, #button:hover {
-  box-shadow: 0 0 10px 0 #3498db inset, 0 0 10px 4px #3498db;
+#rightBlock {
+  float: right;
 }
 
 .styled-table {
     border-collapse: collapse;
-    margin: 25px 0;
     font-size: 0.9em;
     font-family: sans-serif;
     min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    margin-left: auto;
-    margin-right: auto;
+    margin: auto;
 }
 
 .styled-table thead tr {
@@ -153,16 +176,19 @@ var backendUrl =
 
 
 export default {
-  name: "SignIn",
+  name: "CustomerHome",
   data () {
     return {
-      amountpaying: 0,
-      amountpayed:0,
-      amountowed:0,
-      temp:'',
       appointments: [],
       username: this.$store.getters.getActiveUserName, //get actual username
-  
+      currentCustomer: "",
+      updatingName: false,
+      updatingEmail: false,
+      newName: "",
+      newEmail: "",
+      password: "",
+      newPassword: "",
+      errorMessage: "",
     }
   },
 
@@ -183,23 +209,26 @@ export default {
       .catch(e => {
         var error = e.response.data
         console.log(error)
-        this.endUserError = error
-      })
+        this.errorMessage = error
+      });
+
+      AXIOS.get("/customers/" + this.username)
+        .then(response => {
+          this.currentCustomer = response.data;
+        })
+        .catch(e => {
+          this.errorMessage = e.response.data;
+          console.log(e);
+        })
     },
 //actually delete account in database and then go to sign in
     deleteaccountpopup: function () {
-       if (confirm('Do you want to Delete?')) {
+       if (confirm("WARNING: Deleting an account is permanent! Are you certain you want to proceed?")) {
           console.log(this.deleteuser())
            
        } else {
            return false;
        }
-    },
-
-
-    checkinvoices: function () {
-      this.$router.push({name: "PayInvoice"});
-      
     },
 
 //removes current user
@@ -237,6 +266,50 @@ export default {
       servicesString += appointment.services[i].name;
 
       return servicesString;
+    },
+
+    openUpdateName: function() {
+      this.updatingEmail = false;
+      this.updatingName = !this.updatingName;
+    },
+
+    openUpdateEmail: function() {
+      this.updatingName = false;
+      this.updatingEmail = !this.updatingEmail;
+    },
+
+    updateAccount: function(username, password, name, email) {
+
+      AXIOS.put("/endUsers/" + username + "?password=" + password + "&name=" + name + "&email=" + email)
+        .then(response => {
+          this.currentCustomer = response.data;
+          this.updatingEmail = false;
+          this.updatingName = false;
+          this.newName = "";
+          this.newEmail = "";
+          this.password = "";
+          this.newPassword = "";
+          this.errorMessage = "";
+        })
+        .catch(e => {
+          this.errorMessage = e.response.data;
+          console.log(e);
+        });
+
+    },
+
+    updatePassword: function() {
+      if (this.password !== this.currentCustomer.password) {
+      console.log("yeet");
+        this.errorMessage = "Entered password does not match current password!";
+        return;
+      }
+
+      var confirmation = window.confirm("Are you sure you want to change your password?");
+
+      if (confirmation) {
+        this.updateAccount(this.currentCustomer.username, this.newPassword, this.currentCustomer.name, this.currentCustomer.email);
+      }
     }
   }
 }

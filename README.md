@@ -14,6 +14,8 @@ Henri Rofiq     |260805473|
 
 ## Project Scope:
 
+For this project, we are tasked with developing an application for use as a business managment system for an auto repair garage. This task includes development of the back-end, front-end as well as presenting various documentation outlining our design process and decision making. 
+
 ## Links:
 - [Sprint 1](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-1) <br>
 - [Sprint 2](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-2) <br>
@@ -46,11 +48,11 @@ Henri Rofiq     |Service Methods and Report Documentation|24 hours
 
 Name            | Team Roles         | Individual Efforts
 --------------- |------------------- |-------------------
-Edgar Desnos    || 
-Charles Wetaski ||
-Ezra Gomolin    ||                   
-Hassan Kanj     ||
-Henri Rofiq     ||
+Edgar Desnos    |Front-End and Back-End Developer|30 hours
+Charles Wetaski |Front-End and Back-End Developer|30 hours
+Ezra Gomolin    |Front-End Developer|27 hours           
+Hassan Kanj     |Front-End Developer and CSS Formatting|27 hours
+Henri Rofiq     |Front-End Developer and Documentaton |25 hours
 
 [Sprint 4:](https://github.com/McGill-ECSE321-Winter2021/project-group-13/wiki/Sprint-4)
 

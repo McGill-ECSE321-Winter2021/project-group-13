@@ -473,15 +473,6 @@ export default {
         return selectedDate;
     },
 
-    //This method converts time input field to a date object (Where we only care about the time)
-    getTimeClean(currTime) {
-      if (currTime == "") return "";
-      var selectedTime = new Date();
-      var time = currTime.split(":");
-      selectedTime.setHours(time[0], time[1], "00");
-      return selectedTime;
-    },
-
     appointmentStartTime(eventData) {
       this.inputTime = eventData;
     },
