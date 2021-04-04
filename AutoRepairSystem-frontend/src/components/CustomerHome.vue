@@ -8,7 +8,7 @@
   
     <div id="currentappointments">
      <h2> Current Appointments </h2>
-  <table class="styled-table">
+  <table class="content-table">
     <thead>
         <tr>
           <th>Services</th>
@@ -34,20 +34,20 @@
       <table id="accountTable">
         <tr>
           <td id="leftBlock"><b>Name:</b><br>{{currentCustomer.name}}</td>
-          <td id="rightBlock"><button @click="openUpdateName()">Edit</button></td>
+          <td id="rightBlock"><button class="btn-hover color small" style="display: inline" @click="openUpdateName()">Edit</button></td>
         </tr>
         <tr>
           <td id="leftBlock"><b>E-mail:</b><br>{{currentCustomer.email}}</td>
-          <td id="rightBlock"><button @click="openUpdateEmail()">Edit</button></td>
+          <td id="rightBlock"><button class="btn-hover color small" @click="openUpdateEmail()">Edit</button></td>
         </tr>
       </table>
       <span v-if="updatingName">
         <input style="margin-top: 10px" type="text" v-model="newName" placeholder="New Name">
-        <button @click="updateAccount(currentCustomer.username, currentCustomer.password, newName, currentCustomer.email)" v-bind:disabled="!newName">Update</button>
+        <button class="btn-hover color small" @click="updateAccount(currentCustomer.username, currentCustomer.password, newName, currentCustomer.email)" v-bind:disabled="!newName">Update</button>
       </span>
       <span v-if="updatingEmail">
         <input style="margin-top: 10px" type="text" v-model="newEmail" placeholder="New E-mail">
-        <button @click="updateAccount(currentCustomer.username, currentCustomer.password, currentCustomer.name, newEmail)" v-bind:disabled="!newEmail">Update</button>
+        <button class="btn-hover color small" @click="updateAccount(currentCustomer.username, currentCustomer.password, currentCustomer.name, newEmail)" v-bind:disabled="!newEmail">Update</button>
       </span>
     </div>
     <div id="passwordChange">
@@ -56,11 +56,11 @@
       <br><br>
       New Password:<br><input type="password" v-model="newPassword" placeholder="New Password">
       <br><br>
-      <button @click="updatePassword()" v-bind:disabled="!password || !newPassword">Update Password</button>
+      <button @click="updatePassword()" class="btn-hover color" v-bind:disabled="!password || !newPassword">Update Password</button>
     </div>
 
-    <div style="margin-top: 50px">
-      <button id="deletebutton" @click="deleteaccountpopup()">Delete Account</button>
+    <div>
+      <button id="deletebutton" class="btn-hover color" @click="deleteaccountpopup()">Delete Account</button>
       <br><br>
       <span v-if="errorMessage" style="color:red">Error: {{errorMessage}}</span>
     </div>
@@ -72,6 +72,13 @@
 
 <style>
 
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 #deletebutton{
   border-color: #3498db;
   color: #fff;
@@ -81,8 +88,49 @@
 }
 
 
+h2{
+font-family: 'Poppins', sans-serif;
+}
+
+.btn-hover.color {
+    background-image: linear-gradient(to right, #25aae1, #4481eb, #04befe, #3f86ed);
+}
+
+.small {
+  height: 30px;
+  width: 3px;
+}
+
+.btn-hover {
+    width: 150px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    margin: 20px;
+    height: 40px;
+    text-align:center;
+    border: none;
+    background-size: 300% 100%;
+
+    border-radius: 20px;
+    moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
+
+.btn-hover:hover {
+    background-position: 100% 0;
+    moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
+
+
 #home {
-  background-color: #CDD7DE;
+  background-color: white;
   width: 100%;
   height: 100vh;
 }
@@ -101,12 +149,13 @@
 #accountTable {
   width: 20%;
   margin: auto;
-  border: 3px solid black;
-  background-color: #f3f3f3;
+  border: 3px solid white;
+  background-color: white;
 }
 
 #accountTable tr {
-  border: 3px solid black;
+  border: 3px solid white;
+  border-radius: 10px;
 }
 
 #leftBlock {
@@ -118,36 +167,48 @@
   float: right;
 }
 
-.styled-table {
-    border-collapse: collapse;
-    font-size: 0.9em;
-    font-family: sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    margin: auto;
+.content-table {
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.9em;
+  min-width: 400px;
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+  box-shadow: 0 0 20px white;
+
+  padding-top: 100px;
+  margin: auto;
+  width: 30%;
 }
 
-.styled-table thead tr {
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
+.content-table thead tr {
+  background-color: 
+#013bbe;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
 }
 
-.styled-table th,
-.styled-table td {
-    padding: 12px 15px;
+.content-table th,
+.content-table td {
+  padding: 12px 15px;
 }
 
-.styled-table tbody tr {
-    border-bottom: 1px solid #dddddd;
+.content-table tbody tr {
+  border-bottom: 1px solid white;
 }
 
-.styled-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
+.content-table tbody tr:nth-of-type(even) {
+  background-color: white;
 }
 
-.styled-table tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
+.content-table tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
+
+.content-table tbody tr.highlight {
+  font-weight: bold;
+  color: #009879;
 }
 
 .navbarContainer {

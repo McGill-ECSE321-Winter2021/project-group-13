@@ -5,7 +5,7 @@
     </div>
     <div class="side-menu">
       <div id="business-hour-menu">
-        <h2>Manage <br>Business Hours</h2>
+        <h2>Business Hours</h2>
         <div v-if="selectedBusinessHourId <= 0 || selectedBusinessHourId == null">
           <div class = "time-pick">
           <p class = "left-pick"> Open Time:</p> 
@@ -60,7 +60,7 @@
         </div>
       </div> <!-- close business hour window -->
       <div class="technicianHourWindow">
-        <h2>Manage <br> Technician Shifts</h2>
+        <h2>Technician Shifts</h2>
         <div class = "createTechnicianHour" v-if="selectedTechnicianHourId <= 0 || selectedTechnicianHourId == null">
           <div class = "time-pick">
           <p class = "left-pick"> Shift Start :</p> 
@@ -242,20 +242,48 @@
 }
 
 .side-menu {
-  background-color: black;
+
+  margin-top: 5px;
+  margin-left: 5px;
+
+  border-radius: 20px;
+
   width: 300px;
   height: 100vh;
   float: left;
   padding: 10px;
   color: white;
+
+  
+  background: linear-gradient(-45deg, #380036, #0CBABA);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+h2, h3{
+font-family: 'Poppins', sans-serif;
+}
+
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .calendar {
   background-color: white;
-  width: calc(100% - 300px);
+  width: 70%;
   height: 100vh;
   float: right;
-  padding: 15px;
+  padding: 10px;
+  margin-right: 2%;
 }
 
 #header-appointments {
@@ -281,7 +309,7 @@
 }
 
 .highlight {
- background: yellow;
+ background: #27a8e2;
 }
 
 button.week-change {
@@ -302,8 +330,8 @@ button.week-change {
 }
 
 #calendar-top-row {
-  background-color: #013bbe;
-  color: white;
+  background-color: white;
+  color: black;
   font-size: 20px;
   height: 80px;
 }

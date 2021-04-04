@@ -253,7 +253,7 @@ tr.highlight {
   min-width: 400px;
   border-radius: 5px 5px 0 0;
   overflow: hidden;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 20px white;
 
   padding-top: 100px;
   margin: auto;
@@ -274,11 +274,11 @@ tr.highlight {
 }
 
 .content-table tbody tr {
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid white;
 }
 
 .content-table tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
+  background-color: white;
 }
 
 .content-table tbody tr:last-of-type {
