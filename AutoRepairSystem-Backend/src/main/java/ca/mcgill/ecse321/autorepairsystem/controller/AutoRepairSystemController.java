@@ -364,7 +364,7 @@ public class AutoRepairSystemController {
   public ResponseEntity<?> updateWorkBreak(@PathVariable("id") Integer id, @RequestParam Time startBreak,
       @RequestParam Time endBreak) {
     try {
-      return new ResponseEntity<>(convertToDto(service.updateWorkBreak(id, newStartTime, newEndTime)), HttpStatus.OK);
+      return new ResponseEntity<>(convertToDto(service.updateWorkBreak(id, startBreak, endBreak)), HttpStatus.OK);
     } catch (IllegalArgumentException e) {
       return ResponseEntity.badRequest().body(e.getMessage());
     }
