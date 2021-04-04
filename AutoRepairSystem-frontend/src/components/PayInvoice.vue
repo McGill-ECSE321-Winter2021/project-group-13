@@ -6,33 +6,59 @@
   </div>
 
   <div id="payment">
-    <h2>Payment</h2>
-     <div id="amountowed">
-       <button id="button2" @click="getamountowed()">View Amount Owed</button>
-       <span v-if="(amountowed==0 && temp6=='2' && temp2=='5')" style="color:blue">No Outstanding Balance, Please Return Home!</span> <br>
-   <h2 v-if="amountowed && amountowed!=0"> Amount Owed: ${{amountowed}} </h2>
-   <br>
-   <span v-if="amountowed!=0 && amountpaying && amountpaying<=amountowed && amountpaying>0" style="color:red">New Amount Owed If You Pay ${{amountpaying}}:<br> ${{amountowed}} - ${{amountpaying}} = ${{amountowed - amountpaying}}</span>
-   </div>
-   <div id="homebutton">
-     <button id="button" @click="returnhome()">Back To Home</button>
-     </div>
+      <div id="centr">
+    <h2 style="margin-bottom: 70px;">Payment</h2>
+
+    <h4 style="display: inline;">$</h4><h1 style="display: inline">{{amountOwed}}</h1>
+    <h4>balance</h4>
+
     <div id="textbar">
-     <span v-if="!amountowed && amountpayed==amountowed && temp!=3" style="color:red"> Note: User Must View Amount Owed Before They Are Able To Pay. </span>
-      <br>
-      <br>
-      <span v-if="amountpaying > amountowed" style="color:red">You Cannot Pay More Than You Owe!</span> <br>
- <label for="appt-time">Enter amount to pay: $ </label><span v-if="temp6=='2'"  id="amounttopay"><input type="number" step="1" min="1"  v-model="amountpaying" placeholder="Amount To Pay" id="amnt" name="amnt"></span>
+ <label for="appt-time">Enter amount to pay: $ </label>
+ <input type="number" step="1" min="1"  v-model="amountPaying" placeholder="Amount To Pay" id="amnt" name="amnt">
+
  <br>
  <br>
- <button id="button" v-bind:disabled="!amountpaying || !amountowed || amountowed==0 || amountpaying>amountowed || amountpaying<=0 " @click="paynow(amountpaying)">Pay Now</button> <br>
+ <button id="button" class="btn-hover color" v-bind:disabled="!amountPaying || amountPaying>amountOwed || amountPaying<=0" @click="addPayment(amountPaying)">Pay Now</button> <br>
  <br>
- <span v-if="amountpayed" style="color:blue">Thank You For Your Payment Of  ${{amountpayed}}</span> <br>
+ </div>
  </div>
  </div>
 </div>
 </template>
 <style>
+
+#LogIn {
+  height: 100vh;
+  position: relative;
+  
+  /* https://wallpaperaccess.com/full/1900672.jpg */
+  
+  background-image: url("https://i.ibb.co/bX833PJ/1900672.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#centr {
+  width: 400px;
+  height: 500px;
+  position: absolute;
+  top: 60%;
+  background-color: white;
+  left: 50%;
+  margin: -42vh 0 0 -200px;
+  padding-top: 40px;
+  
+    box-shadow: inset 0 -3em 3em rgba(0,0,0,0), 
+		 0.3em 0.3em 1em rgba(0,0,0,0.2);
+
+    border-radius: 10px; 
+    overflow: hidden;
+}
+
+h2{
+font-family: 'Poppins', sans-serif;
+}
 
 #button:enabled{
   border-color: #3498db;
@@ -42,7 +68,51 @@
   transition: all 150ms ease-in-out;
 }
 
+.btn-hover.color {
+    background-image: linear-gradient(to right, #25aae1, #4481eb, #04befe, #3f86ed);
+}
 
+
+.btn-hover.color2 {
+    background-image: linear-gradient(to right, #DC1C13, #EA4C46, #F07470);
+}
+
+.btn-hover:disabled{
+  background-color: gray;
+}
+
+.btn-hover {
+    width: 150px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    margin: 5px;
+    height: 40px;
+    text-align:center;
+    border: none;
+    background-size: 300% 100%;
+
+    border-radius: 20px;
+    moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+
+    margin-top: 20px;
+}
+
+.small {
+  width: 100px;
+}
+
+.btn-hover:hover {
+    background-position: 100% 0;
+    moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
 
 #button2.disabled{
   border-color: #3498aa;
@@ -51,7 +121,7 @@
 
 
 #payment {
-  background-color: #CDD7DE;
+  background-color: white;
   width: 100%;
   height: 100vh;
   float: right;
@@ -111,19 +181,21 @@ export default {
   name: "SignIn",
   data () {
     return {
-      amountpaying: 0,
-      amountpayed:0,
-      amountowed:0,
-      temp:'',
-      temp2:'',
-      temp6:'',
-      temp7: '',
+      amountPaying: 0,
+      amountOwed: 0,
       Username: this.$store.getters.getActiveUserName,
     }
   },
 
   components: {
     CustomerNavbar
+  },
+
+  created: function() {
+    this.getAmountOwed()
+    window.setInterval(() => {
+      this.getAmountOwed()
+    }, 2000)
   },
 
   methods: {
@@ -133,54 +205,28 @@ export default {
       this.$router.push({name: "CustomerHome"});
     },
 
-    getamountowed: function () {
-      console.log(this.getamountowednow());
-      this.temp6='2';
-      if(!this.amountowed){
-        this.temp2='5';
-      }
-      var elem = document.getElementById('button2');
-      elem.parentNode.removeChild(elem);
-      this.temp='3';
-     return false;
-      
-    },
-
-    paynow: function () {
-      
-      this.amountpayed=this.amountpaying;
-      this.amountowed=this.amountowed - this.amountpayed;
-      //actually update database/what user owes
-      console.log(this.payment());
-      if(this.amountowed==0){
-        this.temp2='5';
-      }
-      this.amountpaying=0;
-      
-    },
-
-    getamountowednow: function () {
+    getAmountOwed: function () {
       AXIOS.get(`/customers/`.concat(this.Username), {}, {})
           .then((response) => {
-           this.amountowed=response.data.amountOwed;
+           this.amountOwed=response.data.amountOwed;
           })
           
           .catch((e) => {
             var error= e.response.data;
             this.errorMessage = error;
           });
-      
     },
     
-    payment: function () {
-      AXIOS.put(`/customers/`.concat(this.Username).concat("/payment" + `?amount=` + this.amountpayed), {}, {})
+    addPayment: function (amount) {
+      AXIOS.put(`/customers/`.concat(this.Username).concat("/payment" + `?amount=` + amount), {}, {})
           .then((response) => {
-           
+            this.getAmountOwed();
           })
           
           .catch((e) => {
             var error= e.response.data;
             this.errorMessage = error;
+            window.alert(this.errorMessage);
           });
            
     }

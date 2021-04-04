@@ -36,6 +36,7 @@
       <table class="content-table">
         <thead>
           <tr>
+            <th>Services</th>
             <th>Technician</th>
             <th>Start Time</th>
             <th>End Time</th>
@@ -44,12 +45,14 @@
         </thead>
         <tbody>
           <tr v-for="appointment in appointments" @click="selectRow(appointment)" v-bind:key="appointment.id" :class="{'highlight': (appointment.id === selectedAppointment)}">
+            <td>{{ formattedServices(appointment) }}</td>
             <td>{{ appointment.technician.name }}</td>
             <td>{{ appointment.startTime }}</td>
             <td>{{ appointment.endTime }}</td>
             <td>{{ appointment.customer.name }}</td>
           </tr>
           <tr>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
@@ -400,6 +403,19 @@ export default {
 
             window.alert(this.errorMessage);
           });
+    },
+
+    formattedServices: function(appointment) {
+
+      var servicesString = "";
+
+      var i=0;
+      for (; i<appointment.services.length-1; i++) {
+          servicesString += appointment.services[i].name + ", ";
+      }
+      servicesString += appointment.services[i].name;
+
+      return servicesString;
     },
 
     deleteAppointment(appointment){
