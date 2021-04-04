@@ -11,7 +11,7 @@
   <table class="styled-table">
     <thead>
         <tr>
-            <th>Service</th>
+            <th>Services</th>
             <th>Date</th>
             <th>Start Time</th>
             <th>End Time</th>
@@ -19,7 +19,7 @@
     </thead>
       <tbody>
           <tr v-for="appointment in appointments">
-            <td>{{ appointment.services.name }}</td>
+            <td>{{ formattedServices(appointment) }}</td>
             <td>{{ appointment.date }}</td>
             <td>{{ appointment.startTime }}</td>
             <td>{{ appointment.endTime }}</td>
@@ -214,7 +214,7 @@ export default {
     },
     
     deleteuser: function () {
-      AXIOS.delete(`/endUsers/`.concat(this.Username), {}, {})
+      AXIOS.delete(`/endUsers/`.concat(this.username), {}, {})
           .then((response) => {
             this.$router.push({name: "SignIn"});
           })
@@ -224,6 +224,19 @@ export default {
             this.errorMessage = error;
           });
            
+    },
+
+    formattedServices: function(appointment) {
+
+      var servicesString = "";
+
+      var i=0;
+      for (; i<appointment.services.length-1; i++) {
+          servicesString += appointment.services[i].name + ", ";
+      }
+      servicesString += appointment.services[i].name;
+
+      return servicesString;
     }
   }
 }
