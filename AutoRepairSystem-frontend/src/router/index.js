@@ -5,7 +5,6 @@ import CustomerHome from "@/components/CustomerHome"
 import TechnicianHome from "@/components/TechnicianHome"
 import AdministratorHome from "@/components/AdministratorHome"
 import AvailableAppointments from "@/components/AvailableAppointments"
-import BookAppointmentConfirmation from "@/components/BookAppointmentConfirmation"
 import PayInvoice from "@/components/PayInvoice"
 import AccountCreation from "@/components/AccountCreation"
 import AdminUserManagement from "@/components/AdminUserManagement"
@@ -42,11 +41,6 @@ export default new Router({
       name: 'AvailableAppointments',
       component: AvailableAppointments
     }, 
-    {
-      path: '/BookAppointmentConfirmation',
-      name: 'BookAppointmentConfirmation',
-      component: BookAppointmentConfirmation
-    },
       
     {
       path: '/PayInvoice',
