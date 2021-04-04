@@ -13,18 +13,17 @@
   </div>
   
   <div id="home">
-<<<<<<< HEAD
 
 <!--
-=======
     <h2>Home (ADMIN) </h2>
     <h4>My Info : {{username}}</h4>
-    
->>>>>>> c29ef1758c4e029a33629eaf42a5f1e2675e2006
+
+
     <div id="invoices">
       <button id="button2" @click="checkinvoices()">Check/Pay Outstanding Balances</button> 
     </div>
     -->
+
 
 
 <div style="display: flex;">
@@ -32,7 +31,7 @@
       <h2> Current Appointments </h2>
       <br>
       <div class="datetime-block">
-        <label for="appt-date">Select a Date: </label><span id="datetimepicker"><input type="date" @input="getDateClean($event.target.value)"></span>
+        <label>Select a Date: </label><span><input type="date" @input="getDateClean($event.target.value)"></span>
       </div>
       <table class="content-table">
         <thead>
@@ -51,6 +50,7 @@
             <td>{{ appointment.customer.name }}</td>
           </tr>
           <tr>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>

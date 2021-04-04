@@ -1,74 +1,130 @@
 
 <template>
+
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<img class="logo" src="https://i.ibb.co/kcj0HD4/circle-cropped-1.png" width="100">
+
 <div id="signUp">
   <div id="central">
     <h2>Create Your Account</h2><br>
     <div id="fields">
       <div>
-        Username:<br>
-        <input class="creation-input" id="username-icon" type="text" v-model="username" placeholder="Username">
+        <input class="textbox" type="text" v-model="username" placeholder="Username">
       </div>
       <div>
-        Name:<br>
-        <input class="creation-input" id="name-icon" type="text" v-model="name" placeholder="Name">
+        <input class="textbox" type="text" v-model="name" placeholder="Name">
       </div>
       <div>
-        Email:<br>
-        <input class="creation-input" id="email-icon" type="text" v-model="email" placeholder="Email">
+        <input class="textbox" type="text" v-model="email" placeholder="Email">
       </div>
       <div>
-        Password:<br>
-        <input class="creation-input" id="password-icon" type="password" v-model="password" placeholder="Password">
+        <input class="textbox" type="password" v-model="password" placeholder="Password">
       </div>
       <div>
-        Password:<br>
-        <input class="creation-input" id="password-icon" type="password" v-model="passwordCheck" placeholder="Password">
+        <input class="textbox" type="password" v-model="passwordCheck" placeholder="Confirm Password">
       </div>
     </div>
     <div>
       <span v-if="errorMessage" style="color:red">Error: {{errorMessage}}</span>
       <br>
-      <button id="signup-button" v-bind:disabled="!username || !password ||!passwordCheck || !name || !email" v-on:click="createAccount(username, password, passwordCheck, name, email)">Sign Up</button><br>
+      <button id="signup-button" class="btn-hover color" v-bind:disabled="!username || !password ||!passwordCheck || !name || !email" v-on:click="createAccount(username, password, passwordCheck, name, email)">Sign Up</button><br>
       <br>
       <span>I already have an account! <router-link to="/">Sign In</router-link></span>
     </div>
   </div>
 </div>
+
+</html>
+
 </template>
 
 <style>
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.btn-hover.color {
+    background-image: linear-gradient(to right, #25aae1, #4481eb, #04befe, #3f86ed);
+}
+
+.btn-hover {
+    width: 90px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    margin: 20px;
+    height: 40px;
+    text-align:center;
+    border: none;
+    background-size: 300% 100%;
+
+    border-radius: 20px;
+    moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
+
+.btn-hover:hover {
+    background-position: 100% 0;
+    moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
+
+h2{
+font-family: 'Poppins', sans-serif;
+}
+
+.btn-hover:focus {
+    outline: none;
+}
+
+.textbox{
+	border-top-width: 0;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-bottom-width: 3px;
+	margin-top: 10px;
+	border-color: blue;
+}
 
 #signUp {
   background-color: #CDD7DE;
   height: 100vh;
   position: relative;
+
+  background-image: url("https://i.ibb.co/P9mSh5r/Los-Santos-Customs-GTAV-Burton.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 #central {
   width: 400px;
   height: 500px;
-  background-color: #EAF0F4;
   position: absolute;
   top: 50%;
+  background-color: white;
   left: 50%;
   margin: -42vh 0 0 -200px;
-  padding-top: 20px;
-}
+  padding-top: 30px;
+  
+    box-shadow: inset 0 -3em 3em rgba(0,0,0,0), 
+		 0.3em 0.3em 1em rgba(0,0,0,0.2);
 
-#username-icon {
-  background: white url(../assets/username-icon.png) left no-repeat;
-}
-
-#name-icon {
-  background: white url(../assets/name-icon.png) left no-repeat;
-}
-
-#email-icon {
-  background: white url(../assets/email-icon.png) left no-repeat;
-}
-
-#password-icon {
-  background: white url(../assets/password-icon.png) left no-repeat;
+    border-radius: 10px; 
+    overflow: hidden;
 }
 
 input.creation-input {

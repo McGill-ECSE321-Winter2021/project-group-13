@@ -19,7 +19,7 @@
         </thead>
         <tbody>
           <template v-for="service in services">
-          <tr>
+          <tr v-bind:key="service.name">
             <td><div id="servicediv"><input type="checkbox" v-bind:value="service" v-model="checkedServices"><span id="service">{{service.name}}</span></div></td>
             <td>{{service.duration}} minutes</td>
             <td>${{service.price}}</td>
@@ -68,7 +68,7 @@
         <td>Fri.<br>{{weekdays[5]}}</td>
         <td>Sat.<br>{{weekdays[6]}}</td>
       </tr>
-      <tr id="available-slots">
+      <tr id="available-slots" >
         <td>
           <div id="availability-block" v-for="availability in availabilities[0]">{{availability.startTime.slice(0, 5)}}<br>{{availability.endTime.slice(0, 5)}}</div>
         </td>
@@ -269,8 +269,9 @@ import CustomerNavbar from '@/components/CustomerNavbar'
 import axios from 'axios';
 var config = require('../../config');
 
-var frontendUrl = 'http://' + config.dev.host + ':' + config.dev.port;
-var backendUrl = 'http://' + config.dev.backendHost + ':' + config.dev.backendPort;
+var frontendUrl = "https://" + config.build.host + ":" + config.build.port;
+var backendUrl =
+  "https://" + config.build.backendHost + ":" + config.build.backendPort;
 
 var AXIOS = axios.create({
   baseURL: backendUrl,
@@ -346,6 +347,7 @@ export default {
     AXIOS.get(`/workitems`)
         .then((response) => {
           this.services = response.data;
+          console.log(this.services);
         })
         .catch((e) => {
           this.errorMessage = e.response.data;

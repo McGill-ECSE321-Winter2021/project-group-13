@@ -1,15 +1,20 @@
 <template>
+
 <div>
+
+    <div class="navbarContainer">
+      <TechnicianNavbar/>
+    </div>
+
+<!--
   <div id="home">
     <h2>Home (TECHNICIAN)</h2>
     <h4>My Info : {{username}}</h4>
+    -->
   
-<div id="invoices">
-       <button id="buttonlogout" @click="logout()">Log Out </button> 
-       </div>
     <div id="currentappointments">
      <h2> Scheduled Appointments </h2>
-  <table class="styled-table">
+  <table class="content-table">
     <thead>
         <tr>
             <th>Service</th>
@@ -25,7 +30,8 @@
             <td>{{ appointment.startTime }}</td>
             <td>{{ appointment.endTime }}</td>
           </tr>
-          <tr v-for="n in emptyAdministrators" v-bind:key="n">
+          <tr>
+          <td></td>
           <td></td>
           <td></td>
           <td></td>
@@ -44,6 +50,60 @@
 
 
 <style>
+
+h2{
+font-family: 'Poppins', sans-serif;
+}
+
+.content-table {
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.9em;
+  min-width: 400px;
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+  padding-top: 100px;
+  margin: auto;
+  width: 30%;
+
+  margin-top: 30px;
+}
+
+.content-table thead tr {
+  background-color: 
+#013bbe;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+
+.content-table th,
+.content-table td {
+  padding: 12px 15px;
+}
+
+.content-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.content-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.content-table tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
+
+.content-table tbody tr.highlight {
+  font-weight: bold;
+  color: #009879;
+}
+
+.navbarContainer {
+  margin-bottom: 0px;
+}
 
  #deletebutton, #buttonlogout{
   border-color: #3498db;
@@ -128,6 +188,7 @@ margin-left: 1100px;
 
 <script>
 
+import TechnicianNavbar from '@/components/TechnicianNavbar'
 import axios from "axios";
 var config = require("../../config");
 var frontendUrl = "https://" + config.build.host + ":" + config.build.port;
@@ -150,6 +211,7 @@ export default {
   },
 
   components: {
+    TechnicianNavbar,
   },
 
   created: function() {
@@ -193,13 +255,6 @@ export default {
           });
            
     },
-
-
-//removes current user
-    logout: function () {
-      this.$router.push({name: "SignIn"});
-      
-    }
 
   }
 }

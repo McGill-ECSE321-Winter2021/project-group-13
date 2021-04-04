@@ -5,14 +5,7 @@
   </div>
 
   <div id="home">
-    <h2>Home (CUSTOMER)</h2>
-    <h4>My Info : {{username}}</h4>
   
-<div id="invoices">
-       <button id="button2" @click="checkinvoices()">Check/Pay Outstanding Balances</button> 
-       
-       <button id="buttonlogout" @click="logout()">Log Out </button> 
-       </div>
     <div id="currentappointments">
      <h2> Current Appointments </h2>
   <table class="styled-table">
@@ -41,7 +34,6 @@
 </table>
  <br>
  <br>
- <button id="button" @click="browseappointment()">Browse/Book Available Appointments</button> <br>
  <button id="deletebutton" @click="deleteaccountpopup()">Delete Account</button>
  <br>
  </div>
