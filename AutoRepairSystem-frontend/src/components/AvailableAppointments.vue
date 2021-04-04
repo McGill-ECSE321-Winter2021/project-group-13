@@ -40,12 +40,12 @@
       <div class="datetime-block">
         <h3>Date & Time</h3>
         <br>
-        <label for="appt-date"></label><span id="datetimepicker"><input type="date" @input="inputDate = getDateClean($event.target.value)"></span>
-        <label for="appt-time"></label><span id="datetimepicker"><input type="time" pattern="[0-9]{2}:[0-9]{2}" @input="inputTime = getTimeClean($event.target.value)"></span>
+        <label for="appt-date"></label><span id="datetimepicker"><input type="date" style="height: 46px" @input="inputDate = getDateClean($event.target.value)"></span>
+        <vue-timepicker input-width = "100px" format="HH:mm" :minute-interval="15" @input="appointmentStartTime"></vue-timepicker>
       </div>
 
       <div style="margin-top: 30px;">
-        <button v-bind:disabled="!inputDate || !inputTime || checkedServices.length<=0" v-on:click="createAppointment()">Book Appointment</button>
+        <button v-bind:disabled="!inputDate || !inputTime.HH || !inputTime.mm || checkedServices.length<=0" v-on:click="createAppointment()">Book Appointment</button>
       </div>
       <span v-if="errorMessage" style="color:red">Error: {{errorMessage}}</span>
 
@@ -265,16 +265,19 @@ body {
 
 <script>
 import CustomerNavbar from '@/components/CustomerNavbar'
+import VueTimepicker from 'vue2-timepicker'
+import 'vue2-timepicker/dist/VueTimepicker.css'
 
 import axios from 'axios';
 var config = require('../../config');
 
-var frontendUrl = 'http://' + config.dev.host + ':' + config.dev.port;
-var backendUrl = 'http://' + config.dev.backendHost + ':' + config.dev.backendPort;
+var frontendUrl = "https://" + config.build.host + ":" + config.build.port;
+var backendUrl =
+  "https://" + config.build.backendHost + ":" + config.build.backendPort;
 
-var AXIOS = axios.create({
+  var AXIOS = axios.create({
   baseURL: backendUrl,
-  headers: { 'Access-Control-Allow-Origin': frontendUrl }
+  //headers: { "Access-Control-Allow-Origin": frontendUrl },
 });
 
 //Variable which stores the date of the start of the displayed week (Sunday)
@@ -314,10 +317,16 @@ function CustomerDto(username) {
 }
 
 function AppointmentDto(customer, services, startTime, startDate) {
-    this.customer = new CustomerDto(customer);
-    this.services = services;
-    this.startTime = startTime;
-    this.date = startDate;
+  this.customer = new CustomerDto(customer);
+  this.services = services;
+  this.startTime = startTime;
+  this.date = startDate;
+}
+
+function formatDate(aDate) {
+  var offset = aDate.getTimezoneOffset()*60000; // timezone offset in milliseconds
+  var formattedDate = (new Date(aDate - offset)).toISOString().slice(0,10);
+  return formattedDate;
 }
 
 export default {
@@ -329,7 +338,7 @@ export default {
       year: "",
       weekdays: ["", "", "", "", "", "", ""],
       inputDate: "",
-      inputTime: "",
+      inputTime: {HH: "", mm: ""},
       services: [],
       checkedServices: [],
       availabilities: [],
@@ -339,7 +348,8 @@ export default {
   },
 
   components: {
-    CustomerNavbar
+    CustomerNavbar,
+    VueTimepicker
   },
 
   created: function () {
@@ -394,8 +404,8 @@ export default {
     },
 
     createAppointment: function () {
-      var dateString = this.inputDate.toLocaleString("default");
-      var timeString = this.inputTime.toLocaleString("default", { timeStyle: "long"});
+      var dateString = this.inputDate.toLocaleString("default", {dateStyle: "full"});
+      var timeString = this.inputTime.HH + ":" + this.inputTime.mm;
 
       var servicesString = this.checkedServices[0].name;
       for (var i=1; i<this.checkedServices.length-1; i++) {
@@ -409,9 +419,8 @@ export default {
       var confirmation = window.confirm("Are you sure you want to book an appointment on " + dateString + " at " + timeString + " with the following services: " + servicesString);
 
       if (confirmation) {
-        var timeInput = this.inputTime.toLocaleString("default", { timeStyle: "medium", hour12: false});
-        this.inputDate.setDate(this.inputDate.getDate() + 1);
-        var dateInput = this.inputDate.toISOString().split("T")[0];
+        var timeInput = this.inputTime.HH + ":" + this.inputTime.mm + ":00";
+        var dateInput = formatDate(this.inputDate);
         var apptDto = new AppointmentDto(this.username, this.checkedServices, timeInput, dateInput);
 
         AXIOS.post(`/create/appointment/any`, apptDto)
@@ -423,8 +432,6 @@ export default {
         .catch((e) => {
           this.errorMessage = e.response.data;
         });
-
-        this.inputDate.setDate(this.inputDate.getDate() - 1);
       }
     },
 
@@ -435,7 +442,7 @@ export default {
 
       for (var i=0; i<7; i++) {
         var dailyAvailabilities = [];
-        var dateInput = currDate.toISOString().split("T")[0];
+        var dateInput = formatDate(currDate);
 
         this.availabilities.push([]);
 
@@ -465,14 +472,9 @@ export default {
         return selectedDate;
     },
 
-    //This method converts time input field to a date object (Where we only care about the time)
-    getTimeClean(currTime) {
-      if (currTime == "") return "";
-      var selectedTime = new Date();
-      var time = currTime.split(":");
-      selectedTime.setHours(time[0], time[1], "00");
-      return selectedTime;
-    }
+    appointmentStartTime(eventData) {
+      this.inputTime = eventData;
+    },
 
   }
   
