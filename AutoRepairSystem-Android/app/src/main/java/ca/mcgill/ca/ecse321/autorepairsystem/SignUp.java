@@ -15,38 +15,39 @@ import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-public class LogIn extends AppCompatActivity {
+public class SignUp extends AppCompatActivity {
     private EditText username;
     private EditText password;
-    private String user="";
-
-    public void createAccount(View v){
-        setContentView(R.layout.activity_signup);
-    }
-
+    private EditText email;
+    private EditText name;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_signup);
         username=findViewById(R.id.username);
         password=findViewById(R.id.password);
+        email=findViewById(R.id.email);
+        name=findViewById(R.id.name);
 
     }
 
+    public void signUp(View v){
+        RequestParams pr = new RequestParams();
+        pr.add("password", password.getText().toString());
+        pr.add("email", email.getText().toString());
+        pr.add("name", name.getText().toString());
+        final TextView username = (TextView) findViewById(R.id.username);
 
-    public void signIn(View v){
-        RequestParams parameters = new RequestParams();
-        parameters.add("username", username.getText().toString());
-        parameters.add("password", password.getText().toString());
-
-        HttpUtils.get("/signin", parameters, new JsonHttpResponseHandler(){
+        HttpUtils.post("/customers/"+username, pr, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 //clear fields for next login
                 username.setText("");
                 password.setText("");
+                email.setText("");
+                name.setText("");
                 //Redirect to customer page
                 setContentView(R.layout.activity_login);
 
@@ -58,14 +59,16 @@ public class LogIn extends AppCompatActivity {
                 //clear for next login
                 username.setText("");
                 password.setText("");
+                email.setText("");
+                name.setText("");
                 displayError.append("Invalid Credentials");
             }
         });
 
 
-        }
-
-
     }
+
+
+}
 
 
