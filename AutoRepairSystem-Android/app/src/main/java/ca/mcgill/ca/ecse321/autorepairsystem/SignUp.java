@@ -16,18 +16,18 @@ import org.json.JSONObject;
 import cz.msebera.android.httpclient.Header;
 
 public class SignUp extends AppCompatActivity {
-    private EditText username;
     private EditText password;
     private EditText email;
     private EditText name;
+    private EditText username;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        username=findViewById(R.id.username);
-        password=findViewById(R.id.password);
+        username=findViewById(R.id.usernamesignup);
+        password=findViewById(R.id.passwordsignup);
         email=findViewById(R.id.email);
         name=findViewById(R.id.name);
 
@@ -36,11 +36,11 @@ public class SignUp extends AppCompatActivity {
     public void signUp(View v){
         RequestParams pr = new RequestParams();
         pr.add("password", password.getText().toString());
-        pr.add("email", email.getText().toString());
         pr.add("name", name.getText().toString());
-        final TextView username = (TextView) findViewById(R.id.username);
+        pr.add("email", email.getText().toString());
 
-        HttpUtils.post("/customers/"+username, pr, new JsonHttpResponseHandler(){
+
+        HttpUtils.post("/customers/"+(username.getText().toString()), pr, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 //clear fields for next login
@@ -49,7 +49,7 @@ public class SignUp extends AppCompatActivity {
                 email.setText("");
                 name.setText("");
                 //Redirect to customer page
-                setContentView(R.layout.activity_login);
+                setContentView(R.layout.activity_signup);
 
 
             }

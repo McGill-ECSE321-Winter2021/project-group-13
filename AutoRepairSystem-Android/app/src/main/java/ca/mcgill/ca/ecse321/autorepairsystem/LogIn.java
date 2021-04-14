@@ -21,6 +21,8 @@ public class LogIn extends AppCompatActivity {
     private String user="";
 
     public void createAccount(View v){
+        Intent intent = new Intent(this, SignUp.class);
+        startActivity(intent);
         setContentView(R.layout.activity_signup);
     }
 
