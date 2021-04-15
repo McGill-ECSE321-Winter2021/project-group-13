@@ -10,7 +10,7 @@ import AccountCreation from "@/components/AccountCreation"
 import AdminUserManagement from "@/components/AdminUserManagement"
 import AdminNavbar from "@/components/AdminNavbar"
 import CustomerNavbar from "@/components/CustomerNavbar"
-import AdminTechnicianSchedule from "@/components/AdminTechnicianSchedule"
+import AdminTechnicianSchedule from "@/components/AdminTechnicianSchedule.vue"
 
 Vue.use(Router)
 
