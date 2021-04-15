@@ -59,7 +59,7 @@ public class LogIn extends AppCompatActivity {
             }
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                final TextView displayError = (TextView) findViewById(R.id.login_error);
+                TextView displayError = (TextView) findViewById(R.id.login_error);
                 //clear for next login
                 username.setText("");
                 password.setText("");
