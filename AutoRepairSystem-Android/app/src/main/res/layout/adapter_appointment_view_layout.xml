@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="100">
+
+    <TextView
+        android:id="@+id/appointmentDate"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_weight="25"
+        android:gravity="center"
+        android:text="TestDate" />
+
+    <TextView
+        android:id="@+id/appointmentStartTime"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_weight="25"
+        android:gravity="center"
+        android:text="TestStart" />
+
+    <TextView
+        android:id="@+id/appointmentEndTime"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_weight="25"
+        android:gravity="center"
+        android:text="TestEnd" />
+
+    <TextView
+        android:id="@+id/appointmentServices"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_weight="25"
+        android:gravity="center"
+        android:text="TestService" />
+
+
+</LinearLayout>

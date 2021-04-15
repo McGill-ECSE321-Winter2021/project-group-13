@@ -1,8 +1,12 @@
 package ca.mcgill.ca.ecse321.autorepairsystem;
 
+import android.content.Context;
+
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.AsyncHttpClient;
+
+import cz.msebera.android.httpclient.entity.StringEntity;
 
 
 public class HttpUtils {
@@ -29,6 +33,9 @@ public class HttpUtils {
 
     public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.post(getAbsoluteUrl(url), params, responseHandler);
+    }
+    public static void post(Context context, String url, StringEntity entity, AsyncHttpResponseHandler responseHandler) {
+        client.post(context, getAbsoluteUrl(url), entity, "application/json", responseHandler);
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {

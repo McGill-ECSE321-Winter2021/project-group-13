@@ -1,5 +1,6 @@
 package ca.mcgill.ca.ecse321.autorepairsystem;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -42,6 +43,7 @@ public class LogIn extends AppCompatActivity {
         RequestParams parameters = new RequestParams();
         parameters.add("username", username.getText().toString());
         parameters.add("password", password.getText().toString());
+        Boolean loginSuccess = false;
 
         HttpUtils.get("/signin", parameters, new JsonHttpResponseHandler(){
             @Override
@@ -50,8 +52,9 @@ public class LogIn extends AppCompatActivity {
                 username.setText("");
                 password.setText("");
                 //Redirect to customer page
-                setContentView(R.layout.activity_login);
-
+                Intent intent = new Intent(getApplicationContext(), CustomerHomeActivity.class);
+                startActivity(intent);
+                setContentView(R.layout.activity_customerhome);
 
             }
             @Override
