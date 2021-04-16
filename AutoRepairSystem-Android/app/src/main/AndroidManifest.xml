@@ -30,7 +30,10 @@
             android:label="Customer Home"
             android:theme="@style/Theme.AutoRepairSystemAndroid">
         </activity>
-
+        <activity
+            android:name=".DisplayAvailabilities"
+            android:label="Display Availabilities"
+            android:theme="@style/Theme.AutoRepairSystemAndroid"></activity>
     </application>
 
 </manifest>
