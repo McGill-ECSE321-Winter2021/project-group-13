@@ -17,4 +17,14 @@
     <string name="bookedAppointmentsString">Booked Appointments</string>
     <!-- Strings related to availabilities -->
     <string name="availabilityText">Availabilities:</string>
+    <!-- Strings related to appointment booking -->
+    <string name="select_services">Select Services:</string>
+    <string name="view_availabilities">View Availabilities</string>
+    <string name="select_date">Select Date:</string>
+    <string name="select_time">Select Time:</string>
+    <string name="book_appointment">Book Appointment</string>
+    <string name="book_appointment_title">Book Appointment</string>
+    <string name="select_services_button">Select Services</string>
+    <string name="select_date_button">Select Date</string>
+    <string name="select_time_button">Select Time</string>
 </resources>

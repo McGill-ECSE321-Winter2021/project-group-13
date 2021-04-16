@@ -33,7 +33,14 @@
         <activity
             android:name=".DisplayAvailabilities"
             android:label="Display Availabilities"
-            android:theme="@style/Theme.AutoRepairSystemAndroid"></activity>
+            android:theme="@style/Theme.AutoRepairSystemAndroid"
+            android:parentActivityName=".AppointmentBooking">
+        </activity>
+        <activity
+            android:name=".AppointmentBooking"
+            android:label="Appointment Booking"
+            android:theme="@style/Theme.AutoRepairSystemAndroid">
+        </activity>
     </application>
 
 </manifest>
