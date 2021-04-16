@@ -1,7 +1,9 @@
 package ca.mcgill.ca.ecse321.autorepairsystem;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.content.SharedPreferences;
 import android.widget.EditText;
 import android.view.View;
 import android.widget.TextView;
@@ -22,6 +24,10 @@ public class SignUp extends AppCompatActivity {
     private EditText name;
     private EditText username;
 
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String Username = "usernameKey";
+    SharedPreferences sharedpreferences;
+
 
     @Override
     //on create we set view and set users input to parameters
@@ -32,6 +38,8 @@ public class SignUp extends AppCompatActivity {
         password=findViewById(R.id.passwordsignup);
         email=findViewById(R.id.email);
         name=findViewById(R.id.name);
+
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
     }
 
@@ -47,6 +55,14 @@ public class SignUp extends AppCompatActivity {
             @Override
             //on success we go to customers home page
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                String usernameString = username.getText().toString();
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(Username,usernameString);
+                editor.commit();
+
+                String currentUser = sharedpreferences.getString(Username, "");
+
                 //clear fields for next login
                 username.setText("");
                 password.setText("");

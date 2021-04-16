@@ -2,6 +2,7 @@ package ca.mcgill.ca.ecse321.autorepairsystem;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.view.View;
@@ -20,6 +21,10 @@ public class LogIn extends AppCompatActivity {
     private EditText username;
     private EditText password;
 
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String Username = "usernameKey";
+    SharedPreferences sharedpreferences;
+
     //Helper function to start new activity and take us to SignUp Page
     public void createAccount(View v){
         Intent intent = new Intent(this, SignUp.class);
@@ -28,13 +33,15 @@ public class LogIn extends AppCompatActivity {
     }
 
 
-    //OnCreate we set layout and set unsername and password to users input
+    //OnCreate we set layout and set username and password to users input
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         username=findViewById(R.id.username);
         password=findViewById(R.id.password);
+
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
     }
 
@@ -49,6 +56,14 @@ public class LogIn extends AppCompatActivity {
             @Override
             //on success we go to home page
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                String usernameString = username.getText().toString();
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(Username,usernameString);
+                editor.commit();
+
+                String currentUser = sharedpreferences.getString(Username, "");
+
                 //clear fields for next login
                 username.setText("");
                 password.setText("");
