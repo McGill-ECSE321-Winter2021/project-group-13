@@ -10,7 +10,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import androidx.appcompat.app.AppCompatActivity;
 import com.loopj.android.http.RequestParams;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
@@ -18,7 +17,6 @@ import cz.msebera.android.httpclient.Header;
 public class LogIn extends AppCompatActivity {
     private EditText username;
     private EditText password;
-    private String user="";
 
     public void createAccount(View v){
         Intent intent = new Intent(this, SignUp.class);
@@ -51,22 +49,21 @@ public class LogIn extends AppCompatActivity {
                 password.setText("");
                 //Redirect to customer page
                 setContentView(R.layout.activity_login);
-
-
             }
+
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 final TextView displayError = (TextView) findViewById(R.id.login_error);
                 //clear for next login
                 username.setText("");
                 password.setText("");
-                displayError.append("Invalid Credentials");
+                displayError.setText("");
+                displayError.setText("Invalid Username Or Password");
             }
         });
 
 
         }
-
 
     }
 

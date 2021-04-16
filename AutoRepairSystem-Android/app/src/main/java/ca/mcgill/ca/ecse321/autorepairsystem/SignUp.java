@@ -10,7 +10,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import androidx.appcompat.app.AppCompatActivity;
 import com.loopj.android.http.RequestParams;
 
-import org.json.JSONException;
+
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
@@ -55,13 +55,15 @@ public class SignUp extends AppCompatActivity {
             }
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
                 final TextView displayError = (TextView) findViewById(R.id.login_error);
                 //clear for next login
                 username.setText("");
                 password.setText("");
                 email.setText("");
                 name.setText("");
-                displayError.append("Invalid Credentials");
+                displayError.setText("");
+                displayError.setText("Please Fill Out All Fields");
             }
         });
 
