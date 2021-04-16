@@ -1,10 +1,12 @@
 package ca.mcgill.ca.ecse321.autorepairsystem;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.content.SharedPreferences;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -25,11 +27,21 @@ public class CustomerHomeActivity extends AppCompatActivity {
 
     private List<Appointment> appointments = new ArrayList<Appointment>();
     private String error = "";
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String Username = "usernameKey" ;
+    public static String currentUsername;
+    SharedPreferences sharedpreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customerhome);
+
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        currentUsername = sharedpreferences.getString(Username, "ERROR");
+
+
         getAppointmentsList();
         initListView();
     }
@@ -45,7 +57,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
         //Get This Customer's Appointments
         try {
             JSONObject customerJSON = new JSONObject();
-            customerJSON.put("username", "customer1"); // Need to develop current customer persistence
+            customerJSON.put("username", currentUsername); // Need to develop current customer persistence
             StringEntity stringEntity = new StringEntity(customerJSON.toString());
             HttpUtils.post(this,"/appointments/bycustomer/", stringEntity, new JsonHttpResponseHandler() {
                 @Override
