@@ -60,7 +60,7 @@ Name            | Team Roles         | Individual Efforts
 --------------- |------------------- |-------------------
 Edgar Desnos    || 
 Charles Wetaski ||
-Ezra Gomolin    ||                   
+Ezra Gomolin    |Android Frontend|20 hours                  
 Hassan Kanj     ||
 Henri Rofiq     ||
 
