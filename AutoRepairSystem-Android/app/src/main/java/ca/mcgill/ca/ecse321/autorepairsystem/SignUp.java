@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import cz.msebera.android.httpclient.Header;
 
 public class SignUp extends AppCompatActivity {
+    //our four input fields
     private EditText password;
     private EditText email;
     private EditText name;
@@ -23,6 +24,7 @@ public class SignUp extends AppCompatActivity {
 
 
     @Override
+    //on create we set view and set users input to parameters
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
@@ -33,6 +35,7 @@ public class SignUp extends AppCompatActivity {
 
     }
 
+    //we get the parameters for backend call
     public void signUp(View v){
         RequestParams pr = new RequestParams();
         pr.add("password", password.getText().toString());
@@ -42,6 +45,7 @@ public class SignUp extends AppCompatActivity {
 
         HttpUtils.post("/customers/"+(username.getText().toString()), pr, new JsonHttpResponseHandler(){
             @Override
+            //on success we go to customers home page
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 //clear fields for next login
                 username.setText("");
@@ -49,11 +53,14 @@ public class SignUp extends AppCompatActivity {
                 email.setText("");
                 name.setText("");
                 //Redirect to customer page
-                setContentView(R.layout.activity_signup);
+                Intent intent = new Intent(getApplicationContext(), CustomerHomeActivity.class);
+                startActivity(intent);
+                setContentView(R.layout.activity_customerhome);
 
 
             }
             @Override
+            //on failiure we print out error message and empty boxes for next attempt
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
                 final TextView displayError = (TextView) findViewById(R.id.login_error);

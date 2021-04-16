@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TableRow
+        android:id="@+id/appointmentsTitleContainer"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar2">
+
+        <TextView
+            android:id="@+id/appointmentsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="@string/bookedAppointmentsString"
+            android:textAlignment="viewStart"
+            android:textAllCaps="true"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:translationX="10dp"
+            android:translationY="10dp" />
+
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/appointmentHeaders"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/black_border_top_and_bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appointmentsTitleContainer">
+
+        <TextView
+            android:id="@+id/appointmentDateHeader"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="25"
+            android:gravity="center"
+            android:text="@string/dateHeader" />
+
+        <TextView
+            android:id="@+id/appointmentStartTimeHeader"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="25"
+            android:gravity="center"
+            android:text="@string/startTimeHeader" />
+
+        <TextView
+            android:id="@+id/appointmentEndTimeHeader"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="25"
+            android:gravity="center"
+            android:text="@string/endTimeHeader" />
+
+        <TextView
+            android:id="@+id/appointmentServicesHeader"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="25"
+            android:gravity="center"
+            android:text="@string/servicesHeader" />
+
+    </TableRow>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TESTING"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar2" />
+
+    <TableRow
+        android:id="@+id/appointmentListContainer"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/black_border_top_and_bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appointmentHeaders">
+
+        <ListView
+            android:id="@+id/appointmentListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/appointment_list_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appointmentHeaders" />
+    </TableRow>
+    <TextView
+        android:id="@+id/errorText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="100dp"
+        android:text="TextView"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
