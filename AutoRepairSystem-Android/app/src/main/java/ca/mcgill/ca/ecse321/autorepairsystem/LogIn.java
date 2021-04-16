@@ -62,8 +62,6 @@ public class LogIn extends AppCompatActivity {
                 editor.putString(Username,usernameString);
                 editor.commit();
 
-                String currentUser = sharedpreferences.getString(Username, "");
-
                 //clear fields for next login
                 username.setText("");
                 password.setText("");
