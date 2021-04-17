@@ -100,9 +100,12 @@
             android:layout_weight="50">
 
             <Button
-                android:id="@+id/button2"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
+                android:id="@+id/goToBookingButton"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="25"
                 android:onClick="goToBookAppointments"
                 android:text="Appointment Booking"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -117,9 +120,12 @@
             android:layout_weight="50">
 
             <Button
-                android:id="@+id/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/logOutButton"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:onClick="logOut"
                 android:text="Log Out"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
