@@ -113,4 +113,9 @@ public class CustomerHomeActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AppointmentBooking.class);
         startActivity(intent);
     }
+
+    public void logOut(View v) {
+        Intent intent = new Intent(this, LogIn.class);
+        startActivity(intent);
+    }
 }
