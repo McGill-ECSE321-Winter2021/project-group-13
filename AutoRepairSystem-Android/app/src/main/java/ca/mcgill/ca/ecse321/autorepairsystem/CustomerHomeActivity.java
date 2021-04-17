@@ -162,6 +162,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
      * Takes the user to the book appointments activity
      */
     public void goToBookAppointments (View v){
+        Log.d("DEBUG","GOING TO BOOK APPOINTMENTS");
         Intent intent = new Intent(this, AppointmentBooking.class);
         startActivity(intent);
     }
