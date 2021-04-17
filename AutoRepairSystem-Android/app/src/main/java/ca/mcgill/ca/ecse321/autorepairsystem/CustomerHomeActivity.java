@@ -162,7 +162,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
         }
     }
 
-    public void goToBookAppointments (){
+    public void goToBookAppointments (View v){
         Intent intent = new Intent(this, AppointmentBooking.class);
         startActivity(intent);
     }
