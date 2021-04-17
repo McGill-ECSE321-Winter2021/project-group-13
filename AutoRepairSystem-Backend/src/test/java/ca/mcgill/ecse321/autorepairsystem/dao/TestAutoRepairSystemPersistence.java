@@ -135,6 +135,10 @@ public class TestAutoRepairSystemPersistence {
 		
 	}
 	
+	/**
+	 * Testing of the persistence of a generic administrator object
+	 */
+	
 	@Test
 	public void testPersistAndLoadAdministrator() {
 		
@@ -152,6 +156,10 @@ public class TestAutoRepairSystemPersistence {
 		
 	}
 
+	/**
+	 * Testing of the persistence of a generic appointment object
+	 */
+	
 	@Test
 	public void testPersistAndLoadAppointment() {
 		
@@ -206,6 +214,10 @@ public class TestAutoRepairSystemPersistence {
 		assertNotNull(workItemRepository.findWorkItemByName(WORKITEMNAME));
 	}
 	
+	
+	/**
+	 * Testing of the persistence of a generic businessHour object
+	 */
 	@Test
 	public void testPersistAndLoadBusinessHour() {
 		
@@ -256,6 +268,10 @@ public class TestAutoRepairSystemPersistence {
 		assertNull(workBreakRepository.findWorkBreakById(workBreakId));
 	}
 	
+	
+	/**
+	 * Testing of the persistence of a generic customer object
+	 */
 	@Test
 	public void testPersistAndLoadCustomer() {
 
@@ -280,6 +296,9 @@ public class TestAutoRepairSystemPersistence {
 	
 	}
 	
+	/**
+	 * Testing of the persistence of a generic technician object
+	 */
 	@Test	
 	public void testPersistAndLoadTechnician() {
 		
@@ -330,7 +349,9 @@ public class TestAutoRepairSystemPersistence {
 		
 	} 
 	
-
+	/**
+	 * Testing of the persistence of a generic technicianHour object
+	 */
 	@Test
 	public void testPersistAndLoadTechnicianHour() {
 		
@@ -373,6 +394,9 @@ public class TestAutoRepairSystemPersistence {
 		assertNull(workBreakRepository.findWorkBreakById(workBreakId));
 	}
 	
+	/**
+	 * Testing of the persistence of a generic endUser object
+	 */
 	@Test
 	public void testPersistAndLoadEndUser() {
 
@@ -416,6 +440,10 @@ public class TestAutoRepairSystemPersistence {
 		
 	}
 	
+	
+	/**
+	 * Testing of the persistence of a generic workBreak object
+	 */
 	@Test
 	public void testPersistAndLoadWorkBreak() {
 		
@@ -448,6 +476,10 @@ public class TestAutoRepairSystemPersistence {
 		assertTrue(techHour.getWorkBreak().isEmpty());
 	}
 	
+	
+	/**
+	 * Testing of the persistence of a generic workHour object
+	 */
 	@Test
 	public void testPersistAndLoadWorkHour() {
 		
@@ -508,6 +540,9 @@ public class TestAutoRepairSystemPersistence {
 		assertNull(businessHourRepository.findBusinessHourById(businessHourId));
 	}
 	
+	/**
+	 * Testing of the persistence of a generic workItem object
+	 */
 	@Test
 	public void testPersistAndLoadWorkItem() {
 		
@@ -527,7 +562,7 @@ public class TestAutoRepairSystemPersistence {
 	}
 
 	// Helper Methods
-	
+	//Each of the helper methods below act as "constructors"; allow us to create generic objects to be used in the test cases above 
 	
 	private Administrator newAdministrator(String username, String password, String name, String email) {
 		Administrator admin = new Administrator();
