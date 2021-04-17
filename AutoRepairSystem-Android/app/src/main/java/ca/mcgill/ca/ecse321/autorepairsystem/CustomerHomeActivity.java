@@ -39,7 +39,10 @@ public class CustomerHomeActivity extends AppCompatActivity {
     public static String currentUsername;
     SharedPreferences sharedpreferences;
 
-
+    /**
+     * On creation of the page, gets the current user, and uses it to display the header properly.
+     * Then gets list of the current user's appointments and displays them.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +51,6 @@ public class CustomerHomeActivity extends AppCompatActivity {
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         currentUsername = sharedpreferences.getString(Username, "ERROR");
 
-        String mainText = "Welcome to the Los Santos Customers";
         String appointmentsHeader = currentUsername + "'s Appointments";
         TextView titleTextView = (TextView) findViewById(R.id.appointmentsTitle);
         titleTextView.setText(appointmentsHeader);
@@ -57,6 +59,9 @@ public class CustomerHomeActivity extends AppCompatActivity {
         initListView();
     }
 
+    /**
+     * Displays the user's appointments as a list
+     */
     private void initListView() {
         Log.d("CREATION", "Adapter TIME");
         ListView listView = (ListView) findViewById(R.id.appointmentListView);
@@ -64,6 +69,9 @@ public class CustomerHomeActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
     }
 
+    /**
+     * Gets all of the current user's appointments and then calls initListView() to display them
+     */
     private void getAppointmentsList() {
         //Get This Customer's Appointments
         try {

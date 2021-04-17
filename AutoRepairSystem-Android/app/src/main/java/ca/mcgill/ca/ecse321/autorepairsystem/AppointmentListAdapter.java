@@ -23,6 +23,11 @@ public class AppointmentListAdapter extends ArrayAdapter<Appointment> {
         this.resource = resource;
     }
 
+    /**
+     * Creates a list view of appointnments with 4 columns. The 4 columns are the appointments
+     * date, starttime, endtime, and services.
+     * @return
+     */
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
