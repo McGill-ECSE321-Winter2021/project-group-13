@@ -24,8 +24,8 @@
     <string name="select_time">Select Time:</string>
     <string name="book_appointment">Book Appointment</string>
     <string name="book_appointment_title">Book Appointment</string>
-    <string name="select_services_button">Select Services</string>
-    <string name="select_date_button">Select Date</string>
-    <string name="select_time_button">Select Time</string>
+    <string name="select_services_button">No Selected Services</string>
+    <string name="select_date_button">1/1/2021</string>
+    <string name="select_time_button">00:00</string>
     <string name="customerHomeText1">Welcome to Los Santos Customs</string>
 </resources>
