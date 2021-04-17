@@ -43,7 +43,9 @@ public class SignUp extends AppCompatActivity {
 
     }
 
-    //we get the parameters for backend call
+    /**
+     * we get the parameters for backend call
+     */
     public void signUp(View v){
         RequestParams pr = new RequestParams();
         pr.add("password", password.getText().toString());
@@ -69,9 +71,6 @@ public class SignUp extends AppCompatActivity {
                 //Redirect to customer page
                 Intent intent = new Intent(getApplicationContext(), CustomerHomeActivity.class);
                 startActivity(intent);
-                setContentView(R.layout.activity_customerhome);
-
-
             }
             @Override
             //on failiure we print out error message and empty boxes for next attempt

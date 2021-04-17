@@ -25,11 +25,12 @@ public class LogIn extends AppCompatActivity {
     public static final String Username = "usernameKey";
     SharedPreferences sharedpreferences;
 
-    //Helper function to start new activity and take us to SignUp Page
+    /**
+     * Helper function to start new activity and take us to SignUp Page
+     */
     public void createAccount(View v){
         Intent intent = new Intent(this, SignUp.class);
         startActivity(intent);
-        setContentView(R.layout.activity_signup);
     }
 
 
@@ -45,7 +46,9 @@ public class LogIn extends AppCompatActivity {
 
     }
 
-//Collects parameters for backend call
+    /**
+     * Collects parameters for backend call
+     */
     public void signIn(View v){
         RequestParams parameters = new RequestParams();
         parameters.add("username", username.getText().toString());
@@ -68,7 +71,6 @@ public class LogIn extends AppCompatActivity {
                 //Redirect to customer page
                 Intent intent = new Intent(getApplicationContext(), CustomerHomeActivity.class);
                 startActivity(intent);
-                setContentView(R.layout.activity_customerhome);
 
 
             }
