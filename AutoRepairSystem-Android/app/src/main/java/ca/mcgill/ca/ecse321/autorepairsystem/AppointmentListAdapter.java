@@ -32,7 +32,7 @@ public class AppointmentListAdapter extends ArrayAdapter<Appointment> {
 
         List<String> services = getItem(position).getServices();
 
-        Appointment appointment = new Appointment(date,startTime,endTime,services);
+        Appointment appointment = new Appointment(date,startTime,endTime,services,"");
 
         LayoutInflater inflater = LayoutInflater.from(context);
         convertView = inflater.inflate(resource,parent,false);

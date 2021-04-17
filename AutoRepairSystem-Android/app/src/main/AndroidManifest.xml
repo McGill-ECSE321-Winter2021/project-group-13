@@ -16,6 +16,9 @@
             android:label="Sign Up"
             android:theme="@style/Theme.AutoRepairSystemAndroid">
         </activity>
+        <receiver
+            android:name="ca.mcgill.ca.ecse321.autorepairsystem.ReminderReceiver"
+            android:exported="false" />
         <activity
             android:name=".LogIn"
             android:label="Auto Repair System"

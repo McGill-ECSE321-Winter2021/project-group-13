@@ -7,12 +7,14 @@ public class Appointment {
     private String startTime;
     private String endTime;
     private List<String> services;
+    private String id;
 
-    public Appointment(String date, String startTime, String endTime, List<String> serviceNames) {
+    public Appointment(String date, String startTime, String endTime, List<String> serviceNames, String id) {
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
         this.services = serviceNames;
+        this.id = id;
     }
 
     public String getDate() {
@@ -26,6 +28,8 @@ public class Appointment {
     public String getEndTime() {
         return endTime;
     }
+
+    public String getId() { return id;}
 
     public List<String> getServices() {
         return services;

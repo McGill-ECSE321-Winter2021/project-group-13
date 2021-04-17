@@ -1,5 +1,9 @@
 package ca.mcgill.ca.ecse321.autorepairsystem;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -15,8 +19,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
@@ -65,7 +76,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
                             for (int j = 0; j < servicesResponse.length(); j++) {
                                 serviceNames.add(servicesResponse.getJSONObject(j).getString("name"));
                             }
-                            Appointment appointment = new Appointment(data.get("date").toString(), data.get("startTime").toString(),data.get("endTime").toString(), serviceNames);
+                            Appointment appointment = new Appointment(data.get("date").toString(), data.get("startTime").toString(),data.get("endTime").toString(), serviceNames, data.get("id").toString());
                             appointments.add(appointment);
                         } catch (Exception e) {
                             TextView displayError = (TextView) findViewById(R.id.errorText);
@@ -74,6 +85,8 @@ public class CustomerHomeActivity extends AppCompatActivity {
                         }
                         initListView();
                     }
+
+                    manageReminders();
 
                 }
 
@@ -95,5 +108,49 @@ public class CustomerHomeActivity extends AppCompatActivity {
             error += e.getMessage();
             displayError.append(error);
         }
+    }
+
+    private void manageReminders(){
+
+        for (Appointment appointment : appointments) {
+
+            int requestCode = Integer.parseInt(appointment.getId()); //set this to ID
+
+            Log.d("ID REQUEST CODE", Integer.toString(requestCode));
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:ss");
+            Date mDate = null;
+            try {
+                mDate = sdf.parse(appointment.getDate() + " " + appointment.getStartTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            Log.d("DATE", mDate.toString());
+
+            long timeInMilliseconds = mDate.getTime();
+
+            Log.d("MILLIS", Long.toString(timeInMilliseconds));
+
+
+            Intent intent = new Intent(this, ReminderReceiver.class);
+
+            intent.putExtra("time", appointment.getStartTime());
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(timeInMilliseconds);
+            calendar.add(Calendar.MINUTE, -60);
+
+            //calendar.setTimeInMillis(System.currentTimeMillis());
+            //calendar.add(Calendar.SECOND, 5);
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+        }
+
     }
 }
