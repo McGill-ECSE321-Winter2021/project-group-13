@@ -44,13 +44,25 @@ public class AutoRepairSystemService {
   WorkBreakRepository workBreakRepository;
   @Autowired
   BusinessHourRepository businessHourRepository;
-
+  
+  
+  /**
+  * A method which takes no input and is used to find all of the appointments which exist in the database
+  * 
+  * @return A list of all appointments in the database.
+  */
   @Transactional
   public List<Appointment> getAllAppointments() {
 
     return toList(appointmentRepository.findAll());
   }
-
+  
+  /**
+  * A method which takes a customer as input and returns all of the appointments associated with that customer in the database.
+  * 
+  * @param customer; A specific customer object whose appointments we desire 
+  * @return A list of all appointments associated with a specific customer
+  */
   @Transactional
   public List<Appointment> getAppointmentsByCustomer(Customer customer) throws IllegalArgumentException {
 
@@ -69,7 +81,14 @@ public class AutoRepairSystemService {
 
     return appointments;
   }
-
+  
+  
+  /**
+   * A method which takes a date as input and returns all of the appointments associated with that date in the database.
+   * 
+   * @param date; The specific java.sql.date object in question which has appointments occurring on that day which we desire.
+   * @return A list of all appointments occurring on that date
+   */
   @Transactional
   public List<Appointment> getAppointmentsByDate(java.sql.Date date) {
 
@@ -77,7 +96,14 @@ public class AutoRepairSystemService {
 
     return appointments;
   }
-
+  
+  
+  /**
+   * A method which takes a technician as input and returns all of the appointments associated with that technician in the database.
+   * 
+   * @param technician; A specific technician object whose appointments we desire (they are working during these appointments)
+   * @return A list of all appointments associated with a specific technician
+   */
   @Transactional
   public List<Appointment> getAppointmentsByTechnician(Technician technician) throws IllegalArgumentException {
 
@@ -98,7 +124,15 @@ public class AutoRepairSystemService {
   }
 
   // add update appointment method
-  
+  /**
+   * A method which creates an appointment and automatically assigns a technician to work on it.
+   * 
+   * @param services; A set of services that the customer wants to have done on their car 
+   * @param customer; A specific customer object which is the singular client of that appointment
+   * @param starTime; A java.sql.Time object, denoting the start time when the client wants their appointment
+   * @param date; A java.sql.Date object which represents the day the appointment will occur
+   * @return The specific appointment that was just created
+   */
   @Transactional
   public Appointment createAppointmentAnyTechnician(Set<WorkItem> services, Customer customer, 
       java.sql.Time startTime, java.sql.Date date) throws IllegalArgumentException {
@@ -178,6 +212,16 @@ public class AutoRepairSystemService {
       return appointment;
   }
 
+  /**
+   * A method which creates an appointment and necessitates all "appointment" fields to be provided as arguments
+   * 
+   * @param services; A set of workItems that the customer wants to have done on their car 
+   * @param customer; A specific customer object which is the singular client of that appointment
+   * @param technician; A specific technician that will be working on the appointment
+   * @param starTime; A java.sql.Time object, denoting the start time when the client wants their appointment
+   * @param date; A java.sql.Date object which represents the day the appointment will occur
+   * @return The specific appointment that was just created
+   */
   @Transactional
   public Appointment createAppointment(Set<WorkItem> services, Customer customer, Technician technician,
       java.sql.Time startTime, java.sql.Date date) throws IllegalArgumentException {
@@ -252,6 +296,16 @@ public class AutoRepairSystemService {
     return appointment;
   }
 
+  /**
+   * A method which updates the info/details of an appointment
+   * 
+   * @param id; the primary key of the appointment you want to update
+   * @param technician; A new/updated technician that will be working on the appointment
+   * @param services; A set of workItems that will be the new services performed during the appointment
+   * @param starTime; A java.sql.Time object, denoting the new start time when the client wants their appointment
+   * @param date; A java.sql.Date object which represents the new day the appointment will occur
+   * @return The newly updated appointment that was just altered 
+   */
   @Transactional
   public Appointment updateAppointment(Integer id, Technician technician, Set<WorkItem> services,
       java.sql.Time startTime, java.sql.Date date) throws IllegalArgumentException {
@@ -286,7 +340,12 @@ public class AutoRepairSystemService {
     }
 
   }
-
+  /**
+   * A method which deletes an appointment
+   * 
+   * @param id; the primary key of the appointment you want to delete
+   * @return The non existing appointment that was just deleted 
+   */
   @Transactional
   public Appointment deleteAppointment(Integer id) throws IllegalArgumentException {
 
@@ -311,7 +370,13 @@ public class AutoRepairSystemService {
     return appointment;
   }
 
-  // add exceptions: null arguments
+  /**
+   * A method which returns a map of technicians that are available for a minimum amount of time on a given day.
+   * 
+   * @param date; The java.sql.Date object in question you are seeking to find technicians for
+   * @param minDurationInMin; the minimum time in minutes that a technician must be available for (filtering criteria)
+   * @return A map of technicians which are available for the specified minimum duration and their associated technicianHour schedule
+   */
   @Transactional
   // Organized by technician
   // Filtered by minimum duration
@@ -336,14 +401,13 @@ public class AutoRepairSystemService {
 
   }
 
-  // helper methods
+  // helper methods for completing getTechnicianAvailableTechnicianHoursByDate(java.sql.Date date,int minDurationInMin)
   /*
    * Assumptions: -breaks are within technical hours time -appointments are within technical hours time -no overlap
    * between appointments -Service.getDuration() in minutes
    * 
    * Not assumed: -no overlap between breaks
    */
-
   private List<Appointment> cleanupAppointments(List<Appointment> appointments) {
 
     if (appointments == null || appointments.size() <= 1) {
@@ -471,6 +535,12 @@ public class AutoRepairSystemService {
   }
 
   // Organized by technician
+  /**
+   * A method which returns a map of technicians and their associated technicianHours for a given day
+   * 
+   * @param date; the date in question we are hoping to find technicians available on 
+   * @return A map of technicians which are working on the specified day and their associated technicianHour schedule
+   */
   private Map<Technician, List<TechnicianHour>> getTechnicianHoursByDate(java.sql.Date date) {
 
     Map<Technician, List<TechnicianHour>> result = new HashMap<Technician, List<TechnicianHour>>();
@@ -497,6 +567,12 @@ public class AutoRepairSystemService {
   }
 
   // Organized by technician
+  /**
+   * A method which returns a map of technicians and their associated appointments for a given day
+   * 
+   * @param date; the date in question we are hoping to find technicians available on 
+   * @return A map of technicians which are working on the specified day and their associated appointments they will be working on 
+   */
   private Map<Technician, List<Appointment>> getTechnicianAppointmentsByDate(java.sql.Date date) {
 
     List<Appointment> technicianAppointmentsByDate =
@@ -504,7 +580,14 @@ public class AutoRepairSystemService {
 
     return technicianAppointmentsByDate.stream().collect(Collectors.groupingBy(Appointment::getTechnician));
   }
-
+  
+  /**
+   * A method which returns a list of updated technicianHours for a specific technician; creating chunks of unavailability based off of when they are working on appointments
+   * 
+   * @param technicianHoursForDay; a list of technicianHours on a specific day (not depicting when they are unavailable due to already being booked to work)
+   * @param appointments; a list of appointments that the technician will be working on 
+   * @return A list of technicianHours which has been updated/spots blocked off based on the unavailabilities that were provided as a list of appointments 
+   */
   private List<TechnicianHour> subtractAppointmentsFromTechnicianHours(List<TechnicianHour> technicianHoursForDay,
       List<Appointment> appointments) {
     
@@ -573,7 +656,14 @@ public class AutoRepairSystemService {
 
     return technicianHours;
   }
-
+  
+  /**
+   * A method which returns a list of technicianHours that are longer than a specificed minimum duration
+   * 
+   * @param technicianHours; a list of technicianHours to be filtered through
+   * @param minDurationInMin; the minimum specified duration that we want the technicianHour to be of (filtering criteria) 
+   * @return A filtered list of technicianHours which are as long as or longer than the specified minimum duration
+   */
   private List<TechnicianHour> filterByMinDuration(List<TechnicianHour> technicianHours, int minDurationInMin) {
 
     Calendar c1 = Calendar.getInstance();
@@ -594,7 +684,13 @@ public class AutoRepairSystemService {
 
   }
 
-  // Log-in generic endUser...either customer, technician, or admin
+  /**
+   * A method which logs in a user at start up
+   * 
+   * @param username; the username of the person trying to log in
+   * @param password; the password of the person trying to log in
+   * @return the endUser object that corresponds to the credentials that were provided
+   */
   @Transactional
   public EndUser signIn(String endUserID, String password) throws IllegalArgumentException {
 	EndUser endUser = endUserRepository.findEndUserByUsername(endUserID);
@@ -608,13 +704,23 @@ public class AutoRepairSystemService {
 
 
   // Customer service methods
-
+  
+  /**
+   * A method which returns all of the customers that exist
+   * @return a list of customers that exist in the database
+   */
   @Transactional
   public List<Customer> getAllCustomers() {
     return toList(customerRepository.findAll());
   }
 
-
+  /**
+   * A method which returns a customer if it can be found using a specific username
+   * 
+   * @param username; the account username of the customer we are seeking to find
+   * @return A customer object whose account username is the username were provided as a parameter
+   * @exception in the case where no customer exists based on the given username, we throw an exception 
+   */
   @Transactional
   public Customer getCustomerByUsername(String username) throws IllegalArgumentException {
     Customer customer = customerRepository.findCustomerByUsername(username);
@@ -626,7 +732,16 @@ public class AutoRepairSystemService {
     return customer;
   }
 
-
+  /**
+   * A method which creates a new customer
+   * 
+   * @param username; the username that will be tied to the account
+   * @param password; the password that will be used to log in to the account
+   * @param name; the legal name of the owner of the account that is being created
+   * @param email; the email info of the owner of the account 
+   * @return the newly created customer object
+   * @exception in the case where the parameters provided are invalid, we throw an exception
+   */
   @Transactional
   public Customer createCustomer(String username, String password, String name, String email)
       throws IllegalArgumentException {
@@ -669,11 +784,22 @@ public class AutoRepairSystemService {
 
   // Administrator service methods
 
+  /**
+   * A method which returns all of the administrators that exist
+   * @return a list of administrators that exist in the database
+   */
   @Transactional
   public List<Administrator> getAllAdministrators() {
     return toList(administratorRepository.findAll());
   }
-
+  
+  /**
+   * A method which returns a administrator if it can be found using a specific username
+   * 
+   * @param username; the account username of the administrator we are seeking to find
+   * @return An administrator object whose account username is the username were provided as a parameter
+   * @exception in the case where no administrator exists based on the given username, we throw an exception 
+   */
   @Transactional
   public Administrator getAdministrator(String username) throws IllegalArgumentException {
     Administrator administrator = administratorRepository.findAdministratorByUsername(username);
@@ -685,6 +811,13 @@ public class AutoRepairSystemService {
     return administrator;
   }
 
+  /**
+   * A method which takes the username of a customer and converts that customer account into an administrator
+   * 
+   * @param username; the account username of the customer we are seeking to convert
+   * @return An newly created administrator object who was just created based off the info tied to the old customer account
+   * @exception in the case where no customer exists based on the given username, we throw an exception 
+   */
   @Transactional
   public Administrator makeAdministrator(String username) throws IllegalArgumentException {
 
@@ -710,12 +843,22 @@ public class AutoRepairSystemService {
 
 
   // endUser service methods
-
+  /**
+   * A method which returns all of the endUsers that exist
+   * @return a list of endUsers that exist in the database
+   */
   @Transactional
   public List<EndUser> getAllEndUsers() {
     return toList(endUserRepository.findAll());
   }
-
+  
+  /**
+   * A method which returns a endUser if it can be found using a specific username
+   * 
+   * @param username; the account username of the endUser we are seeking to find
+   * @return An endUser object whose account username is the username were provided as a parameter
+   * @exception in the case where no endUser exists based on the given username, we throw an exception 
+   */
   @Transactional
   public EndUser getEndUser(String username) throws IllegalArgumentException {
     EndUser endUser = endUserRepository.findEndUserByUsername(username);
@@ -725,6 +868,16 @@ public class AutoRepairSystemService {
     return endUser;
   }
 
+  /**
+   * A method which updates the info of an endUser(or one of its subclasses) if it can be found using the primary key 
+   * 
+   * @param userId; the primary key of the endUser which we are seeking to find
+   * @param password; the password we would like to update to 
+   * @param name; the name we would like to update to
+   * @param email; the email we would like to update to
+   * @return The endUser which we found and whose info we updated
+   * @exception in the case where no endUser exists based on the given username or invalid parameters were passed, we throw an exception 
+   */
   @Transactional
   public EndUser updateEndUser(String userId, String password, String name, String email)
       throws IllegalArgumentException {
@@ -762,7 +915,14 @@ public class AutoRepairSystemService {
     endUserRepository.save(endUser);
     return endUser;
   }
-
+  
+  /**
+   * A method which deletes an endUser (including if it is a subclass)
+   * 
+   * @param username; the account username of the endUser we are seeking to find
+   * @return non existing endUser which was just recently deleted
+   * @exception in the case where no endUser exists based on the given username, we throw an exception 
+   */
   @Transactional
   public EndUser deleteEndUser(String username) throws IllegalArgumentException {
 
@@ -793,13 +953,22 @@ public class AutoRepairSystemService {
 
 
   // Technician service methods
-
+  /**
+   * A method which returns all of the technicians that exist
+   * @return a list of technicians that exist in the database
+   */
   @Transactional
   public List<Technician> getAllTechnicians() {
     return toList(technicianRepository.findAll());
   }
 
-
+  /**
+   * A method which returns a technician if it can be found using a specific username
+   * 
+   * @param username; the account username of the technician we are seeking to find
+   * @return A technician object whose account username is the username were provided as a parameter
+   * @exception in the case where no technician exists based on the given username, we throw an exception 
+   */
   @Transactional
   public Technician getTechnicianByUsername(String username) throws IllegalArgumentException {
 
@@ -816,7 +985,13 @@ public class AutoRepairSystemService {
     return technician;
   }
 
-
+  /**
+   * A method which takes the username of a customer and converts that customer account into a technician
+   * 
+   * @param username; the account username of the customer we are seeking to convert
+   * @return An newly created technician object who was just created based off the info tied to the old customer account
+   * @exception in the case where no customer exists based on the given username, we throw an exception 
+   */
   @Transactional
   public Technician makeTechnician(String username) throws IllegalArgumentException {
 
@@ -843,7 +1018,12 @@ public class AutoRepairSystemService {
 
 
   // Appointment service methods
-
+  /**
+   * A method which provides the appointments attended by a customer
+   * 
+   * @param customer; the customer in question whose appointments we desire 
+   * @return A set of appointments that was attended by the customer parameter 
+   */
   @Transactional
   public Set<Appointment> getAppointmentsAttendedByCustomer(Customer customer) {
     Set<Appointment> appointmentsAttendedByCustomer = new HashSet<Appointment>();
@@ -854,7 +1034,16 @@ public class AutoRepairSystemService {
   }
 
   // workItem service methods
-
+  
+  /**
+   * A method which creates new workItems which can be booked by a customer
+   * 
+   * @param name; the name of the new workItem 
+   * @param duration; the duration of time that the workItem will require to be completed
+   * @param price; the cost of booking and performing the new workItem
+   * @return the newly created workItem object
+   * @exception in the case where invalid inputs are provided, an exception is thrown
+   */
   @Transactional
   public WorkItem createWorkItem(String name, int duration, int price) throws IllegalArgumentException {
     if (name == null || name == "") {
@@ -882,6 +1071,13 @@ public class AutoRepairSystemService {
     return workItem;
   }
 
+  /**
+   * A method which finds a workItem based off a specific name
+   * 
+   * @param name; the name of the workItem we are seeking
+   * @return the workItem object which we were looking for
+   * @exception if no workItem object with the provided name can be found, we throw an exception
+   */
   @Transactional
   public WorkItem getWorkItem(String name) {
     WorkItem workItem = workItemRepository.findWorkItemByName(name);
@@ -892,6 +1088,15 @@ public class AutoRepairSystemService {
     return workItem;
   }
 
+  /**
+   * A method which updates an existing workItem object
+   * 
+   * @param name; the name of the workItem we wish to update/find
+   * @param duration; the new duration of time that the workItem will be updated to
+   * @param price; the new cost of booking that the workItem will be updated to
+   * @return the newly updated pre-existing workItem object
+   * @exception in the case where invalid inputs are provided, an exception is thrown
+   */
   @Transactional
   public WorkItem updateWorkItem(String name, int duration, int price) {
     if (name == null || name == "") {
@@ -920,6 +1125,13 @@ public class AutoRepairSystemService {
     return workItem;
   }
 
+  /**
+   * A method which deletes an existing workItem object
+   * 
+   * @param name; the name of the existing workItem we wish to delete
+   * @return the non-existing workItem which we just deleted
+   * @exception in the case where invalid inputs are provided/the workItem cannot be found, an exception is thrown
+   */
   @Transactional
   public WorkItem deleteWorkItem(String name) {
     if (name == null || name == "") {
@@ -941,13 +1153,29 @@ public class AutoRepairSystemService {
     workItemRepository.delete(workItem);
     return workItem;
   }
-
+  
+  /**
+   * A method which returns all workItems which can be booked by a customer
+   * 
+   * @return a list of all possible/existing workItems
+   */
   @Transactional
   public List<WorkItem> getAllWorkItems() {
     return toList(workItemRepository.findAll());
   }
 
   // WorkBreak service methods
+  
+  
+  /**
+   * A method which creates new workBreaks which can be used by technicians
+   * 
+   * @param workHourId; the primary key of the workHour that the workBreak is associated to
+   * @param starTime; the startTime of the workBreak
+   * @param endTime; the endTime of the workBreak
+   * @return the newly created workBreak object
+   * @exception in the case where invalid inputs are provided, an exception is thrown
+   */
   @Transactional
   public WorkBreak createWorkBreak(Integer workHourId, Time startTime, Time endTime) throws IllegalArgumentException {
 
@@ -1006,6 +1234,13 @@ public class AutoRepairSystemService {
     return workBreak;
   }
 
+  /**
+   * A method which finds a specific workBreak based off its primary key
+   * 
+   * @param workBreakId; the primary key of the existing workBreak 
+   * @return the existing workBreak item that is tied to the given parameter
+   * @exception in the case where invalid inputs are provided, an exception is thrown
+   */
   @Transactional
   public WorkBreak getWorkBreak(Integer workBreakId) throws IllegalArgumentException {
 
@@ -1021,6 +1256,15 @@ public class AutoRepairSystemService {
 
   }
 
+  /**
+   * A method which updates a specific workBreak found via its primary key
+   * 
+   * @param workBreakId; the primary key of the existing workBreak 
+   * @param newStartTime; the new start time of the existing workBreak
+   * @param newEndTime; the new end time of the existing workBreak
+   * @return the newly updated workBreak item that was previously existing/found
+   * @exception in the case where invalid inputs are provided, an exception is thrown
+   */
   @Transactional
   public WorkBreak updateWorkBreak(Integer workBreakId, Time newStartTime, Time newEndTime) {
 
@@ -1067,6 +1311,13 @@ public class AutoRepairSystemService {
     return workBreak;
   }
 
+  /**
+   * A method which deletes a specific workBreak found via its primary key
+   * 
+   * @param workBreakId; the primary key of the existing workBreak 
+   * @return the non-existing workBreak item that was recently deleted
+   * @exception in the case where invalid inputs are provided, an exception is thrown
+   */
   @Transactional
   public WorkBreak deleteWorkBreak(Integer workBreakId) throws IllegalArgumentException {
 
@@ -1085,6 +1336,17 @@ public class AutoRepairSystemService {
   }
 
   // TechnicianHour service methods
+  
+  /**
+   * A method which creates a new TechnicianHour object that needs to be associated with a Technician 
+   * 
+   * @param technicianUsername; the primary key of the existing Technician that will be associated to the new TechnicianHour 
+   * @param starTime; the time when the TechnicianHour will start 
+   * @param endTime; the time when the TechnicianHour will end
+   * @param date; the date when the TechnicianHour will occur 
+   * @return the newly created TechnicianHour object
+   * @exception in the case where invalid inputs are provided, an exception is thrown
+   */
   @Transactional
   public TechnicianHour createTechnicianHour(String technicianUsername, Time startTime, Time endTime, Date date) {
 
@@ -1159,7 +1421,14 @@ public class AutoRepairSystemService {
 
     return technicianHour;
   }
-
+  
+  /**
+   * A method which finds a TechnicianHour object via its primary key
+   * 
+   * @param id; the primary key of the existing TechnicianHour that we are seeking
+   * @return the existing TechnicianHour object that we were seeking
+   * @exception in the case where invalid inputs are provided, an exception is thrown
+   */
 	@Transactional
 	public TechnicianHour getTechnicianHour(Integer id) throws IllegalArgumentException {
 		TechnicianHour technicianHour = technicianHourRepository.findTechnicianHourById(id);
@@ -1170,6 +1439,14 @@ public class AutoRepairSystemService {
 		return technicianHour;
 	}
   
+	
+	/**
+	   * A method which finds all TechnicianHour objects falling on a specific date
+	   * 
+	   * @param date; the Date object in question which we are seeking all TechnicianHours of 
+	   * @return a list of TechnicianHours which fall on the specified date parameter
+	   * @exception in the case where invalid inputs are provided, an exception is thrown
+	   */
 	@Transactional
 	public List<TechnicianHour> getAllTechnicianHoursByDate(Date date) throws IllegalArgumentException {
 		
@@ -1182,7 +1459,16 @@ public class AutoRepairSystemService {
 		return toList(technicianHours);
 	}
 
-
+	/**
+	   * A method which finds and updates an existing TechnicianHour via its primary key
+	   * 
+	   * @param technicianHourId; the primary key of the TechnicianHour which we seek to update
+	   * @param startTime; the new start time that the TechnicianHour will update to
+	   * @param endTime; the new end time that the TechnicianHour will update to
+	   * @param date; the new date that the TechnicianHour will update to
+	   * @return the newly updated TechnicianHour that was previously existing 
+	   * @exception in the case where invalid inputs are provided, an exception is thrown
+	   */
   @Transactional
   public TechnicianHour updateTechnicianHour(Integer technicianHourId, Time startTime, Time endTime, Date date)
       throws IllegalArgumentException {
@@ -1258,7 +1544,13 @@ public class AutoRepairSystemService {
 
 
   // could be changed to update singular workBreak
-	
+  /**
+   * A method which finds and deletes an existing TechnicianHour via its primary key
+   * 
+   * @param id; the primary key of the TechnicianHour which we seek to delete
+   * @return the non-existing  TechnicianHour that we just deleted
+   * @exception in the case where invalid inputs are provided, an exception is thrown
+   */
 	@Transactional
 	public TechnicianHour deleteTechnicianHour(Integer id) throws IllegalArgumentException {
 		
@@ -1290,6 +1582,15 @@ public class AutoRepairSystemService {
 	
 	//BusinessHour service methods
 	
+	/**
+	   * A method which creates a new BusinessHour object
+	   * 
+	   * @param startTime; the time that the BusinessHour will start at
+	   * @param endTime; the time that the BusinessHour will end at
+	   * @param date; the date that we wish the BusinessHour to be linked to/occur on
+	   * @return the newly created BusinessHour that we just made 
+	   * @exception in the case where invalid inputs are provided, an exception is thrown
+	   */
 	@Transactional
 	public BusinessHour createBusinessHour(Time startTime, Time endTime, Date date) {
 		
@@ -1335,6 +1636,13 @@ public class AutoRepairSystemService {
 		return businessHour;
 	}
 	
+	/**
+	   * A method which finds a BusinessHour object via the primary key
+	   * 
+	   * @param id; the primary key of the businessHour that we wish to find
+	   * @return the BusinessHour that we were seeking to find
+	   * @exception in the case where invalid inputs are provided, an exception is thrown
+	   */
 	@Transactional
 	public BusinessHour getBusinessHour(Integer id) throws IllegalArgumentException {
 		
@@ -1350,6 +1658,13 @@ public class AutoRepairSystemService {
 		return businessHour;
 	}
 	
+	/**
+	   * A method which finds all BusinessHours occurring on a specific date
+	   * 
+	   * @param date; the date that we wish to find BusinessHours for
+	   * @return a list of all BusinessHours which are tied to a specific date 
+	   * @exception in the case where invalid inputs are provided, an exception is thrown
+	   */
 	@Transactional
 	public List<BusinessHour> getBusinessHoursByDate(Date date) throws IllegalArgumentException {
 		
@@ -1362,6 +1677,17 @@ public class AutoRepairSystemService {
 		return toList(businessHours);
 	}
 	
+	
+	/**
+	   * A method which finds and updates an existing BusinessHour via its primary key
+	   * 
+	   * @param id; the primary key of the BusinessHour which we seek to update
+	   * @param startTime; the new start time that the BusinessHour will update to
+	   * @param endTime; the new end time that the BusinessHour will update to
+	   * @param date; the new date that the BusinessHour will occur on
+	   * @return the newly updated BusinessHour that was previously existing 
+	   * @exception in the case where invalid inputs are provided, an exception is thrown
+	   */
 	@Transactional
 	public BusinessHour updateBusinessHour(Integer id,Time startTime, Time endTime, Date date) throws IllegalArgumentException {
 		
@@ -1423,6 +1749,13 @@ public class AutoRepairSystemService {
 		return businessHour;
 	}
 	
+	/**
+	   * A method which finds and deletes an existing BusinessHour via its primary key
+	   * 
+	   * @param id; the primary key of the BusinessHour which we seek to delete
+	   * @return the non-existing  BusinessHour that we just deleted
+	   * @exception in the case where invalid inputs are provided, an exception is thrown
+	   */
 	@Transactional
 	public BusinessHour deleteBusinessHour(Integer id) throws IllegalArgumentException {
 		
@@ -1456,6 +1789,12 @@ public class AutoRepairSystemService {
 		return businessHour;
 	}
 	
+	/**
+	   * A method which finds all existing BusinessHours
+	   * 
+	   * @return a list of all of the existing BusinessHours in the database
+	   * @exception in the case where invalid inputs are provided, an exception is thrown
+	   */
 	@Transactional
 	public List<BusinessHour> getAllBusinessHours(){
 		return toList(businessHourRepository.findAll());
@@ -1464,6 +1803,15 @@ public class AutoRepairSystemService {
 	
 	//Payment service methods
 	
+	
+	/**
+	   * A method which finds a customer via the username and updates the amount they are owing to the company
+	   * 
+	   * @param username; the primary key of the customer which we seek to find
+	   * @param amountPayed; the total amount of money they are paying off from their total owed
+	   * @return the customer which was found via the username and just made a payment
+	   * @exception in the case where invalid inputs are provided, an exception is thrown
+	   */
 	@Transactional
 	public Customer payment(String username, Integer amountPayed) throws IllegalArgumentException {
 		if (nonValidString(username)) {
