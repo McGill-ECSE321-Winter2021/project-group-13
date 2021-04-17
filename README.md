@@ -58,10 +58,10 @@ Henri Rofiq     |Front-End Developer and Documentaton |25 hours
 
 Name            | Team Roles         | Individual Efforts
 --------------- |------------------- |-------------------
-Edgar Desnos    || 
-Charles Wetaski ||
+Edgar Desnos    |Android Frontend|25 hours  
+Charles Wetaski |Android Frontend|25 hours
 Ezra Gomolin    |Android Frontend|20 hours                  
-Hassan Kanj     ||
-Henri Rofiq     ||
+Hassan Kanj     |Android Frontend|20 hours
+Henri Rofiq     |Android Frontend|15 hours
 
 
