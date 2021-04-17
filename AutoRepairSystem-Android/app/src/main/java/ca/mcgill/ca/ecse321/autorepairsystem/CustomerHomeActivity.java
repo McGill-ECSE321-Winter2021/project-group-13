@@ -1,11 +1,12 @@
 package ca.mcgill.ca.ecse321.autorepairsystem;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.content.SharedPreferences;
@@ -19,7 +20,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -29,8 +34,8 @@ public class CustomerHomeActivity extends AppCompatActivity {
 
     private List<Appointment> appointments = new ArrayList<Appointment>();
     private String error = "";
-    public static final String MyPREFERENCES = "MyPrefs" ;
-    public static final String Username = "usernameKey" ;
+    public static final String MyPREFERENCES = "MyPrefs";
+    public static final String Username = "usernameKey";
     public static String currentUsername;
     SharedPreferences sharedpreferences;
 
@@ -65,14 +70,14 @@ public class CustomerHomeActivity extends AppCompatActivity {
             JSONObject customerJSON = new JSONObject();
             customerJSON.put("username", currentUsername);
             StringEntity stringEntity = new StringEntity(customerJSON.toString());
-            HttpUtils.post(this,"/appointments/bycustomer/", stringEntity, new JsonHttpResponseHandler() {
+            HttpUtils.post(this, "/appointments/bycustomer/", stringEntity, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                     // Clear past appointments
                     appointments.clear();
 
                     JSONObject data;
-                    Log.d("CREATION","DATA SIZE IS" + response.length());
+                    Log.d("CREATION", "DATA SIZE IS" + response.length());
                     for (int i = 0; i < response.length(); i++) {
 
                         try {
@@ -83,13 +88,15 @@ public class CustomerHomeActivity extends AppCompatActivity {
                             for (int j = 0; j < servicesResponse.length(); j++) {
                                 serviceNames.add(servicesResponse.getJSONObject(j).getString("name"));
                             }
-                            Appointment appointment = new Appointment(data.get("date").toString(), data.get("startTime").toString(),data.get("endTime").toString(), serviceNames);
+                            Appointment appointment = new Appointment(data.get("date").toString(), data.get("startTime").toString(), data.get("endTime").toString(), serviceNames, data.get("id").toString());
                             appointments.add(appointment);
                         } catch (Exception e) {
                             error += e.getMessage();
                         }
                         initListView();
                     }
+
+                    manageReminders();
 
                 }
 
@@ -103,16 +110,58 @@ public class CustomerHomeActivity extends AppCompatActivity {
 
                 }
             });
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             error += e.getMessage();
         }
     }
 
+    private void manageReminders() {
+
+        for (Appointment appointment : appointments) {
+
+            int requestCode = Integer.parseInt(appointment.getId()); //set this to ID
+
+            Log.d("ID REQUEST CODE", Integer.toString(requestCode));
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:ss");
+            Date mDate = null;
+            try {
+                mDate = sdf.parse(appointment.getDate() + " " + appointment.getStartTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            Log.d("DATE", mDate.toString());
+
+            long timeInMilliseconds = mDate.getTime();
+
+            Log.d("MILLIS", Long.toString(timeInMilliseconds));
+
+
+            Intent intent = new Intent(this, ReminderReceiver.class);
+
+            intent.putExtra("time", appointment.getStartTime());
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(timeInMilliseconds);
+            calendar.add(Calendar.MINUTE, -60);
+
+            //calendar.setTimeInMillis(System.currentTimeMillis());
+            //calendar.add(Calendar.SECOND, 5);
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+        }
+    }
+
     /**
-     * Takes the user to appointment booking page. Called onClick by buttons in layout.
+     * Takes the user to the book appointments activity
      */
-    public void goToBookAppointments(View v) {
+    public void goToBookAppointments (View v){
         Intent intent = new Intent(this, AppointmentBooking.class);
         startActivity(intent);
     }
