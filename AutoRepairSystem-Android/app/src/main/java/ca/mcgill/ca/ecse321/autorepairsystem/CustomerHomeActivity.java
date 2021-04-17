@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.content.SharedPreferences;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -36,11 +38,25 @@ public class CustomerHomeActivity extends AppCompatActivity {
 
     private List<Appointment> appointments = new ArrayList<Appointment>();
     private String error = "";
+    public static final String MyPREFERENCES = "MyPrefs";
+    public static final String Username = "usernameKey";
+    public static String currentUsername;
+    SharedPreferences sharedpreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customerhome);
+
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        currentUsername = sharedpreferences.getString(Username, "ERROR");
+
+        String mainText = "Welcome to the Los Santos Customers";
+        String appointmentsHeader = currentUsername + "'s Appointments";
+        TextView titleTextView = (TextView) findViewById(R.id.appointmentsTitle);
+        titleTextView.setText(appointmentsHeader);
+
         getAppointmentsList();
         initListView();
     }
@@ -56,16 +72,16 @@ public class CustomerHomeActivity extends AppCompatActivity {
         //Get This Customer's Appointments
         try {
             JSONObject customerJSON = new JSONObject();
-            customerJSON.put("username", "customer1"); // Need to develop current customer persistence
+            customerJSON.put("username", currentUsername);
             StringEntity stringEntity = new StringEntity(customerJSON.toString());
-            HttpUtils.post(this,"/appointments/bycustomer/", stringEntity, new JsonHttpResponseHandler() {
+            HttpUtils.post(this, "/appointments/bycustomer/", stringEntity, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                     // Clear past appointments
                     appointments.clear();
 
                     JSONObject data;
-                    Log.d("CREATION","DATA SIZE IS" + response.toString());
+                    Log.d("CREATION", "DATA SIZE IS" + response.length());
                     for (int i = 0; i < response.length(); i++) {
 
                         try {
@@ -76,12 +92,10 @@ public class CustomerHomeActivity extends AppCompatActivity {
                             for (int j = 0; j < servicesResponse.length(); j++) {
                                 serviceNames.add(servicesResponse.getJSONObject(j).getString("name"));
                             }
-                            Appointment appointment = new Appointment(data.get("date").toString(), data.get("startTime").toString(),data.get("endTime").toString(), serviceNames, data.get("id").toString());
+                            Appointment appointment = new Appointment(data.get("date").toString(), data.get("startTime").toString(), data.get("endTime").toString(), serviceNames, data.get("id").toString());
                             appointments.add(appointment);
                         } catch (Exception e) {
-                            TextView displayError = (TextView) findViewById(R.id.errorText);
                             error += e.getMessage();
-                            displayError.append(error);
                         }
                         initListView();
                     }
@@ -95,22 +109,17 @@ public class CustomerHomeActivity extends AppCompatActivity {
                     try {
                         error = errorResponse.get("message").toString();
                     } catch (JSONException e) {
-                        TextView displayError = (TextView) findViewById(R.id.errorText);
                         error += e.getMessage();
-                        displayError.append(error);
                     }
 
                 }
             });
-        }
-        catch(Exception e) {
-            TextView displayError = (TextView) findViewById(R.id.errorText);
+        } catch (Exception e) {
             error += e.getMessage();
-            displayError.append(error);
         }
     }
 
-    private void manageReminders(){
+    private void manageReminders() {
 
         for (Appointment appointment : appointments) {
 
@@ -151,6 +160,10 @@ public class CustomerHomeActivity extends AppCompatActivity {
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
         }
+    }
 
+    public void goToBookAppointments (){
+        Intent intent = new Intent(this, AppointmentBooking.class);
+        startActivity(intent);
     }
 }
