@@ -100,6 +100,7 @@ public class AppointmentBookingActivity extends AppCompatActivity {
     public void getExistingServices() {
         RequestParams parameters = new RequestParams();
 
+        //Get all services in the system
         HttpUtils.get("/workitems/", parameters, new JsonHttpResponseHandler() {
 
             @Override
@@ -107,6 +108,7 @@ public class AppointmentBookingActivity extends AppCompatActivity {
 
                 for (int i=0; i<response.length(); i++) {
                     try {
+                        //Format the services as a string we will display
                         JSONObject service = response.getJSONObject(i);
 
                         String serviceString = service.getString("name") +  ", " + service.getString("duration") + " min, $" + service.getString("price");
@@ -116,8 +118,6 @@ public class AppointmentBookingActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-
-                Log.d("AppointmentBooking", response.toString());
             }
 
             @Override
@@ -156,7 +156,7 @@ public class AppointmentBookingActivity extends AppCompatActivity {
         };
 
         TimePickerDialog timeSelector = new TimePickerDialog(this, timeSetListener, selectedHour, selectedMinute, true);
-        timeSelector.setTitle("00:00");
+        timeSelector.setTitle("00:00"); //Default time set
         timeSelector.show();
     }
 
@@ -167,9 +167,11 @@ public class AppointmentBookingActivity extends AppCompatActivity {
         AlertDialog.Builder serviceSelector = new AlertDialog.Builder(this);
         serviceSelector.setTitle("Select Services");
 
+        //Two arrays that are used for setMultiChoiceItems() which needs arrays and not ArrayLists
         String[] existingServices = toArray(serviceList);
         boolean[] selectedServices = new boolean[existingServices.length];
 
+        //Setup the array accordingly
         for (int i=0; i<existingServices.length; i++) {
             if (desiredServices.contains(existingServices[i])) {
                 selectedServices[i] = true;
@@ -179,6 +181,7 @@ public class AppointmentBookingActivity extends AppCompatActivity {
             }
         }
 
+        //Perform the adequate changes when services are selected/deselected
         serviceSelector.setMultiChoiceItems(existingServices, selectedServices, (dialog, which, isChecked) -> {
             if (isChecked) {
                 desiredServices.add(existingServices[which]);
@@ -190,9 +193,12 @@ public class AppointmentBookingActivity extends AppCompatActivity {
             }
         });
 
+        //Setup the OK button
         serviceSelector.setPositiveButton("Ok", (dialog, which) -> {
             String serviceString = "";
             int counter = 0;
+
+            //Check whether services were added
             if (!desiredServices.isEmpty()) {
                 for (String service : desiredServices) {
                     serviceString += service.split(",")[0];
@@ -258,6 +264,7 @@ public class AppointmentBookingActivity extends AppCompatActivity {
      * This method connects with the backend to perform the actual booking of the appointment
      */
     public void performAppointmentBooking(String date, String time, String services, String customer) throws JSONException, UnsupportedEncodingException {
+        //Set up all the necessary information for the appointmentDto
         JSONObject appointment = new JSONObject();
         String[] splitDate = date.split("/");
         appointment.put("date", splitDate[2] + "-" + splitDate[0] + "-" + splitDate[1]);
@@ -280,13 +287,8 @@ public class AppointmentBookingActivity extends AppCompatActivity {
         }
         appointment.put("services", serviceArray);
 
+        //Create the appointment
         StringEntity stringEntity = new StringEntity(appointment.toString());
-
-        Log.d("TEST", appointment.toString());
-        Log.d("TEST", stringEntity.toString());
-
-        RequestParams params = new RequestParams();
-
         HttpUtils.post(this,"/create/appointment/any/", stringEntity, new JsonHttpResponseHandler() {
 
             @Override

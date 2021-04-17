@@ -79,7 +79,7 @@ public class DisplayAvailabilities extends AppCompatActivity {
                 JSONArray availableTechnicians = response.names();
 
                 if (availableTechnicians != null) {
-                    //Iterate through all the
+                    //Iterate through all the available technicians
                     for (int i = 0; i < availableTechnicians.length (); i++) {
                         String technician;
                         try {
