@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AutoRepairSystemAndroid">
         <activity
-            android:name=".SignUp"
+            android:name=".SignUpActivity"
             android:label="Sign Up"
             android:theme="@style/Theme.AutoRepairSystemAndroid">
         </activity>
@@ -20,7 +20,7 @@
             android:name="ca.mcgill.ca.ecse321.autorepairsystem.ReminderReceiver"
             android:exported="false" />
         <activity
-            android:name=".LogIn"
+            android:name=".MainActivity"
             android:label="Auto Repair System"
             android:theme="@style/Theme.AutoRepairSystemAndroid">
             <intent-filter>
@@ -37,10 +37,10 @@
             android:name=".DisplayAvailabilities"
             android:label="Display Availabilities"
             android:theme="@style/Theme.AutoRepairSystemAndroid"
-            android:parentActivityName=".AppointmentBooking">
+            android:parentActivityName=".AppointmentBookingActivity">
         </activity>
         <activity
-            android:name=".AppointmentBooking"
+            android:name=".AppointmentBookingActivity"
             android:label="Appointment Booking"
             android:theme="@style/Theme.AutoRepairSystemAndroid">
         </activity>

@@ -163,7 +163,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
      */
     public void goToBookAppointments (View v){
         Log.d("DEBUG","GOING TO BOOK APPOINTMENTS");
-        Intent intent = new Intent(this, AppointmentBooking.class);
+        Intent intent = new Intent(this, AppointmentBookingActivity.class);
         startActivity(intent);
     }
 
@@ -176,7 +176,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
         editor.putString(Username,"");
         editor.commit();
 
-        Intent intent = new Intent(this, LogIn.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 }

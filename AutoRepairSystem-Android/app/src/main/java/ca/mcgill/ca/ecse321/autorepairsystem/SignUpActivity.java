@@ -2,8 +2,8 @@ package ca.mcgill.ca.ecse321.autorepairsystem;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.content.SharedPreferences;
 import android.widget.EditText;
 import android.view.View;
 import android.widget.TextView;
@@ -12,59 +12,60 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import androidx.appcompat.app.AppCompatActivity;
 import com.loopj.android.http.RequestParams;
 
+
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-public class LogIn extends AppCompatActivity {
-    //Our Two Input Fields
-    private EditText username;
+public class SignUpActivity extends AppCompatActivity {
+    //our four input fields
     private EditText password;
+    private EditText email;
+    private EditText name;
+    private EditText username;
 
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String Username = "usernameKey";
     SharedPreferences sharedpreferences;
 
-    //Helper function to start new activity and take us to SignUp Page
-    public void createAccount(View v){
-        Intent intent = new Intent(this, SignUp.class);
-        startActivity(intent);
-        setContentView(R.layout.activity_signup);
-    }
 
-
-    //OnCreate we set layout and set username and password to users input
     @Override
+    //on create we set view and set users input to parameters
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        username=findViewById(R.id.username);
-        password=findViewById(R.id.password);
+        setContentView(R.layout.activity_signup);
+        username=findViewById(R.id.usernamesignup);
+        password=findViewById(R.id.passwordsignup);
+        email=findViewById(R.id.email);
+        name=findViewById(R.id.name);
 
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
     }
 
-//Collects parameters for backend call
-    public void signIn(View v){
-        RequestParams parameters = new RequestParams();
-        parameters.add("username", username.getText().toString());
-        parameters.add("password", password.getText().toString());
+    //we get the parameters for backend call
+    public void signUp(View v){
+        RequestParams pr = new RequestParams();
+        pr.add("password", password.getText().toString());
+        pr.add("name", name.getText().toString());
+        pr.add("email", email.getText().toString());
 
 
-        HttpUtils.get("/signin", parameters, new JsonHttpResponseHandler(){
+        HttpUtils.post("/customers/"+(username.getText().toString()), pr, new JsonHttpResponseHandler(){
             @Override
-            //on success we go to home page
+            //on success we go to customers home page
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
                 String usernameString = username.getText().toString();
                 SharedPreferences.Editor editor = sharedpreferences.edit();
                 editor.putString(Username,usernameString);
                 editor.commit();
-
+                
                 //clear fields for next login
                 username.setText("");
                 password.setText("");
+                email.setText("");
+                name.setText("");
                 //Redirect to customer page
                 Intent intent = new Intent(getApplicationContext(), CustomerHomeActivity.class);
                 startActivity(intent);
@@ -72,22 +73,25 @@ public class LogIn extends AppCompatActivity {
 
 
             }
-
             @Override
-            //on failiure we print out error message and empty the input boxes for next attempt
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            //on failiure we print out error message and empty boxes for next attempt
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
                 final TextView displayError = (TextView) findViewById(R.id.login_error);
                 //clear for next login
                 username.setText("");
                 password.setText("");
+                email.setText("");
+                name.setText("");
                 displayError.setText("");
-                displayError.setText("Invalid Username Or Password");
+                displayError.setText("Please Fill Out All Fields");
             }
         });
 
 
-        }
-
     }
+
+
+}
 
 
