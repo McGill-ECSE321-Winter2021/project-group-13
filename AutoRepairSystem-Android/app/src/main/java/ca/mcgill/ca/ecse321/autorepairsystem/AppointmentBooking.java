@@ -187,8 +187,8 @@ public class AppointmentBooking extends AppCompatActivity {
                 selectedList.add(true);
             }
             else {
-                desiredServices.remove(existingServices[which]);
                 selectedList.remove(which);
+                desiredServices.remove(existingServices[which]);
             }
         });
 
@@ -261,37 +261,69 @@ public class AppointmentBooking extends AppCompatActivity {
      */
     public void performAppointmentBooking(String date, String time, String services, String customer) throws JSONException, UnsupportedEncodingException {
         JSONObject appointment = new JSONObject();
-        appointment.put("date", date);
-        appointment.put("starttime", time + ":00");
-        appointment.put("customer", customer);
+        String[] splitDate = date.split("/");
+        appointment.put("date", splitDate[2] + "-" + splitDate[0] + "-" + splitDate[1]);
+        appointment.put("startTime", time + ":00");
+
+        JSONObject customerObject = new JSONObject();
+        customerObject.put("username", customer);
+        appointment.put("customer", customerObject);
 
         JSONArray serviceArray = new JSONArray();
-        for (String serviceString : serviceList) {
+        for (String serviceString : desiredServices) {
             String[] splitService = serviceString.split(", ");
 
             JSONObject service = new JSONObject();
             service.put("name", splitService[0]);
-            service.put("duration", splitService[1].split(" min")[0]);
-            service.put("price", splitService[2].substring(1));
+            service.put("duration", Integer.parseInt(splitService[1].split(" min")[0]));
+            service.put("price", Integer.parseInt(splitService[2].substring(1)));
 
             serviceArray.put(service);
         }
-        appointment.put("services", serviceArray.toString());
+        appointment.put("services", serviceArray);
 
         StringEntity stringEntity = new StringEntity(appointment.toString());
+
+        Log.d("TEST", appointment.toString());
+        Log.d("TEST", stringEntity.toString());
+
+        RequestParams params = new RequestParams();
 
         HttpUtils.post(this,"/create/appointment/any/", stringEntity, new JsonHttpResponseHandler() {
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                succesfulBookingWindow();
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
+            public void onFailure(int statusCode, Header[] headers,String message, Throwable throwable) {
+                unsuccesfulBookingWindow(message);
             }
         });
+    }
+
+    /**
+     * This method opens a popup used to confirm a booking took place
+     */
+    public void succesfulBookingWindow() {
+        AlertDialog.Builder succesfulBooking = new AlertDialog.Builder(this);
+        succesfulBooking.setTitle("Success");
+        succesfulBooking.setMessage("Your booking has been succesful!");
+        succesfulBooking.setPositiveButton("Ok", (dialog, which) -> {});
+        succesfulBooking.show();
+    }
+
+    /**
+     * This method opens a popup used to display an error message when a booking is unsuccessful
+     * @param errorMessage The error message to display
+     */
+    public void unsuccesfulBookingWindow(String errorMessage) {
+        AlertDialog.Builder unsuccesfulBooking = new AlertDialog.Builder(this);
+        unsuccesfulBooking.setTitle("Error");
+        unsuccesfulBooking.setMessage(errorMessage);
+        unsuccesfulBooking.setPositiveButton("Ok", (dialog, which) -> {});
+        unsuccesfulBooking.show();
     }
 
     /**
