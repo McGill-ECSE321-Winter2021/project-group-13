@@ -109,12 +109,23 @@ public class CustomerHomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Takes the user to appointment booking page. Called onClick by buttons in layout.
+     */
     public void goToBookAppointments(View v) {
         Intent intent = new Intent(this, AppointmentBooking.class);
         startActivity(intent);
     }
 
+    /**
+     * Removes current username from shared preferences and takes the user to log in activity.
+     * Called onClick by buttons in layout.
+     */
     public void logOut(View v) {
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString(Username,"");
+        editor.commit();
+
         Intent intent = new Intent(this, LogIn.class);
         startActivity(intent);
     }

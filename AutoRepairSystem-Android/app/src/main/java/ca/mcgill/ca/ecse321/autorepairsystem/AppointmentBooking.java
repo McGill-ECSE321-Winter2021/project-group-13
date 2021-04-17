@@ -317,4 +317,24 @@ public class AppointmentBooking extends AppCompatActivity {
         return dateString;
     }
 
+    /**
+     * This method takes the user to the sign in page.
+     */
+    public void goToCustomerHome(View v) {
+        Intent intent = new Intent(this, CustomerHomeActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Removes current username from shared preferences and takes the user to log in activity.
+     * Called onClick by buttons in layout.
+     */
+    public void logOut(View v) {
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString(Username,"");
+        editor.commit();
+
+        Intent intent = new Intent(this, LogIn.class);
+        startActivity(intent);
+    }
 }
