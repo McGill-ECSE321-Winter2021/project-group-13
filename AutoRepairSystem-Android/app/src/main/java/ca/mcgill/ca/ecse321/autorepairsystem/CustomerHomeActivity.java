@@ -1,8 +1,10 @@
 package ca.mcgill.ca.ecse321.autorepairsystem;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -41,6 +43,10 @@ public class CustomerHomeActivity extends AppCompatActivity {
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         currentUsername = sharedpreferences.getString(Username, "ERROR");
 
+        String mainText = "Welcome to the Los Santos Customers";
+        String appointmentsHeader = currentUsername + "'s Appointments";
+        TextView titleTextView = (TextView) findViewById(R.id.appointmentsTitle);
+        titleTextView.setText(appointmentsHeader);
 
         getAppointmentsList();
         initListView();
@@ -57,7 +63,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
         //Get This Customer's Appointments
         try {
             JSONObject customerJSON = new JSONObject();
-            customerJSON.put("username", currentUsername); // Need to develop current customer persistence
+            customerJSON.put("username", currentUsername);
             StringEntity stringEntity = new StringEntity(customerJSON.toString());
             HttpUtils.post(this,"/appointments/bycustomer/", stringEntity, new JsonHttpResponseHandler() {
                 @Override
@@ -66,7 +72,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
                     appointments.clear();
 
                     JSONObject data;
-                    Log.d("CREATION","DATA SIZE IS" + response.toString());
+                    Log.d("CREATION","DATA SIZE IS" + response.length());
                     for (int i = 0; i < response.length(); i++) {
 
                         try {
@@ -80,9 +86,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
                             Appointment appointment = new Appointment(data.get("date").toString(), data.get("startTime").toString(),data.get("endTime").toString(), serviceNames);
                             appointments.add(appointment);
                         } catch (Exception e) {
-                            TextView displayError = (TextView) findViewById(R.id.errorText);
                             error += e.getMessage();
-                            displayError.append(error);
                         }
                         initListView();
                     }
@@ -94,18 +98,19 @@ public class CustomerHomeActivity extends AppCompatActivity {
                     try {
                         error = errorResponse.get("message").toString();
                     } catch (JSONException e) {
-                        TextView displayError = (TextView) findViewById(R.id.errorText);
                         error += e.getMessage();
-                        displayError.append(error);
                     }
 
                 }
             });
         }
         catch(Exception e) {
-            TextView displayError = (TextView) findViewById(R.id.errorText);
             error += e.getMessage();
-            displayError.append(error);
         }
+    }
+
+    public void goToBookAppointments(View v) {
+        Intent intent = new Intent(this, AppointmentBooking.class);
+        startActivity(intent);
     }
 }
